@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("TAG","接收广播2222");
+//            Log.e("TAG","接收广播2222");
             finish();
             System.exit(0);
         }
