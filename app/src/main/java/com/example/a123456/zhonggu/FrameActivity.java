@@ -1,0 +1,193 @@
+package com.example.a123456.zhonggu;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import Fragment.Fragment1;
+import Fragment.Fragment2;
+import Fragment.Fragment3;
+import Fragment.Fragment4;
+
+public class FrameActivity extends AppCompatActivity implements View.OnClickListener{
+    private RelativeLayout TopView_Bottem1,TopView_Bottem2,TopView_Bottem3,TopView_Bottem4;
+    private LinearLayout TopView_FragmentGroup;
+    private ImageView img1,img2,img3,img4;
+    private TextView tv1,tv2,tv3,tv4;
+    private Fragment fragment1, fragment2,fragment3,fragment4;
+    private FragmentManager fragmentManager;
+    FragmentTransaction ft;
+    MyBroadcastReceiver myBroadcastReceiver;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_frame);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().hide();
+        }
+        fragmentManager=getSupportFragmentManager();
+
+        initView();
+        setOnClick();
+        MyRegistReciver();
+    }
+
+    private void setOnClick() {
+        TopView_Bottem1.setOnClickListener(this);
+        TopView_Bottem2.setOnClickListener(this);
+        TopView_Bottem3.setOnClickListener(this);
+        TopView_Bottem4.setOnClickListener(this);
+    }
+
+    private void initView() {
+        TopView_FragmentGroup=findViewById(R.id.TopView_FragmentGroup);
+        TopView_Bottem1=findViewById(R.id.TopView_Bottem1);
+        TopView_Bottem2=findViewById(R.id.TopView_Bottem2);
+        TopView_Bottem3=findViewById(R.id.TopView_Bottem3);
+        TopView_Bottem4=findViewById(R.id.TopView_Bottem4);
+        img1=findViewById(R.id.Img1);
+        img2=findViewById(R.id.Img2);
+        img3=findViewById(R.id.Img3);
+        img4=findViewById(R.id.Img4);
+        tv1=findViewById(R.id.Tv1);
+        tv2=findViewById(R.id.Tv2);
+        tv3=findViewById(R.id.Tv3);
+        tv4=findViewById(R.id.Tv4);
+
+       // 默认显示第一个fragment
+      FragmentTransaction   ft=fragmentManager.beginTransaction();
+      tv1.setTextColor(Color.WHITE);
+      img1.setImageResource(R.mipmap.banyuan_c);
+        if(fragment1==null){
+            fragment1=new Fragment1();
+            ft.add(R.id.TopView_FragmentGroup,fragment1);
+        }else{
+            ft.show(fragment1);
+        }
+        ft.commit();
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        HideFragement();
+        clearBottem();
+        ft=fragmentManager.beginTransaction();
+        switch (view.getId()){
+            case R.id.TopView_Bottem1:
+                tv1.setTextColor(Color.WHITE);
+                img1.setImageResource(R.mipmap.banyuan_c);
+                if(fragment1==null){
+                    fragment1=new Fragment1();
+                    ft.add(R.id.TopView_FragmentGroup,fragment1);
+                }else{
+                    ft.show(fragment1);
+                }
+                break;
+            case R.id.TopView_Bottem2:
+                tv2.setTextColor(Color.WHITE);
+                img2.setImageResource(R.mipmap.shangchuan_c);
+                if(fragment2==null){
+                    fragment2=new Fragment2();
+                    ft.add(R.id.TopView_FragmentGroup,fragment2);
+                }else{
+                    ft.show(fragment2);
+                }
+                break;
+            case R.id.TopView_Bottem3:
+                tv3.setTextColor(Color.WHITE);
+                img3.setImageResource(R.mipmap.yshangchua_c);
+                if(fragment3==null){
+                    fragment3=new Fragment3();
+                    ft.add(R.id.TopView_FragmentGroup,fragment3);
+                }else{
+                    ft.show(fragment3);
+                }
+                break;
+            case R.id.TopView_Bottem4:
+                tv4.setTextColor(Color.WHITE);
+                img4.setImageResource(R.mipmap.wode_c);
+                if(fragment4==null){
+                    fragment4=new Fragment4();
+                    ft.add(R.id.TopView_FragmentGroup,fragment4);
+                }else{
+                    ft.show(fragment4);
+                }
+                break;
+        }
+        ft.commit();
+
+    }
+    //隐藏所有Fragement
+    private void HideFragement(){
+        ft=fragmentManager.beginTransaction();
+        if(fragment1!=null){
+            ft.hide(fragment1);
+        }
+        if(fragment2!=null){
+            ft.hide(fragment2);
+        }
+        if(fragment3!=null){
+            ft.hide(fragment3);
+        }
+        if(fragment4!=null){
+            ft.hide(fragment4);
+        }
+        ft.commit();
+    }
+    //所有底部图片以及textview编程灰色
+    private void clearBottem(){
+        img1.setImageResource(R.mipmap.banyuan);
+        img2.setImageResource(R.mipmap.shangchuan);
+        img3.setImageResource(R.mipmap.yshangchuan);
+        img4.setImageResource(R.mipmap.wode);
+
+        tv1.setTextColor(Color.BLACK);
+        tv2.setTextColor(Color.BLACK);
+        tv3.setTextColor(Color.BLACK);
+        tv4.setTextColor(Color.BLACK);
+    }
+    //注册广播
+    private void MyRegistReciver(){
+      myBroadcastReceiver=new MyBroadcastReceiver();
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("closeSetting");
+        this.registerReceiver(myBroadcastReceiver,intentFilter);
+    }
+    //接受广播退出APP
+    public class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("TAG","接收广播11111");
+            Intent intent1=new Intent();
+            intent1.setAction("close");
+            sendBroadcast(intent1);
+            Log.e("TAG","发送广播111");
+            finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroadcastReceiver);
+    }
+}
