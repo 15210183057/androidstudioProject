@@ -1,13 +1,17 @@
 package com.example.a123456.zhonggu;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +56,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         initView();
         setOnClick();
         MyRegistReciver();
+        setPermissions();
     }
 
     private void setOnClick() {
@@ -216,5 +221,24 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    static final String[] PERMISSION = new String[]{
+            Manifest.permission.READ_CONTACTS,// 写入权限
+            Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
+            Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
+            Manifest.permission.CAMERA
+    };
+    /**
+     * 设置Android6.0的权限申请
+     */
+    private void setPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            //Android 6.0申请权限
+            ActivityCompat.requestPermissions(this,PERMISSION,1);
+            Log.e("TAG","权限申请no");
+        }else{
+            Log.e("TAG","权限申请ok");
+        }
     }
 }
