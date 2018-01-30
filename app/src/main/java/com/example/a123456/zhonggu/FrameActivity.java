@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,13 +19,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import Fragment.Fragment1;
 import Fragment.Fragment2;
 import Fragment.Fragment3;
 import Fragment.Fragment4;
+import base.BaseActivity;
 
-public class FrameActivity extends AppCompatActivity implements View.OnClickListener{
+public class FrameActivity extends BaseActivity implements View.OnClickListener{
     private RelativeLayout TopView_Bottem1,TopView_Bottem2,TopView_Bottem3,TopView_Bottem4;
     private LinearLayout TopView_FragmentGroup;
     private ImageView img1,img2,img3,img4;
@@ -33,15 +36,17 @@ public class FrameActivity extends AppCompatActivity implements View.OnClickList
     private FragmentManager fragmentManager;
     FragmentTransaction ft;
     MyBroadcastReceiver myBroadcastReceiver;
+    //记录用户首次点击返回键的时间
+    private long firstTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_frame);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().hide();
-        }
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        if (getSupportActionBar() != null){
+//            getSupportActionBar().hide();
+//        }
         fragmentManager=getSupportFragmentManager();
 
         initView();
@@ -177,11 +182,12 @@ public class FrameActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接收广播11111");
-            Intent intent1=new Intent();
-            intent1.setAction("close");
-            sendBroadcast(intent1);
+//            Intent intent1=new Intent();
+//            intent1.setAction("close");
+//            sendBroadcast(intent1);
             Log.e("TAG","发送广播111");
             finish();
+            System.exit(0);
         }
     }
 
@@ -189,5 +195,26 @@ public class FrameActivity extends AppCompatActivity implements View.OnClickList
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(myBroadcastReceiver);
+    }
+
+    /**
+     * 第二种办法
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            long secondTime = System.currentTimeMillis();
+            if (secondTime - firstTime > 2000) {
+                Toast.makeText(FrameActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                firstTime = secondTime;
+                return true;
+            } else {
+                System.exit(0);
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

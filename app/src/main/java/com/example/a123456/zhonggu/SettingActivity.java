@@ -12,19 +12,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener{
+import base.BaseActivity;
+
+public class SettingActivity extends BaseActivity implements View.OnClickListener{
     private ImageView img_back;
     private RelativeLayout relative1,relative11,relative2,relative22,relative3,relative33;
     private TextView tv_tuichu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_setting);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().hide();
-        }
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        if (getSupportActionBar() != null){
+//            getSupportActionBar().hide();
+//        }
         initView();
     }
 

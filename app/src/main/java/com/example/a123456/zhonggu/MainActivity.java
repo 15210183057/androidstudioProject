@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-    //记录用户首次点击返回键的时间
-    private long firstTime = 0;
-    MyBroadcastReceiver myBroadcastReceiver;
+import base.BaseActivity;
+
+public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,49 +26,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        MyRegistReciver();
-    }
-    /**
-     * 第二种办法
-     * @param keyCode
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            long secondTime = System.currentTimeMillis();
-            if (secondTime - firstTime > 2000) {
-                Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                firstTime = secondTime;
-                return true;
-            } else {
-                System.exit(0);
+        //停留三秒自动跳转
+        Thread myThread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                    Intent intent=new Intent(MainActivity.this,FrameActivity.class);
+                    startActivity(intent);
+                    finish();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-    //注册广播
-    private void MyRegistReciver(){
-        myBroadcastReceiver=new MyBroadcastReceiver();
-        IntentFilter intentFilter=new IntentFilter();
-        intentFilter.addAction("close");
-        this.registerReceiver(myBroadcastReceiver,intentFilter);
-    }
-//接受广播退出APP
-    public class MyBroadcastReceiver extends BroadcastReceiver{
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            Log.e("TAG","接收广播2222");
-            finish();
-            System.exit(0);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(myBroadcastReceiver);
+        });
+        myThread.start();
     }
 }
