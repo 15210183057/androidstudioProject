@@ -14,6 +14,9 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 @SuppressLint("AppCompatCustomView")
+/*
+自定义圆角图片类
+ */
 public class CircleImageView extends ImageView {
 
     private Paint mPaint; //画笔
