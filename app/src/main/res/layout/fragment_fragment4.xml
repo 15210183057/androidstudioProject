@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical"
-    tools:context="Fragment.Fragment4">
+    tools:context="fragment.Fragment4">
 
     <include
         layout="@layout/top_titlebar"/>

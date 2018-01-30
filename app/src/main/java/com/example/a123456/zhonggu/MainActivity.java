@@ -30,12 +30,12 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        //停留三秒自动跳转
+        //停留1秒自动跳转
         Thread myThread=new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                     Intent intent=new Intent(MainActivity.this,FrameActivity.class);
                     startActivity(intent);
                     finish();

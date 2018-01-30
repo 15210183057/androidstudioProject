@@ -12,23 +12,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import Fragment.Fragment1;
-import Fragment.Fragment2;
-import Fragment.Fragment3;
-import Fragment.Fragment4;
+import fragment.Fragment1;
+import fragment.Fragment2;
+import fragment.Fragment3;
+import fragment.Fragment4;
 import base.BaseActivity;
 
 public class FrameActivity extends BaseActivity implements View.OnClickListener{
@@ -236,9 +233,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             //Android 6.0申请权限
             ActivityCompat.requestPermissions(this,PERMISSION,1);
-            Log.e("TAG","权限申请no");
         }else{
-            Log.e("TAG","权限申请ok");
         }
     }
 }

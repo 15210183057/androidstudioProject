@@ -1,4 +1,4 @@
-package Fragment;
+package fragment;
 
 
 import android.os.Bundle;

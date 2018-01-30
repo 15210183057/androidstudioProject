@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="Fragment.Fragment1"
+    tools:context="fragment.Fragment1"
     android:background="#fff">
 
     <include

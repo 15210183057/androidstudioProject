@@ -1,8 +1,8 @@
-package Fragment;
-
+package fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,62 +22,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.MyLvAdapter;
-import adapter.MyLvFrag2Adapter;
 import bean.CarBean;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Fragment2 extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener, MyLvFrag2Adapter.SelectCallBack{
+public class Fragment1 extends Fragment implements AdapterView.OnItemClickListener,View.OnClickListener{
     private View view;
-    private TextView tv_topcenter,img_topleft,img_topright,tv_f2_null;
-    private ImageView img_f2_center;
+    private ImageView img_topleft,img_topright;
+    private TextView tv_topcenter;
+    RecyclerView recyclerView;
     RefreshLayout refreshLayout;
     ListView lv;
     private List<CarBean> list;
-    private MyLvFrag2Adapter adapter;
+    private MyLvAdapter adapter;
     private int count;
-    public Fragment2() {
-        // Required empty public constructor
-    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view=inflater.inflate(R.layout.fragment_fragment2, container, false);
-        img_topleft=view.findViewById(R.id.img_left);
-        img_topright=view.findViewById(R.id.img_right);
-        tv_topcenter=view.findViewById(R.id.tv_center);
+         view=inflater.inflate(R.layout.fragment_fragment1, container, false);
+         img_topleft=view.findViewById(R.id.img_left);
+         img_topright=view.findViewById(R.id.img_right);
+         tv_topcenter=view.findViewById(R.id.tv_center);
 
-//        img_topleft.setImageResource(R.mipmap.qx);
-        tv_topcenter.setText("待上传车源");
-//        img_topright.setImageResource(R.mipmap.tj);
-        img_f2_center=view.findViewById(R.id.img_f2_center);
-        tv_f2_null=view.findViewById(R.id.tv_f2_null);
-        img_topleft.setOnClickListener(this);
+         img_topleft.setVisibility(View.GONE);
+         tv_topcenter.setText("待补充车源");
+         img_topright.setImageResource(R.mipmap.saoyisao);
+         initView();
 
-        initView();
-        return view;
+         img_topright.setOnClickListener(this);
+         return view;
     }
-
 
     private void initView() {
         setDate();
-        if(list.size()==0){
-            img_f2_center.setVisibility(View.VISIBLE);
-            tv_f2_null.setVisibility(View.VISIBLE);
-        }else{
-            img_f2_center.setVisibility(View.GONE);
-            tv_f2_null.setVisibility(View.GONE);
-        }
         refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
 
         lv=view.findViewById(R.id.lv);
         lv.setOnItemClickListener(this);
-        adapter=new MyLvFrag2Adapter(list,getActivity());
-        adapter.setCall(this);
+        adapter=new MyLvAdapter(list,getActivity());
         lv.setAdapter(adapter);
 //        refreshLayout.setEnableAutoLoadmore(true);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -129,7 +116,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
             list.add(carBean);
             count=i;
         }
-    }
+}
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -137,35 +124,56 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
     }
 
     @Override
-    public void call(int i) {
-        if(list.get(i).Flag){
-            list.get(i).Flag=false;
-            img_topleft.setText("全选");
-        }else{
-            list.get(i).Flag=true;
-            img_topleft.setText("取消");
-        }
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.img_left:
-                if(img_topleft.getText().toString().equals("全选")){
-                    img_topleft.setText("取消");
-                    for(int i=0;i<list.size();i++){
-                        list.get(i).Flag=true;
-                        adapter.notifyDataSetChanged();
-                    }
-                }else if(img_topleft.getText().toString().equals("取消")){
-                    img_topleft.setText("全选");
-                    for(int i=0;i<list.size();i++){
-                        list.get(i).Flag=false;
-                    }
-                    adapter.notifyDataSetChanged();
-                }
+            case R.id.img_right:
+                Toast.makeText(getContext(),"扫描二维码",Toast.LENGTH_SHORT).show();
                 break;
         }
     }
+    //设置刷新
+//    private void setPullRefresher(){
+////        //设置 Header 为 MaterialHeader
+////        refreshLayout.setRefreshHeader(new MaterialHeader(this));
+////        //设置 Footer 为 经典样式
+////        refreshLayout.setRefreshFooter(new ClassicsFooter(getContext()));
+//
+//        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh(RefreshLayout refreshlayout) {
+//                //在这里执行上拉刷新时的具体操作(网络请求、更新UI等)
+//
+//                //模拟网络请求到的数据
+//                ArrayList<ItemBean> newList = new ArrayList<ItemBean>();
+//                for (int i=0;i<20;i++){
+//                    newList.add(new ItemBean(
+//                            R.mipmap.ic_launcher,
+//                            "newTitle"+i,
+//                            System.currentTimeMillis()+""
+//                    ));
+//                }
+//                myAdapter.refresh(newList);
+//                refreshlayout.finishRefresh(2000/*,false*/);
+//                //不传时间则立即停止刷新    传入false表示刷新失败
+//            }
+//        });
+//        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+//            @Override
+//            public void onLoadmore(RefreshLayout refreshlayout) {
+//
+//                //模拟网络请求到的数据
+//                ArrayList<ItemBean> newList = new ArrayList<ItemBean>();
+//                for (int i=0;i<20;i++){
+//                    newList.add(new ItemBean(
+//                            R.mipmap.ic_launcher,
+//                            "addTitle"+i,
+//                            System.currentTimeMillis()+""
+//                    ));
+//                }
+//                myAdapter.add(newList);
+//                //在这里执行下拉加载时的具体操作(网络请求、更新UI等)
+//                refreshlayout.finishLoadmore(2000/*,false*/);//不传时间则立即停止刷新    传入false表示加载失败
+//            }
+//        });
+//    }
 }

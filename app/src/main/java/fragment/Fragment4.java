@@ -1,8 +1,11 @@
-package Fragment;
+package fragment;
 
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +30,9 @@ import com.example.a123456.zhonggu.R;
 import com.example.a123456.zhonggu.SettingActivity;
 
 import java.io.IOException;
+import java.net.URL;
 
+import mycamare.TakePhoteActivity;
 import View.CircleImageView;
 
 /**
@@ -45,6 +51,9 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
     private View popView;
     private PopupWindow window;
     ImageView selectImag;
+
+    //拍照传递回来的uri
+    MyReciver myReciver;
     public Fragment4() {
         // Required empty public constructor
     }
@@ -66,6 +75,10 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
         img_topright.setOnClickListener(this);
         img_circle.setOnClickListener(this);
         initView();
+        myReciver=new MyReciver();
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("image");
+        getActivity().registerReceiver(myReciver,intentFilter);
         return view;
     }
 
@@ -89,7 +102,7 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
                 break;
             case R.id.tv_paizhao:
                 //调取相机功能
-//            activity.startActivity(new Intent(this, TakePhoteActivity.class));
+            startActivity(new Intent(getContext(), TakePhoteActivity.class));
                 window.dismiss();
                 break;
             case R.id.tv_xiangce:
@@ -109,14 +122,21 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
     private void getPopView(ImageView imageView){
         selectImag=imageView;
         popView= View.inflate(getContext(),R.layout.popwiew,null);
+        LinearLayout pop_linear=popView.findViewById(R.id.pop_linear);
         tv_paizhao=popView.findViewById(R.id.tv_paizhao);
         tv_xiangce=popView.findViewById(R.id.tv_xiangce);
         tv_canle=popView.findViewById(R.id.tv_canle);
         window=new PopupWindow(getContext());
+        int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        pop_linear.measure(w, h);
+        int pop_height = pop_linear.getMeasuredHeight();
+        int pop_width = pop_linear.getMeasuredWidth();
+       Log.e("TAG","测量h="+pop_height);
         int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
         window.setWidth(width);
-        window.setHeight(height/4);
+        window.setHeight(pop_height);
         // 设置PopupWindow的背景
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         // 设置PopupWindow是否能响应外部点击事件
@@ -178,5 +198,24 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
                 selectImag.setImageBitmap(bitmap);
             }
         }
+    }
+
+    public class MyReciver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Uri source=Uri.parse(intent.getStringExtra("imgUrl"));
+            try {
+                selectImag.setImageBitmap(MediaStore.Images.Media.getBitmap(getContext().getContentResolver(),source));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().unregisterReceiver(myReciver);
     }
 }
