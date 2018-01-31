@@ -214,6 +214,8 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 firstTime = secondTime;
                 return true;
             } else {
+                finish();
+                Log.e("TAG","这里走了吗");
                 System.exit(0);
             }
         }
