@@ -29,7 +29,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.HelloTV).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this,FrameActivity.class);
+                Intent intent=new Intent(MainActivity.this,TestActivity.class);
                 startActivity(intent);
             }
         });
