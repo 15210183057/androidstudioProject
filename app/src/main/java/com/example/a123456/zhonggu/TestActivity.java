@@ -46,7 +46,6 @@ ImageView img;
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
-                        Log.e("TAG","请求是吧=="+ex.getMessage().toString());
                     }
 
                     @Override
