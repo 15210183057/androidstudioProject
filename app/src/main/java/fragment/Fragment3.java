@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.MyLvAdapter;
+import adapter.MyLvAdapter3;
 import bean.CarBean;
 
 /**
@@ -36,7 +37,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     RefreshLayout refreshLayout;
     ListView lv;
     private List<CarBean> list;
-    private MyLvAdapter adapter;
+    private MyLvAdapter3 adapter;
     private int count;
     public Fragment3() {
         // Required empty public constructor
@@ -64,7 +65,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
         lv=view.findViewById(R.id.lv);
         lv.setOnItemClickListener(this);
-        adapter=new MyLvAdapter(list,getActivity());
+        adapter=new MyLvAdapter3(list,getActivity());
         lv.setAdapter(adapter);
 //        refreshLayout.setEnableAutoLoadmore(true);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {

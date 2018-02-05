@@ -22,6 +22,7 @@ public class MyApplication extends Application {
         sharedUtils=new SharedUtils();
         userBean.username= sharedUtils.readXML("username",this);
         userBean.password= sharedUtils.readXML("password",this);
+        userBean.groupids=sharedUtils.readXML("groupids",this);
     }
     public static MyApplication getInstance(){
         myApplication=new MyApplication();
