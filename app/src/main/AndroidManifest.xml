@@ -41,6 +41,8 @@
             android:label="@string/title_activity_show_croppered" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".TestActivity"></activity>
+        <activity android:name=".WebViewActivity"/>
+        <activity android:name=".CartListInfoMsgActivity"/>
     </application>
 
 </manifest>

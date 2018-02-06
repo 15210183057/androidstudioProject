@@ -1,5 +1,6 @@
 package fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a123456.zhonggu.CartListInfoMsgActivity;
 import com.example.a123456.zhonggu.R;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -144,6 +146,8 @@ public class Fragment1 extends Fragment implements AdapterView.OnItemClickListen
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Toast.makeText(getContext(),"点击第+"+i+"条数据",Toast.LENGTH_SHORT).show();
+        Intent intent=new Intent(getContext(), CartListInfoMsgActivity.class);
+        startActivity(intent);
     }
 
     @Override
