@@ -1,6 +1,7 @@
 package fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -123,6 +124,18 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
     }
     List<BuCartListBean>listBeans;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.e("TAG","onAttach-------");
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        Log.e("TAG","setUserVisibleHint必走方法==="+isVisibleToUser);
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
     //设置数据源
     private void setDate(){
 //        list=new ArrayList<CarBean>();
@@ -192,11 +205,5 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("TAG","必走吗？");
     }
 }
