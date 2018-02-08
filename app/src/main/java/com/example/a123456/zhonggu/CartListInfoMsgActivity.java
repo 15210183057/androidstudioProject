@@ -1,5 +1,6 @@
 package com.example.a123456.zhonggu;
 
+import android.content.Intent;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import application.MyApplication;
 import base.BaseActivity;
+import bean.BuCartListBean;
+import utils.SharedUtils;
 
 public class CartListInfoMsgActivity extends BaseActivity implements View.OnClickListener{
     private ImageView img_msg_back;
@@ -27,11 +34,32 @@ public class CartListInfoMsgActivity extends BaseActivity implements View.OnClic
     private WebView webView;
     private ProgressBar progressBar;
     String UrlStr="http://www.baidu.com";
+    public int count ;//记录保存多少条数据
+    private List<BuCartListBean> list=new ArrayList<BuCartListBean>();
+    private List<BuCartListBean> list2=new ArrayList<BuCartListBean>();
+    SharedUtils utils = new SharedUtils();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cartlistinfomsg);
+//        utils.saveXML(MyApplication.cartlistmsg,"count",count+"",CartListInfoMsgActivity.this);
+        if(!utils.readXML(MyApplication.cartlistmsg,"count",this).isEmpty()) {
+            count = Integer.parseInt(utils.readXML(MyApplication.cartlistmsg, "count", this));
+        }
         initView();
+        getData();
+    }
+    String posion;
+    private void getData() {
+        BuCartListBean buCartListBean=new BuCartListBean();
+
+        posion=getIntent().getStringExtra("i");
+        buCartListBean.vin=(getIntent().getStringExtra("vin"+posion));
+        buCartListBean.name=(getIntent().getStringExtra("name"+posion));
+        buCartListBean.licensePlate=(getIntent().getStringExtra("licensePlate"+posion));
+        buCartListBean.cardType=(getIntent().getStringExtra("cardType"+posion));
+
+        list.add(buCartListBean);
     }
 
     private void initView() {
@@ -113,8 +141,21 @@ public class CartListInfoMsgActivity extends BaseActivity implements View.OnClic
                 finish();
                 break;
             case R.id.tv_msg_save:
+                count++;
+                Log.e("TAG","count条数=="+count);
+                    utils.saveXML(MyApplication.cartlistmsg,"vin"+posion,list.get(0).vin,CartListInfoMsgActivity.this);
+                    utils.saveXML(MyApplication.cartlistmsg,"name"+posion,list.get(0).name,CartListInfoMsgActivity.this);
+                    utils.saveXML(MyApplication.cartlistmsg,"licensePlate"+posion,list.get(0).licensePlate,CartListInfoMsgActivity.this);
+                    utils.saveXML(MyApplication.cartlistmsg,"cardType"+posion,list.get(0).cardType,CartListInfoMsgActivity.this);
+                    //当前key值的posion
+                Log.e("TAG","存入的所有posion"+"posion=="+posion+"=="+count);
+                    utils.saveXML(MyApplication.cartlistmsg,"posion"+count,posion,CartListInfoMsgActivity.this);
+                    //一共保存条数count
+                    utils.saveXML(MyApplication.cartlistmsg,"count",count+"",CartListInfoMsgActivity.this);
                 Toast.makeText(CartListInfoMsgActivity.this,"保存",Toast.LENGTH_SHORT).show();
+                finish();
                 break;
         }
     }
+
 }

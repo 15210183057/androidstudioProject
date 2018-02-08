@@ -97,9 +97,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     Log.e("TAG","判断="+(username.equals(UserBean.username)&&password.equals(UserBean.password)));
                     if(UserBean.status.equals("1")) {
                         SharedUtils utils = new SharedUtils();
-                        utils.saveXML("username", UserBean.username, LoginActivity.this);
-                        utils.saveXML("password", password, LoginActivity.this);
-                        utils.saveXML("groupids", UserBean.groupids, LoginActivity.this);
+                        utils.saveXML(MyApplication.usermsg,"username", UserBean.username, LoginActivity.this);
+                        utils.saveXML(MyApplication.usermsg,"password", password, LoginActivity.this);
+                        utils.saveXML(MyApplication.usermsg,"groupids", UserBean.groupids, LoginActivity.this);
                         Intent intent = new Intent(LoginActivity.this, FrameActivity.class);
                         startActivity(intent);
                         finish();

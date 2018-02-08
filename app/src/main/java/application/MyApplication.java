@@ -14,15 +14,17 @@ public class MyApplication extends Application {
     public static MyApplication myApplication;
     public UserBean userBean=new UserBean();
     public SharedUtils sharedUtils;
+    public static String usermsg;//用户信息文件名
+    public static String cartlistmsg;//
     @Override
     public void onCreate() {
         super.onCreate();
         x.Ext.init(this);
         x.Ext.setDebug(true);
         sharedUtils=new SharedUtils();
-        userBean.username= sharedUtils.readXML("username",this);
-        userBean.password= sharedUtils.readXML("password",this);
-        userBean.groupids=sharedUtils.readXML("groupids",this);
+        userBean.username= sharedUtils.readXML(usermsg,"username",this);
+        userBean.password= sharedUtils.readXML(usermsg,"password",this);
+        userBean.groupids=sharedUtils.readXML(usermsg,"groupids",this);
     }
     public static MyApplication getInstance(){
         myApplication=new MyApplication();

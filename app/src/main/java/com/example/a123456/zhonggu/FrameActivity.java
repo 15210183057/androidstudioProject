@@ -56,6 +56,12 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         setPermissions();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("TAG","这里走吗？？？？？？？？？？？？？？");
+    }
+
     private void setOnClick() {
         TopView_Bottem1.setOnClickListener(this);
         TopView_Bottem2.setOnClickListener(this);

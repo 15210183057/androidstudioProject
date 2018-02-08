@@ -1,6 +1,7 @@
 package fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,10 +20,14 @@ import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import adapter.MyLvFrag2Adapter;
+import application.MyApplication;
+import bean.BuCartListBean;
 import bean.CarBean;
+import utils.SharedUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,7 +69,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
 
     private void initView() {
         setDate();
-        if(list.size()==0){
+        if(listBeans.size()==0){
             img_f2_center.setVisibility(View.VISIBLE);
             tv_f2_null.setVisibility(View.VISIBLE);
         }else{
@@ -75,7 +80,7 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
 
         lv=view.findViewById(R.id.lv);
         lv.setOnItemClickListener(this);
-        adapter=new MyLvFrag2Adapter(list,getActivity());
+        adapter=new MyLvFrag2Adapter(getActivity(),listBeans);
         adapter.setCall(this);
         lv.setAdapter(adapter);
 //        refreshLayout.setEnableAutoLoadmore(true);
@@ -116,18 +121,39 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
             }
         });
     }
+    List<BuCartListBean>listBeans;
+
     //设置数据源
     private void setDate(){
-        list=new ArrayList<CarBean>();
-        for(int i=0;i<20;i++){
-            CarBean carBean=new CarBean();
-            carBean.tv_name="大众---"+i;
-            carBean.tv_company_name="中古测试---"+i;
-            carBean.tv_num1="12321sdfsfdsfsfs---"+i;
-            carBean.tv_num2="进123rew---"+i;
-            list.add(carBean);
-            count=i;
-        }
+//        list=new ArrayList<CarBean>();
+//        for(int i=0;i<20;i++){
+//            CarBean carBean=new CarBean();
+//            carBean.tv_name="大众---"+i;
+//            carBean.tv_company_name="中古测试---"+i;
+//            carBean.tv_num1="12321sdfsfdsfsfs---"+i;
+//            carBean.tv_num2="进123rew---"+i;
+//            list.add(carBean);
+//            count=i;
+//        }
+        listBeans=new ArrayList<BuCartListBean>();
+        //读取本地数据
+        SharedUtils sharedUtils=new SharedUtils();
+        int size= Integer.parseInt(sharedUtils.readXML(MyApplication.cartlistmsg,"count",getActivity()));
+       for(int i=0;i<size;i++) {
+           BuCartListBean buCartListBean = new BuCartListBean();
+           String posion=sharedUtils.readXML(MyApplication.cartlistmsg,"posion"+i,getActivity());
+           Log.e("TAG","posion=="+posion);
+           buCartListBean.vin = sharedUtils.readXML(MyApplication.cartlistmsg, "vin" + i, getActivity());
+           buCartListBean.cardType = sharedUtils.readXML(MyApplication.cartlistmsg, "cardType" + i, getActivity());
+           buCartListBean.name = sharedUtils.readXML(MyApplication.cartlistmsg, "name" +i , getActivity());
+           buCartListBean.licensePlate = sharedUtils.readXML(MyApplication.cartlistmsg, "licensePlate" + i, getActivity());
+           if(!buCartListBean.vin.isEmpty()
+                         && !buCartListBean.cardType.isEmpty()
+                            &&!buCartListBean.name.isEmpty()
+                            &&!buCartListBean.cardType.isEmpty()){
+               listBeans.add(buCartListBean);
+           }
+       }
     }
 
     @Override
@@ -166,5 +192,11 @@ public class Fragment2 extends Fragment implements View.OnClickListener,AdapterV
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("TAG","必走吗？");
     }
 }

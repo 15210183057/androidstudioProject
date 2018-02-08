@@ -147,6 +147,11 @@ public class Fragment1 extends Fragment implements AdapterView.OnItemClickListen
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Toast.makeText(getContext(),"点击第+"+i+"条数据",Toast.LENGTH_SHORT).show();
         Intent intent=new Intent(getContext(), CartListInfoMsgActivity.class);
+        intent.putExtra("vin"+i,list.get(i).vin);
+        intent.putExtra("cardType"+i,list.get(i).cardType);
+        intent.putExtra("licensePlate"+i,list.get(i).licensePlate);
+        intent.putExtra("name"+i,list.get(i).name);
+        intent.putExtra("i",""+i);
         startActivity(intent);
     }
 

@@ -21,7 +21,7 @@ import mycamare.utils.Utils;
 
 /**
  * @Class: ShowCropperedActivity
- * @Description: 显示截图结果界面
+ * @Description: i显示截图结果界面
  * @author: lling(www.cnblogs.com/liuling)
  * @Date: 2015/10/25
  */

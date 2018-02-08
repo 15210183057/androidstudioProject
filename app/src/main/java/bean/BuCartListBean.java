@@ -6,4 +6,5 @@ package bean;
 
 public class BuCartListBean {
     public String vin,licensePlate,cardType,name;
+    public boolean Flag;
 }
