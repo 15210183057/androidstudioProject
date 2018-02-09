@@ -27,13 +27,14 @@ import fragment.Fragment2;
 import fragment.Fragment3;
 import fragment.Fragment4;
 import base.BaseActivity;
+import fragment.newFragment;
 
 public class FrameActivity extends BaseActivity implements View.OnClickListener{
     private RelativeLayout TopView_Bottem1,TopView_Bottem2,TopView_Bottem3,TopView_Bottem4;
     private LinearLayout TopView_FragmentGroup;
     private ImageView img1,img2,img3,img4;
     private TextView tv1,tv2,tv3,tv4;
-    private Fragment fragment1, fragment2,fragment3,fragment4;
+    private Fragment fragment1, fragment2,fragment3,fragment4,newfragment;
     private FragmentManager fragmentManager;
     FragmentTransaction ft;
     MyBroadcastReceiver myBroadcastReceiver;
@@ -88,11 +89,17 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
       FragmentTransaction   ft=fragmentManager.beginTransaction();
       tv1.setTextColor(Color.WHITE);
       img1.setImageResource(R.mipmap.banyuan_c);
-        if(fragment1==null){
-            fragment1=new Fragment1();
-            ft.add(R.id.TopView_FragmentGroup,fragment1);
+//        if(fragment1==null){
+//            fragment1=new Fragment1();
+//            ft.add(R.id.TopView_FragmentGroup,fragment1);
+//        }else{
+//            ft.show(fragment1);
+//        }
+        if(newfragment==null){
+            newfragment=new newFragment();
+            ft.add(R.id.TopView_FragmentGroup,newfragment);
         }else{
-            ft.show(fragment1);
+            ft.show(newfragment);
         }
         ft.commit();
 
@@ -107,11 +114,17 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
             case R.id.TopView_Bottem1:
                 tv1.setTextColor(Color.WHITE);
                 img1.setImageResource(R.mipmap.banyuan_c);
-                if(fragment1==null){
-                    fragment1=new Fragment1();
-                    ft.add(R.id.TopView_FragmentGroup,fragment1);
+//                if(fragment1==null){
+//                    fragment1=new Fragment1();
+//                    ft.add(R.id.TopView_FragmentGroup,fragment1);
+//                }else{
+//                    ft.show(fragment1);
+//                }
+                if(newfragment==null){
+                    newfragment=new newFragment();
+                    ft.add(R.id.TopView_FragmentGroup,newfragment);
                 }else{
-                    ft.show(fragment1);
+                    ft.show(newfragment);
                 }
                 break;
             case R.id.TopView_Bottem2:
@@ -153,6 +166,9 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         ft=fragmentManager.beginTransaction();
         if(fragment1!=null){
             ft.hide(fragment1);
+        }
+        if(newfragment!=null){
+            ft.hide(newfragment);
         }
         if(fragment2!=null){
             ft.hide(fragment2);

@@ -43,6 +43,10 @@
         <activity android:name=".TestActivity"></activity>
         <activity android:name=".WebViewActivity"/>
         <activity android:name=".CartListInfoMsgActivity"/>
+<!--获取vin码的三条-->
+        <activity android:name="camera.CameraActivity"/>
+        <activity android:name="camera.ShowImageActivity"></activity>
+        <service android:name="camera.CameraInterface"></service>
     </application>
 
 </manifest>
