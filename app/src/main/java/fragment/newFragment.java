@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,9 +36,24 @@ import android.widget.Toast;
 import com.example.a123456.zhonggu.FrameActivity;
 import com.example.a123456.zhonggu.R;
 
-import java.util.Calendar;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import adapter.MyLvAdapter;
+import application.MyApplication;
+import bean.BUCartListBeanNUm;
+import bean.BuCartListBean;
+import bean.JaShiZhengBean;
+import bean.UserBean;
 import camera.CameraActivity;
+import camera.FileUtil;
+import jiekou.getInterface;
+import utils.SharedUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,12 +67,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private TextView tv_paizhao,tv_canle,tv_xiangce;
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
-    private TextView tv_time;
+    private TextView tv_time;//注册日期
     private EditText edt_licheng,edt_price;//里程，价格
     private TextView tv2_newFragment,tv1_newFragment,tv3_newFragment,tv4_newFragment,tv5_newFragment;
     private ImageView img_newfragment,img2_newfragment,img3_newfragment;
     private Button btn_commit;
     private RelativeLayout relative1_newFragment,relative2_newFragment,relative3_newFragment,relative4_newFragment,relative5_newFragment;
+private LinearLayout linear3_newfragment;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,6 +105,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         relative1_newFragment=view.findViewById(R.id.relative1_newFragment);
         relative2_newFragment=view.findViewById(R.id.relative2_newFragment);
         //一下三个控件，当vin码识别识别，需要手动填写
+        linear3_newfragment=view.findViewById(R.id.linear3_newfragment);
         tv3_newFragment=view.findViewById(R.id.tv3_newFragment);//品牌
         tv4_newFragment=view.findViewById(R.id.tv4_newFragment);//车系
         tv5_newFragment=view.findViewById(R.id.tv5_newFragment);//车型
@@ -126,6 +144,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
         img_newfragment.setOnClickListener(this);
         img2_newfragment.setOnClickListener(this);
         img3_newfragment.setOnClickListener(this);
+
+        getDate();
+        getBuCartList(2);
     }
 
     @Override
@@ -181,13 +202,28 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 IsNull(edt_price);
                 IsNullImg(img_newfragment);
                 IsNullImg(img2_newfragment);
+                IsNullImg(img3_newfragment);
                 break;
             case R.id.img_newfragment:
                 img_newfragment.setBackgroundResource(0);
+                Intent intent3=new Intent(getContext(),CameraActivity.class);
+                intent3.putExtra("name","zuoqian");
+                intent3.putExtra("height","350");
+                startActivity(intent3);
                 break;
             case R.id.img2_newfragment:
+                img2_newfragment.setBackgroundResource(0);
+                Intent intent4=new Intent(getContext(),CameraActivity.class);
+                intent4.putExtra("name","zhengqian");
+                intent4.putExtra("height","350");
+                startActivity(intent4);
                 break;
             case R.id.img3_newfragment:
+                img3_newfragment.setBackgroundResource(0);
+                Intent intent5=new Intent(getContext(),CameraActivity.class);
+                intent5.putExtra("name","zhenghou");
+                intent5.putExtra("height","350");
+                startActivity(intent5);
                 break;
         }
     }
@@ -299,7 +335,37 @@ public class newFragment extends Fragment implements View.OnClickListener{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("vinnum"));
+            Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
+            String name=intent.getStringExtra("name");
+            if(!TextUtils.isEmpty(name)) {
+                String path=intent.getStringExtra("path");
+                FileUtil fileUtil = new FileUtil(context);
+                if (name.equals("zhengqian")) {
+                    img2_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                }else if(name.equals("zuoqian")){
+                    img_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                }else if(name.equals("zhenghou")){
+                    img3_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                }
+            }else{
+                //上传vin码返回
+                Log.e("TAG","广播接受上传vin码返回===="+intent.getStringExtra("vinnum"));
+                String str=intent.getStringExtra("vinnum");
+                if(TextUtils.isEmpty(str)){
+                    linear3_newfragment.setVisibility(View.GONE);
+                }else{
+                    String vinStr=intent.getStringExtra("vinnum");
+                    if(TextUtils.isEmpty(vinStr)){
+                        linear3_newfragment.setVisibility(View.VISIBLE);
+                    }else{
+                        linear3_newfragment.setVisibility(View.GONE);
+                        edit_num.setText(vinStr);
+                        edt_licheng.setText(intent.getStringExtra("licheng"));
+                        edt_price.setText(intent.getStringExtra("price"));
+                        tv_time.setText(intent.getStringExtra("data"));
+                    }
+                }
+            }
 //            Intent intent1=new Intent();
 //            intent1.setAction("close");
 //            sendBroadcast(intent1);
@@ -334,7 +400,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
             Log.e("TAG","imageView.getResources()=="+imageView.getDrawable());
             Log.e("TAG","img=="+(imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@54097a6")) );
             if (imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@54097a6")
-                    ||imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@9a02594")) {
+                    ||imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@9a02594")
+                    ||imageView.getDrawable().toString().equals("android.graphics.drawable.BitmapDrawable@cce8832")) {
                 imageView.setBackgroundResource(R.drawable.rednull);
             }
         }
@@ -369,5 +436,79 @@ public class newFragment extends Fragment implements View.OnClickListener{
         public void afterTextChanged(Editable editable) {
         }
     }
+    //上传三张大图
+    private void getDate(){
+        String url="http://mkerp.zgcw.cn/api/api_merchant/getlist";
+        RequestParams params=new RequestParams(url);
+        params.addBodyParameter("json","1");
+        SharedUtils sharedUtils=new SharedUtils();
+        params.addBodyParameter("where","groupid in("+ sharedUtils.readXML(MyApplication.usermsg,"groupids",getActivity())+") and status=1");
+        params.addBodyParameter("pagesize","100");
+        Log.e("TAG","param=="+params);
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e("TAG","result=="+result);
+            }
 
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+    private void getBuCartList(int current_page){
+        RequestParams requestParams=new RequestParams(getInterface.getBuCartList);
+//        json=1&pagesize=10&where=blu=1 and groupid in(5,3,2) and status = 1
+        requestParams.addBodyParameter("json","1");
+        requestParams.addBodyParameter("pagesize","10");
+        requestParams.addBodyParameter("current_page",current_page+"");
+        requestParams.addBodyParameter("where","blu=0 and groupid in("+ UserBean.groupids+") and status=1");
+        Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e("TAG","resulr=="+result);
+
+//                List<BuCartListBean>listBeans=new ArrayList<BuCartListBean>();
+//                listBeans= View.GetJsonUtils.getBuCartList(getActivity(),result);
+//                list.addAll(listBeans);
+//                if (list!=null) {
+//                    adapter = new MyLvAdapter(list, getActivity());
+//                    lv.setAdapter(adapter);
+//                }
+////                List<CarBean>list=new ArrayList<CarBean>();
+////                list=GetJsonUtils.getBuCartList(getActivity(),"");
+////                for(int i=0;i<list.size();i++){
+////                    Log.e("TAG","list数据name=="+list.get(i).tv_name);
+////                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                tv_topcenter.setText(BUCartListBeanNUm.total);//设置title
+                Log.e("TAG","title=="+BUCartListBeanNUm.total);
+            }
+        });
+    }
 }

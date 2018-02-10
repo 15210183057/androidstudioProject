@@ -14,6 +14,7 @@ import java.util.List;
 import bean.BUCartListBeanNUm;
 import bean.BuCartListBean;
 import bean.CarBean;
+import bean.JaShiZhengBean;
 import bean.UserBean;
 
 /**
@@ -105,4 +106,38 @@ public class GetJsonUtils {
 
         return list;
     }
+    //获取vin码
+    public static List getVinMegList(Context ctx,String result){
+        List list=new ArrayList();
+        return list;
+    }
+
+    /**
+     * 获取驾驶证
+     * @param ctx
+     * @param result
+     * @return
+     * "status":0,"msg":"要识别的图片不能为空"}
+     */
+    public static List getJSZMsgList(Context ctx,String result){
+        List list=new ArrayList();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            JaShiZhengBean jaShiZhengBean=new JaShiZhengBean();
+            jaShiZhengBean.status=jsonObject.getString("status");
+            if(jaShiZhengBean.status.equals("0")){
+                 jaShiZhengBean.msg=jsonObject.getString("msg");
+            }else if(jaShiZhengBean.status.equals("1")){
+                jaShiZhengBean.vin=jsonObject.getString("vin");
+                jaShiZhengBean.licheng=jsonObject.getString("mileage");
+                jaShiZhengBean.data=jsonObject.getString("regdate");
+                jaShiZhengBean.price=jsonObject.getString("price");
+                list.add(jaShiZhengBean);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    //获取三张大图
 }

@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import utils.BitZip;
+
 @SuppressWarnings("deprecation")
 public class CameraInterface extends Service{
 	private static final String TAG = "CameraInterface";
@@ -226,6 +228,8 @@ public class CameraInterface extends Service{
 				//设置FOCUS_MODE_CONTINUOUS_VIDEO 之后，myParam.set("rotation",90);失效
 				//图片不能旋转，在这里旋转
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
+				//压缩图片
+				rotaBitmap=BitZip.compressImage(rotaBitmap);
 				new FileUtil(mContext).saveBitmap(rotaBitmap);
 			}
 			//再次进入预览
@@ -258,7 +262,10 @@ public class CameraInterface extends Service{
 				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth());
 				Log.i(TAG, "rotaBitmap.getHeight() = " + rotaBitmap.getHeight());
 				Bitmap rectBitmap = Bitmap.createBitmap(rotaBitmap, x, y, DST_RECT_WIDTH, DST_RECT_HEIGHT);
-				new FileUtil(mContext).saveBitmap(rectBitmap);
+
+				Log.e("TAG","26666=");
+//				Bitmap bitmap=BitZip.compressImage(rectBitmap);
+				new FileUtil(mContext).saveBitmap(BitZip.compressImage(rectBitmap));
 				if(rotaBitmap.isRecycled()){
 					rotaBitmap.recycle();
 					rotaBitmap = null;

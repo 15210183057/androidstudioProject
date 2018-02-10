@@ -9,16 +9,19 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 
 import com.example.a123456.zhonggu.R;
@@ -33,18 +36,20 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 	MaskView maskView = null;
 	float previewRate = -1f;
 	 int DST_CENTER_RECT_WIDTH = 350;//单位是dp
-	  int DST_CENTER_RECT_HEIGHT = 350;
+	 public static int DST_CENTER_RECT_HEIGHT = 350;
 	Point rectPictureSize = null;
 	
 	private String thumbPath = null;
-	
+	private ImageView imageView;
+	private String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        Log.e("TAG","getIntent().getStringExtra(\"height\")====="+getIntent().getStringExtra("height"));
+        name=getIntent().getStringExtra("name");
+        Log.e("TAG","getIntent().getStringExtra(\"height\")===name=="+getIntent().getStringExtra("height")+"==="+name);
 		DST_CENTER_RECT_HEIGHT=Integer.parseInt(getIntent().getStringExtra("height"));
-        setPermissions();
+//        setPermissions();
         initUI();
         initViewParams();
 //        Intent intent = new Intent(this,CameraActivity.class);
@@ -133,6 +138,12 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 						 Intent i = new Intent(CameraActivity.this, ShowImageActivity.class);
 						 i.setData(uri);
 						 i.putExtra("thumbPath", thumbPath);
+						 if(!TextUtils.isEmpty(name)) {
+							 i.putExtra("name", name);
+						 }
+//						 FileUtil f=new FileUtil(context);
+//						 TODO 在CameraActivity里设置图片
+//						 imageView.setImageBitmap(f.readBitmap(thumbPath));
 						 Log.i(TAG, "Uri =============================================================== " + uri.toString());
 						 startActivity(i);
 						 finish();
@@ -225,21 +236,4 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 		return new Rect(x1, y1, x2, y2);
 	}
 
-	static final String[] PERMISSION = new String[]{
-			Manifest.permission.READ_CONTACTS,// 写入权限
-			Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
-			Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
-			Manifest.permission.CAMERA
-	};
-	/**
-	 * 设置Android6.0的权限申请
-	 */
-	private void setPermissions() {
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-			//Android 6.0申请权限
-			ActivityCompat.requestPermissions(this,PERMISSION,1);
-		}else{
-			Log.i("TAG","权限申请ok");
-		}
-	}
 }

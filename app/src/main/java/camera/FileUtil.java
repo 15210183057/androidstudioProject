@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -120,9 +121,10 @@ public class FileUtil {
 		//保存完整路径
 		long dataTake = System.currentTimeMillis();
 		String fileName = getFile()+"/"+dataTake+".jpg";
-
+//
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG,100, buffer);
+
 		File file = new File(fileName);
 		Log.e("TAG","保存图片=="+fileName);
 		jpegName = fileName;
