@@ -5,7 +5,7 @@
     <!-- 读写权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 网络权限-->
+    <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -29,6 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MySerchActvity" />
         <activity android:name=".FrameActivity" />
         <activity android:name=".SettingActivity" />
         <activity
@@ -40,13 +41,16 @@
             android:name="mycamare.ShowCropperedActivity"
             android:label="@string/title_activity_show_croppered" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".TestActivity"></activity>
-        <activity android:name=".WebViewActivity"/>
-        <activity android:name=".CartListInfoMsgActivity"/>
-<!--获取vin码的三条-->
-        <activity android:name="camera.CameraActivity"/>
-        <activity android:name="camera.ShowImageActivity"></activity>
-        <service android:name="camera.CameraInterface"></service>
+        <activity android:name=".TestActivity" />
+        <activity android:name=".WebViewActivity" />
+        <activity android:name=".CartListInfoMsgActivity" />
+        <!-- 获取vin码的三条 -->
+        <activity android:name="camera.CameraActivity" />
+        <activity android:name="camera.ShowImageActivity" />
+
+        <service android:name="camera.CameraInterface" />
+
+        <activity android:name=".CartModelActivity"></activity>
     </application>
 
 </manifest>

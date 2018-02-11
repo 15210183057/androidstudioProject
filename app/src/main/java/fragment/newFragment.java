@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,19 +25,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a123456.zhonggu.CartModelActivity;
 import com.example.a123456.zhonggu.FrameActivity;
+import com.example.a123456.zhonggu.MySerchActvity;
 import com.example.a123456.zhonggu.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -47,23 +58,27 @@ import java.util.List;
 import adapter.MyLvAdapter;
 import application.MyApplication;
 import bean.BUCartListBeanNUm;
+import bean.BrandBean;
 import bean.BuCartListBean;
 import bean.JaShiZhengBean;
+import bean.ModelBean;
+import bean.SeriseBean;
 import bean.UserBean;
 import camera.CameraActivity;
 import camera.FileUtil;
 import jiekou.getInterface;
 import utils.SharedUtils;
-
+import View.GetJsonUtils;
+import View.CommonPopupWindow;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class newFragment extends Fragment implements View.OnClickListener{
+public class newFragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener{
     private ImageView img_paizhao;
     private EditText edit_num;
     private View view;
     private PopupWindow window;
-    private View popView;
+    private View popView,BrandPopView,SerisePopView;
     private TextView tv_paizhao,tv_canle,tv_xiangce;
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
@@ -73,7 +88,21 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private ImageView img_newfragment,img2_newfragment,img3_newfragment;
     private Button btn_commit;
     private RelativeLayout relative1_newFragment,relative2_newFragment,relative3_newFragment,relative4_newFragment,relative5_newFragment;
-private LinearLayout linear3_newfragment;
+    private LinearLayout linear3_newfragment;
+    private ListView lv_brand,lv_serise,lv_model;//品牌，车系，车型
+    private List<BrandBean> brandList=new ArrayList<BrandBean>();//品牌
+    private List<SeriseBean> SeriseList=new ArrayList<SeriseBean>();//车系
+    private List<ModelBean> ModelList=new ArrayList<ModelBean>();//车型
+    List <String>list=new ArrayList<String>();
+    List <String>list2=new ArrayList<String>();
+    List <String>list3=new ArrayList<String>();
+    private ArrayAdapter arrayAdapter;
+    private LinearLayout linear_celiang;
+    private String serise_id,model_id;
+    private TextView tv_quyue;
+    CommonPopupWindow window2;
+    private TextView tv_cartmodel;
+    List imgListPath=new ArrayList();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,6 +128,7 @@ private LinearLayout linear3_newfragment;
         tv_topcenter=view.findViewById(R.id.tv_center);
         img_topleft.setVisibility(View.GONE);
         img_topright.setVisibility(View.GONE);
+        linear_celiang=view.findViewById(R.id.linear_celiang);
         //所有要填写的控件
         tv1_newFragment=view.findViewById(R.id.tv1_newFragment);//二级菜单
         tv2_newFragment=view.findViewById(R.id.tv2_newFragment);//一级菜单
@@ -106,16 +136,18 @@ private LinearLayout linear3_newfragment;
         relative2_newFragment=view.findViewById(R.id.relative2_newFragment);
         //一下三个控件，当vin码识别识别，需要手动填写
         linear3_newfragment=view.findViewById(R.id.linear3_newfragment);
-        tv3_newFragment=view.findViewById(R.id.tv3_newFragment);//品牌
-        tv4_newFragment=view.findViewById(R.id.tv4_newFragment);//车系
-        tv5_newFragment=view.findViewById(R.id.tv5_newFragment);//车型
-        relative3_newFragment=view.findViewById(R.id.relative1_newFragment);
-        relative4_newFragment=view.findViewById(R.id.relative1_newFragment);
-        relative5_newFragment=view.findViewById(R.id.relative1_newFragment);
+        tv_cartmodel=view.findViewById(R.id.tv_cartmodel);
+//        tv3_newFragment=view.findViewById(R.id.tv3_newFragment);//品牌
+//        tv4_newFragment=view.findViewById(R.id.tv4_newFragment);//车系
+//        tv5_newFragment=view.findViewById(R.id.tv5_newFragment);//车型
+//        relative3_newFragment=view.findViewById(R.id.relative3_newFragment);
+//        relative4_newFragment=view.findViewById(R.id.relative4_newFragment);
+//        relative5_newFragment=view.findViewById(R.id.relative5_newFragment);
         tv_time=view.findViewById(R.id.tv_time);//日期
 
         edt_price=view.findViewById(R.id.edt_price);//价格
         edt_licheng=view.findViewById(R.id.edt_licheng);//里程
+        tv_quyue=view.findViewById(R.id.tv_quyue);
         //设置里程和价格的数据，小数点后为0的话不现实0
         getSubStr(edt_price);
         getSubStr(edt_licheng);
@@ -133,9 +165,9 @@ private LinearLayout linear3_newfragment;
         btn_commit.setOnClickListener(this);
         relative1_newFragment.setOnClickListener(this);
         relative2_newFragment.setOnClickListener(this);
-        relative3_newFragment.setOnClickListener(this);
-        relative4_newFragment.setOnClickListener(this);
-        relative5_newFragment.setOnClickListener(this);
+//        relative3_newFragment.setOnClickListener(this);
+//        relative4_newFragment.setOnClickListener(this);
+//        relative5_newFragment.setOnClickListener(this);
 
         edit_num.addTextChangedListener(new MyEditTextChangeListener(edit_num));
         edt_licheng.addTextChangedListener(new MyEditTextChangeListener(edt_licheng));
@@ -144,14 +176,18 @@ private LinearLayout linear3_newfragment;
         img_newfragment.setOnClickListener(this);
         img2_newfragment.setOnClickListener(this);
         img3_newfragment.setOnClickListener(this);
-
-        getDate();
-        getBuCartList(2);
+        tv_cartmodel.setOnClickListener(this);
+        tv_quyue.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.tv_quyue:
+                Intent intentS=new Intent(getContext(), MySerchActvity.class);
+                startActivity(intentS);
+
+                break;
             case R.id.img_paizhao:
                 getPopView();
                 break;
@@ -182,12 +218,33 @@ private LinearLayout linear3_newfragment;
                 tv1_newFragment.setBackgroundResource(R.drawable.juxingnull);
                 break;
             case R.id.relative3_newFragment:
-                tv3_newFragment.setBackgroundResource(R.drawable.juxingnull);
+//                tv3_newFragment.setBackgroundResource(R.drawable.juxingnull);
+//                getBrandPop();
+//                arrayAdapter=new ArrayAdapter(getActivity(),R.layout.item_getbrand,R.id.itemtv_getbrand,list);
+//                lv_brand.setAdapter(arrayAdapter);
+                PopupWindow win=window2.getPopupWindow();
+                window2.showAsDropDown(relative4_newFragment,0,40);
+                WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+                lp.alpha=0.3f;
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp);
                 break;
             case R.id.relative4_newFragment:
+                PopupWindow win1=window2.getPopupWindow();
+                window2.showAsDropDown(relative4_newFragment,0,40);
+                WindowManager.LayoutParams lp1=getActivity().getWindow().getAttributes();
+                lp1.alpha=0.3f;
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp1);
                 tv4_newFragment.setBackgroundResource(R.drawable.juxingnull);
-                break;
+
             case R.id.relative5_newFragment:
+                PopupWindow win2=window2.getPopupWindow();
+                window2.showAsDropDown(relative4_newFragment,0,40);
+                WindowManager.LayoutParams lp2=getActivity().getWindow().getAttributes();
+                lp2.alpha=0.3f;
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp2);
                 tv5_newFragment.setBackgroundResource(R.drawable.juxingnull);
                 break;
             case R.id.btn_commit:
@@ -224,6 +281,10 @@ private LinearLayout linear3_newfragment;
                 intent5.putExtra("name","zhenghou");
                 intent5.putExtra("height","350");
                 startActivity(intent5);
+                break;
+            case R.id.tv_cartmodel:
+                Intent intent6=new Intent(getContext(), CartModelActivity.class);
+                startActivity(intent6);
                 break;
         }
     }
@@ -286,9 +347,10 @@ private LinearLayout linear3_newfragment;
         myBroadcastReceiver=new MyBroadcastReceiver();
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction("vin");
+        intentFilter.addAction("quyu");
+        intentFilter.addAction("cartmodel");
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
-
     //显示日期
     private void showDate(final TextView Tv) {
         Calendar calend1 = Calendar.getInstance();
@@ -313,58 +375,97 @@ private LinearLayout linear3_newfragment;
     //判断小数点后面是否都为"0",截取字符串
     private void getSubStr(EditText editText){
         String editStr=editText.getText().toString();
-        Log.e("TAG","editStr=="+editStr);
+
         if(editStr.contains(".")) {
-            int i = editStr.indexOf(".");
-            Log.e("TAG", "editStr.length()==." + editStr.length() + ".是第几位=" + i);
-            String subStr = editStr.substring(i, editStr.length() - 1);
-            int count = 0;
-            for (int h = 0; h < subStr.length(); h++) {
-                char item = subStr.charAt(h);
-                if ((String.valueOf(item)).equals("0")) {
-                    count++;
+            if(editStr.length()>5){
+                editStr=editStr.substring(0,5);
+             }
+                int i = editStr.indexOf(".");
+                String subStr = editStr.substring(i, editStr.length() - 1);
+                int count = 0;
+                for (int h = 0; h < subStr.length(); h++) {
+                    char item = subStr.charAt(h);
+                    if ((String.valueOf(item)).equals("0")) {
+                        count++;
+                    }
+                }
+                if (count == subStr.length() - 1) {
+                    editText.setText(editStr.substring(0, i));
+                }else{
+                    editText.setText(editStr);
                 }
             }
-            if (count == subStr.length() - 1) {
-                editText.setText(editStr.substring(0, i));
-            }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Log.e("TAG","view.getId()=="+view.getId()+"=="+adapterView.getId());
+        adapterView.getId();
+        switch (adapterView.getId()){
+            case R.id.lv_brand:
+                tv3_newFragment.setText(brandList.get(i).brand_name);
+                Log.e("TAG","品牌listview监听");
+                serise_id=brandList.get(i).brand_id;
+                window.dismiss();
+                break;
+            case R.id.lv2_brand:
+                tv4_newFragment.setText(brandList.get(i).brand_name);
+                Log.e("TAG","品牌listview监听");
+                window.dismiss();
+                break;
+            case R.id.lv3_brand:
+                tv5_newFragment.setText(brandList.get(i).brand_name);
+                Log.e("TAG","品牌listview监听");
+                window.dismiss();
+                break;
         }
     }
+
     //接受广播退出APP
     public class MyBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
-            String name=intent.getStringExtra("name");
-            if(!TextUtils.isEmpty(name)) {
-                String path=intent.getStringExtra("path");
-                FileUtil fileUtil = new FileUtil(context);
-                if (name.equals("zhengqian")) {
-                    img2_newfragment.setImageBitmap(fileUtil.readBitmap(path));
-                }else if(name.equals("zuoqian")){
-                    img_newfragment.setImageBitmap(fileUtil.readBitmap(path));
-                }else if(name.equals("zhenghou")){
-                    img3_newfragment.setImageBitmap(fileUtil.readBitmap(path));
-                }
-            }else{
-                //上传vin码返回
-                Log.e("TAG","广播接受上传vin码返回===="+intent.getStringExtra("vinnum"));
-                String str=intent.getStringExtra("vinnum");
-                if(TextUtils.isEmpty(str)){
-                    linear3_newfragment.setVisibility(View.GONE);
-                }else{
-                    String vinStr=intent.getStringExtra("vinnum");
-                    if(TextUtils.isEmpty(vinStr)){
-                        linear3_newfragment.setVisibility(View.VISIBLE);
-                    }else{
+            if(intent.getAction().equals("quyu")){
+                String name=intent.getStringExtra("name");
+                tv_quyue.setText(name);
+            }else if(intent.getAction().equals("vin")){
+                String name = intent.getStringExtra("name");
+                if (!TextUtils.isEmpty(name)) {
+                    String path = intent.getStringExtra("path");
+                    imgListPath.add(path);
+                    FileUtil fileUtil = new FileUtil(context);
+                    if (name.equals("zhengqian")) {
+                        img2_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                    } else if (name.equals("zuoqian")) {
+                        img_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                    } else if (name.equals("zhenghou")) {
+                        img3_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                    }
+                } else {
+                    //上传vin码返回
+                    Log.e("TAG", "广播接受上传vin码返回====" + intent.getStringExtra("vinnum"));
+                    String str = intent.getStringExtra("vinnum");
+                    if (TextUtils.isEmpty(str)) {
                         linear3_newfragment.setVisibility(View.GONE);
-                        edit_num.setText(vinStr);
-                        edt_licheng.setText(intent.getStringExtra("licheng"));
-                        edt_price.setText(intent.getStringExtra("price"));
-                        tv_time.setText(intent.getStringExtra("data"));
+                    } else {
+                        String vinStr = intent.getStringExtra("vinnum");
+                        if (TextUtils.isEmpty(vinStr)) {
+                            linear3_newfragment.setVisibility(View.VISIBLE);
+                        } else {
+                            linear3_newfragment.setVisibility(View.GONE);
+                            edit_num.setText(vinStr);
+                            edt_licheng.setText(intent.getStringExtra("licheng"));
+                            edt_price.setText(intent.getStringExtra("price"));
+                            tv_time.setText(intent.getStringExtra("data"));
+                        }
                     }
                 }
+            }else if(intent.getAction().equals("cartmodel")){
+                tv_cartmodel.setText(intent.getStringExtra("brand")+
+                        intent.getStringExtra("serise")+
+                intent.getStringExtra("model"));
             }
 //            Intent intent1=new Intent();
 //            intent1.setAction("close");
@@ -436,79 +537,5 @@ private LinearLayout linear3_newfragment;
         public void afterTextChanged(Editable editable) {
         }
     }
-    //上传三张大图
-    private void getDate(){
-        String url="http://mkerp.zgcw.cn/api/api_merchant/getlist";
-        RequestParams params=new RequestParams(url);
-        params.addBodyParameter("json","1");
-        SharedUtils sharedUtils=new SharedUtils();
-        params.addBodyParameter("where","groupid in("+ sharedUtils.readXML(MyApplication.usermsg,"groupids",getActivity())+") and status=1");
-        params.addBodyParameter("pagesize","100");
-        Log.e("TAG","param=="+params);
-        x.http().post(params, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Log.e("TAG","result=="+result);
-            }
 
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
-    }
-    private void getBuCartList(int current_page){
-        RequestParams requestParams=new RequestParams(getInterface.getBuCartList);
-//        json=1&pagesize=10&where=blu=1 and groupid in(5,3,2) and status = 1
-        requestParams.addBodyParameter("json","1");
-        requestParams.addBodyParameter("pagesize","10");
-        requestParams.addBodyParameter("current_page",current_page+"");
-        requestParams.addBodyParameter("where","blu=0 and groupid in("+ UserBean.groupids+") and status=1");
-        Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
-        x.http().post(requestParams, new Callback.CommonCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                Log.e("TAG","resulr=="+result);
-
-//                List<BuCartListBean>listBeans=new ArrayList<BuCartListBean>();
-//                listBeans= View.GetJsonUtils.getBuCartList(getActivity(),result);
-//                list.addAll(listBeans);
-//                if (list!=null) {
-//                    adapter = new MyLvAdapter(list, getActivity());
-//                    lv.setAdapter(adapter);
-//                }
-////                List<CarBean>list=new ArrayList<CarBean>();
-////                list=GetJsonUtils.getBuCartList(getActivity(),"");
-////                for(int i=0;i<list.size();i++){
-////                    Log.e("TAG","list数据name=="+list.get(i).tv_name);
-////                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-                tv_topcenter.setText(BUCartListBeanNUm.total);//设置title
-                Log.e("TAG","title=="+BUCartListBeanNUm.total);
-            }
-        });
-    }
 }

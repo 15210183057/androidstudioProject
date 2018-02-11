@@ -77,6 +77,17 @@
                 android:text="津MRW434"
                 android:textColor="#000"
                 android:textSize="14sp" />
+            <TextView
+                android:id="@+id/btn_xiajia"
+                android:layout_below="@id/tv_num2_mylvitem"
+                android:layout_alignParentRight="true"
+                android:layout_width="50dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="35dp"
+                android:background="@drawable/denglu_bg"
+                android:text="下架"
+                android:textColor="#fff"
+                android:layout_gravity="right"/>
         </RelativeLayout>
     </LinearLayout>
 

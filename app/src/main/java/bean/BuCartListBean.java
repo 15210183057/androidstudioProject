@@ -5,6 +5,6 @@ package bean;
  */
 
 public class BuCartListBean {
-    public String vin,licensePlate,cardType,name;
+    public String vin,licensePlate,cardType,name,id,imgUrl;
     public boolean Flag;
 }

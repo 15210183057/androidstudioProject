@@ -198,6 +198,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
       myBroadcastReceiver=new MyBroadcastReceiver();
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction("closeSetting");
+        intentFilter.addAction("new");
         this.registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //接受广播退出APP
@@ -209,9 +210,28 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
 //            Intent intent1=new Intent();
 //            intent1.setAction("close");
 //            sendBroadcast(intent1);
-            Log.e("TAG","发送广播111");
-            finish();
-            System.exit(0);
+            Log.e("TAG","发送广播111---------"+intent.getAction().equals("new"));
+            if(intent.getAction().equals("new")){
+                FragmentTransaction   ft=fragmentManager.beginTransaction();
+                tv1.setTextColor(Color.WHITE);
+                img1.setImageResource(R.mipmap.banyuan_c);
+//        if(fragment1==null){
+//            fragment1=new Fragment1();
+//            ft.add(R.id.TopView_FragmentGroup,fragment1);
+//        }else{
+//            ft.show(fragment1);
+//        }
+                if(newfragment==null){
+                    newfragment=new newFragment();
+                    ft.add(R.id.TopView_FragmentGroup,newfragment);
+                }else{
+                    ft.show(newfragment);
+                }
+                ft.commit();
+            }else if(intent.getAction().equals("closeSetting")){
+                finish();
+                System.exit(0);
+            }
         }
     }
 

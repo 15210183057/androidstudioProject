@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bean.BUCartListBeanNUm;
+import bean.BrandBean;
 import bean.BuCartListBean;
-import bean.CarBean;
 import bean.JaShiZhengBean;
+import bean.ModelBean;
+import bean.SeriseBean;
 import bean.UserBean;
 
 /**
@@ -88,6 +90,7 @@ public class GetJsonUtils {
                     BuCartListBean buCartListBean=new BuCartListBean();
                     JSONObject jsonObject2 = jsonArray.getJSONObject(i);
                     buCartListBean.vin = jsonObject2.getString("vin");//右上角编码
+                    buCartListBean.id=jsonObject2.getString("id");
                     String car_info=jsonObject2.getString("car_info");
 
                     JSONObject jsonObject3=new JSONObject(car_info);
@@ -103,7 +106,8 @@ public class GetJsonUtils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        Log.e("TAG","listbu0=="+list.get(0).cardType);
+        Log.e("TAG","listbu5=="+list.get(5).cardType);
         return list;
     }
     //获取vin码
@@ -139,5 +143,156 @@ public class GetJsonUtils {
         }
         return list;
     }
-    //获取三张大图
+
+    /**
+     * 获取品牌
+     * @param ctx
+     * @param result
+     * @return
+     */
+//    "status": 1,
+//            "result": [{
+//        "brand_id": "2",
+//                "brand_name": "阿斯顿·马丁",
+//                "brand_initial": "A"
+//    }, {
+
+    public static List getBrand(Context ctx,String result){
+        List<BrandBean>list=new ArrayList<BrandBean>();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            String status=jsonObject.getString("status");
+            if(status.equals("1")){
+                JSONArray jsonArray=jsonObject.getJSONArray("result");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    BrandBean brandBean=new BrandBean();
+                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                    brandBean.brand_id=jsonObject1.getString("brand_id");
+                    brandBean.brand_name=jsonObject1.getString("brand_name");
+                    brandBean.brand_initial=jsonObject1.getString("brand_initial");
+                    list.add(brandBean);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("TAG","list0=="+list.get(0).brand_name);
+        Log.e("TAG","list5=="+list.get(5).brand_name);
+        return list;
+    }
+    /**
+     * 获取车系
+     * "status":1,
+     "result":[
+     {
+     "series_id":"2192",
+     "brand_id":"152",
+     "brand_name":"中客华北",
+     "series_name":"腾狮",
+     "series_group_name":"中客华北",
+     "level_name":"中大型SUV",
+     "maker_type":"国产"
+     },
+     */
+    public static List getSerise(Context ctx,String result){
+        List<SeriseBean>list=new ArrayList<SeriseBean>();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            String status=jsonObject.getString("status");
+            if(status.equals("1")){
+                JSONArray jsonArray=jsonObject.getJSONArray("result");
+                for(int i=0;i<jsonArray.length();i++){
+                    SeriseBean seriseBean=new SeriseBean();
+                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                    seriseBean.serise=jsonObject1.getString("series_name");
+                    seriseBean.serise_id=jsonObject1.getString("series_id");
+                    list.add(seriseBean);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    /**
+     * 获取车型
+     * "status":1,
+     "result":[
+     {
+     "model_id":"508",
+     "brand_id":"2",
+     "brand_name":"阿斯顿·马丁",
+     "series_id":"31",
+     "series_name":"阿斯顿马丁ONE-77",
+     "series_group_name":"阿斯顿·马丁",
+     "model_name":"2011款 阿斯顿马丁ONE-77",
+     "price":"4700",
+     "liter":"7.3L",
+     "gear_type":"自动",
+     "model_year":"2011",
+     "maker_type":"进口",
+     "discharge_standard":"欧4",
+     "seat_number":"2",
+     "min_reg_year":"2010",
+     "max_reg_year":"2015"
+     },
+     */
+    public static List getModel(Context ctx,String result){
+        List<ModelBean>list=new ArrayList<ModelBean>();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            String status=jsonObject.getString("status");
+            if(status.equals("1")){
+                JSONArray jsonArray=jsonObject.getJSONArray("result");
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                    ModelBean modelBean=new ModelBean();
+                    modelBean.model_id=jsonObject1.getString("model_id");
+                    modelBean.model_name=jsonObject1.getString("model_name");
+                    list.add(modelBean);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    //获取区域信息
+
+    /**
+     * \
+     * @param context
+     * @param result
+     * @return
+     * 	"status": 1,
+    "result": {
+    "total": 1,
+    "per_page": "100",
+    "current_page": 1,
+    "last_page": 1,
+    "data": [{
+    "id": "61",
+     */
+    public static List getQuYu(Context context,String result){
+        List list=new ArrayList();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            String status=jsonObject.getString("status");
+            if(status.equals("1")){
+                String str=jsonObject.getString("result");
+                JSONObject jsonObject1=new JSONObject(str);
+                JSONArray jsonArray=jsonObject1.getJSONArray("data");
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject2=jsonArray.getJSONObject(i);
+                    String name=jsonObject2.getString("name");
+                    list.add(name);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
