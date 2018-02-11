@@ -21,6 +21,7 @@
                 <include
                     layout="@layout/top_titlebar"/>
                 <LinearLayout
+                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:orientation="horizontal"
@@ -89,16 +90,18 @@
                     android:layout_marginTop="10dp">
                     <ImageView
                         android:id="@+id/img_paizhao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_takephoto_click"
                         android:layout_alignParentRight="true"
                         />
                     <EditText
+                        android:hint="请输入或拍照上传vin码"
                         android:id="@+id/edt_vinnum"
                         android:layout_toLeftOf="@id/img_paizhao"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:textSize="16sp"
                         android:background="@drawable/juxingnull"
                         />
                 </RelativeLayout>
@@ -212,6 +215,7 @@
                             android:layout_toLeftOf="@id/img_paizhao"
                             android:layout_width="0dp"
                             android:layout_weight="3"
+                            android:textSize="16sp"
                             android:layout_height="match_parent"
                             android:background="@drawable/juxingnull"
                             android:text="12.123"
@@ -231,6 +235,7 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/juxingnull"
                             android:text=""
+                            android:textSize="16sp"
                             />
                         <TextView
                             android:layout_width="wrap_content"
@@ -284,7 +289,8 @@
                                 android:layout_gravity="center_horizontal"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:src="@mipmap/ic_launcher"
+                                android:src="@drawable/zq45d"
+                                android:background="@drawable/rednull"
                                 android:id="@+id/img_newfragment"/>
                             <TextView
                                 android:layout_marginTop="10dp"
@@ -303,7 +309,7 @@
                                 android:layout_gravity="center_horizontal"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:src="@mipmap/ic_launcher"
+                                android:src="@drawable/zqf"
                                 android:id="@+id/img2_newfragment"/>
                             <TextView
                                 android:layout_marginTop="10dp"
@@ -322,7 +328,7 @@
                                 android:layout_gravity="center_horizontal"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:src="@mipmap/ic_launcher"
+                                android:src="@drawable/zhf"
                                 android:id="@+id/img3_newfragment"/>
                             <TextView
                                 android:layout_marginTop="10dp"

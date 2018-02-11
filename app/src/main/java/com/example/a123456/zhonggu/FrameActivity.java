@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import bean.MyNewUpdate;
 import fragment.Fragment1;
 import fragment.Fragment2;
 import fragment.Fragment3;
@@ -40,6 +42,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
     MyBroadcastReceiver myBroadcastReceiver;
     //记录用户首次点击返回键的时间
     private long firstTime = 0;
+    String show;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +53,6 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
 //            getSupportActionBar().hide();
 //        }
         fragmentManager=getSupportFragmentManager();
-
         initView();
         setOnClick();
         MyRegistReciver();
@@ -85,6 +87,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         tv3=findViewById(R.id.Tv3);
         tv4=findViewById(R.id.Tv4);
 
+
        // 默认显示第一个fragment
       FragmentTransaction   ft=fragmentManager.beginTransaction();
       tv1.setTextColor(Color.WHITE);
@@ -114,12 +117,6 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
             case R.id.TopView_Bottem1:
                 tv1.setTextColor(Color.WHITE);
                 img1.setImageResource(R.mipmap.banyuan_c);
-//                if(fragment1==null){
-//                    fragment1=new Fragment1();
-//                    ft.add(R.id.TopView_FragmentGroup,fragment1);
-//                }else{
-//                    ft.show(fragment1);
-//                }
                 if(newfragment==null){
                     newfragment=new newFragment();
                     ft.add(R.id.TopView_FragmentGroup,newfragment);
@@ -199,6 +196,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction("closeSetting");
         intentFilter.addAction("new");
+        intentFilter.addAction("success");
         this.registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //接受广播退出APP
@@ -206,21 +204,25 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("TAG","接收广播11111");
-//            Intent intent1=new Intent();
-//            intent1.setAction("close");
-//            sendBroadcast(intent1);
-            Log.e("TAG","发送广播111---------"+intent.getAction().equals("new"));
+            Log.e("TAG","广播111---------"+intent.getAction().equals("new"));
             if(intent.getAction().equals("new")){
+                Log.e("TAG","intent.getStringExtra(\"cartmodel\")====="+intent.getStringExtra("cartmodel"));
+                MyNewUpdate.cartmodel=(intent.getStringExtra("cartmodel"));
+                MyNewUpdate.Flag=(intent.getStringExtra("Flag"));
+                MyNewUpdate.quyu=(intent.getStringExtra("quyu"));
+                MyNewUpdate.time=(intent.getStringExtra("time"));
+                MyNewUpdate.vinnum=(intent.getStringExtra("vinnum"));
+                MyNewUpdate.licheng=intent.getStringExtra("licheng");
+                MyNewUpdate.price=intent.getStringExtra("price");
+                //通知Fragment vin不可编辑
+                Intent intent1=new Intent();
+                intent1.setAction("update");
+                sendBroadcast(intent1);
+                Log.e("TAG","发送广播");
+                clearBottem();
                 FragmentTransaction   ft=fragmentManager.beginTransaction();
                 tv1.setTextColor(Color.WHITE);
                 img1.setImageResource(R.mipmap.banyuan_c);
-//        if(fragment1==null){
-//            fragment1=new Fragment1();
-//            ft.add(R.id.TopView_FragmentGroup,fragment1);
-//        }else{
-//            ft.show(fragment1);
-//        }
                 if(newfragment==null){
                     newfragment=new newFragment();
                     ft.add(R.id.TopView_FragmentGroup,newfragment);
@@ -228,9 +230,39 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                     ft.show(newfragment);
                 }
                 ft.commit();
+
             }else if(intent.getAction().equals("closeSetting")){
                 finish();
                 System.exit(0);
+            }else if(intent.getAction().equals("success")){
+                clearBottem();
+                String str=intent.getStringExtra("f");
+                if(str.equals("1")){
+                    FragmentTransaction   ft=fragmentManager.beginTransaction();
+                    tv1.setTextColor(Color.WHITE);
+                    img1.setImageResource(R.mipmap.banyuan_c);
+                    if(newfragment==null){
+                        newfragment=new newFragment();
+                        ft.add(R.id.TopView_FragmentGroup,newfragment);
+                    }else{
+                        ft.show(newfragment);
+                    }
+                    ft.commit();
+                }else{
+                    Log.e("TAG","走这里吗？？？？/");
+                    HideFragement();
+                    FragmentTransaction   ft=fragmentManager.beginTransaction();
+                    tv3.setTextColor(Color.WHITE);
+                    img3.setImageResource(R.mipmap.yshangchua_c);
+                    if(fragment3==null){
+                        fragment3=new Fragment3();
+                        ft.add(R.id.TopView_FragmentGroup,fragment3);
+                    }else{
+                        ft.show(fragment3);
+                    }
+                    ft.commit();
+                    Log.e("TAG","为什么");
+                }
             }
         }
     }

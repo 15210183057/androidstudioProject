@@ -32,6 +32,7 @@ import com.example.a123456.zhonggu.SettingActivity;
 import java.io.IOException;
 import java.net.URL;
 
+import bean.BUCartListBeanNUm;
 import mycamare.TakePhoteActivity;
 import View.CircleImageView;
 
@@ -87,6 +88,7 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
         tv_bucong_num=view.findViewById(R.id.tv_bucong_num);
         tv_shangchuan_num=view.findViewById(R.id.tv_shangchuan_num);
         tv_yue_num=view.findViewById(R.id.tv_yue_num);
+        tv_yue_num.setText(BUCartListBeanNUm.total);
     }
 
     @Override

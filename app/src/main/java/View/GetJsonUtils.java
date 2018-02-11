@@ -18,6 +18,7 @@ import bean.JaShiZhengBean;
 import bean.ModelBean;
 import bean.SeriseBean;
 import bean.UserBean;
+import camera.ShowImageActivity;
 
 /**
  * Created by 123456 on 2018/2/5.
@@ -90,12 +91,17 @@ public class GetJsonUtils {
                     BuCartListBean buCartListBean=new BuCartListBean();
                     JSONObject jsonObject2 = jsonArray.getJSONObject(i);
                     buCartListBean.vin = jsonObject2.getString("vin");//右上角编码
+                    buCartListBean.time=jsonObject2.getString("create_time");//时间
                     buCartListBean.id=jsonObject2.getString("id");
                     String car_info=jsonObject2.getString("car_info");
 
                     JSONObject jsonObject3=new JSONObject(car_info);
                     buCartListBean.licensePlate=jsonObject3.getString("licensePlate");//车拍照
+                    buCartListBean.price=jsonObject3.getString("newcarprice");//价格
                     buCartListBean.cardType=jsonObject3.getString("cardType");//车名
+                    buCartListBean.carName=jsonObject3.getString("carName");//车系
+                    buCartListBean.mileage=jsonObject3.getString("mileage");
+
                     //公司merchant_info
                     String merchant_info=jsonObject2.getString("merchant_info");
                     JSONObject jsonObject4=new JSONObject(merchant_info);
@@ -131,6 +137,7 @@ public class GetJsonUtils {
             jaShiZhengBean.status=jsonObject.getString("status");
             if(jaShiZhengBean.status.equals("0")){
                  jaShiZhengBean.msg=jsonObject.getString("msg");
+                Toast.makeText(ctx,""+jaShiZhengBean.msg,Toast.LENGTH_LONG).show();
             }else if(jaShiZhengBean.status.equals("1")){
                 jaShiZhengBean.vin=jsonObject.getString("vin");
                 jaShiZhengBean.licheng=jsonObject.getString("mileage");

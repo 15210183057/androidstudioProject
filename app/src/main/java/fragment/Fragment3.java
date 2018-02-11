@@ -33,6 +33,7 @@ import bean.BuCartListBean;
 import bean.CarBean;
 import bean.UserBean;
 import jiekou.getInterface;
+import utils.Mydialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +50,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     private MyLvAdapter3 adapter;
     private int count;
     private int i=1;//默认加载第一页数据
+    Mydialog mydialog;
     public Fragment3() {
         // Required empty public constructor
     }
@@ -70,6 +72,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         tv_topcenter.setText("已上传车源");
         img_topright.setVisibility(View.GONE);
         initView();
+        mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
+        mydialog.show();
         return view;
     }
     private void initView() {
@@ -147,6 +151,13 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         Toast.makeText(getContext(),"点击第+"+i+"条数据",Toast.LENGTH_SHORT).show();
         Intent intent=new Intent();
         intent.setAction("new");
+        intent.putExtra("Flag","true");
+        intent.putExtra("vinnum",list.get(i).vin);
+        intent.putExtra("time",list.get(i).time);
+        intent.putExtra("quyu",list.get(i).name);
+        intent.putExtra("cartmodel",list.get(i).cardType+list.get(i).carName);
+        intent.putExtra("licheng",list.get(i).mileage);
+        intent.putExtra("price",list.get(i).price);
         getActivity().sendBroadcast(intent);
     }
     private void getBuCartList(int current_page){
@@ -161,7 +172,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
             @Override
             public void onSuccess(String result) {
                 Log.e("TAG","resulr=="+result);
-
+                mydialog.dismiss();
                 List<BuCartListBean>listBeans=new ArrayList<BuCartListBean>();
                 listBeans= GetJsonUtils.getBuCartList(getActivity(),result);
                 list.addAll(listBeans);
@@ -192,5 +203,13 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
                 Log.e("TAG","title=="+BUCartListBeanNUm.total);
             }
         });
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            getBuCartList(i);
+        }
     }
 }

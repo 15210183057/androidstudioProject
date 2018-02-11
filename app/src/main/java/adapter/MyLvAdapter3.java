@@ -51,6 +51,9 @@ public class MyLvAdapter3 extends BaseAdapter{
             holder.tv_num2=view.findViewById(R.id.tv_num2_mylvitem);
             holder.img_item_mylv=view.findViewById(R.id.img_item_mylv);
             holder.btn_xiajia=view.findViewById(R.id.btn_xiajia);
+            holder.tv_user=view.findViewById(R.id.tv_user_itemylv2);
+            holder.tv_price=view.findViewById(R.id.tvprice_mylvitem);
+            holder.tv_time=view.findViewById(R.id.tv_time_itemylv2);
             view.setTag(holder);
         }else{
             holder= (ViewHolder) view.getTag();
@@ -78,11 +81,14 @@ public class MyLvAdapter3 extends BaseAdapter{
                 Log.e("TAG","点击下架");
             }
         });
+        holder.tv_time.setText("采集时间："+list.get(i).time);
+        holder.tv_user.setText("采集员："+list.get(i).userName);
+        holder.tv_price.setText("价格："+list.get(i).price+"万");
         return view;
     }
     public class ViewHolder{
         TextView tv_name,tv_company,tv_num1,tv_num2;
         private ImageView img_item_mylv;
-        TextView btn_xiajia;
+        TextView btn_xiajia,tv_user,tv_time,tv_price;
     }
 }

@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -51,6 +52,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -62,18 +64,21 @@ import bean.BrandBean;
 import bean.BuCartListBean;
 import bean.JaShiZhengBean;
 import bean.ModelBean;
+import bean.MyNewUpdate;
 import bean.SeriseBean;
 import bean.UserBean;
 import camera.CameraActivity;
 import camera.FileUtil;
 import jiekou.getInterface;
+import utils.MySuccess;
+import utils.Mydialog;
 import utils.SharedUtils;
 import View.GetJsonUtils;
 import View.CommonPopupWindow;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class newFragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener{
+public class newFragment extends Fragment implements View.OnClickListener{
     private ImageView img_paizhao;
     private EditText edit_num;
     private View view;
@@ -84,18 +89,9 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
     private TextView tv_topcenter;
     private TextView tv_time;//注册日期
     private EditText edt_licheng,edt_price;//里程，价格
-    private TextView tv2_newFragment,tv1_newFragment,tv3_newFragment,tv4_newFragment,tv5_newFragment;
     private ImageView img_newfragment,img2_newfragment,img3_newfragment;
     private Button btn_commit;
-    private RelativeLayout relative1_newFragment,relative2_newFragment,relative3_newFragment,relative4_newFragment,relative5_newFragment;
     private LinearLayout linear3_newfragment;
-    private ListView lv_brand,lv_serise,lv_model;//品牌，车系，车型
-    private List<BrandBean> brandList=new ArrayList<BrandBean>();//品牌
-    private List<SeriseBean> SeriseList=new ArrayList<SeriseBean>();//车系
-    private List<ModelBean> ModelList=new ArrayList<ModelBean>();//车型
-    List <String>list=new ArrayList<String>();
-    List <String>list2=new ArrayList<String>();
-    List <String>list3=new ArrayList<String>();
     private ArrayAdapter arrayAdapter;
     private LinearLayout linear_celiang;
     private String serise_id,model_id;
@@ -103,6 +99,7 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
     CommonPopupWindow window2;
     private TextView tv_cartmodel;
     List imgListPath=new ArrayList();
+    Mydialog mydialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -111,13 +108,22 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
         view=inflater.inflate(R.layout.fragment_new, container, false);
         initView();
         MyRegistReciver();
+        mydialog=new Mydialog(getContext(),"正在上传.....");
         return view;
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        Log.e("TAG","onHiddenChanged");
+        Log.e("TAG","newFragmentonHiddenChanged=="+hidden);
+        if(hidden){
+            edt_licheng.setText("");
+            edit_num.setText("");
+            edt_price.setText("");
+            tv_quyue.setText("请选择区域");
+            tv_time.setText("请选择日期");
+            tv_cartmodel.setText("请选择品牌，车系和车型");
+        }
         getSubStr(edt_licheng);
         getSubStr(edt_price);
     }
@@ -130,19 +136,9 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
         img_topright.setVisibility(View.GONE);
         linear_celiang=view.findViewById(R.id.linear_celiang);
         //所有要填写的控件
-        tv1_newFragment=view.findViewById(R.id.tv1_newFragment);//二级菜单
-        tv2_newFragment=view.findViewById(R.id.tv2_newFragment);//一级菜单
-        relative1_newFragment=view.findViewById(R.id.relative1_newFragment);
-        relative2_newFragment=view.findViewById(R.id.relative2_newFragment);
         //一下三个控件，当vin码识别识别，需要手动填写
         linear3_newfragment=view.findViewById(R.id.linear3_newfragment);
         tv_cartmodel=view.findViewById(R.id.tv_cartmodel);
-//        tv3_newFragment=view.findViewById(R.id.tv3_newFragment);//品牌
-//        tv4_newFragment=view.findViewById(R.id.tv4_newFragment);//车系
-//        tv5_newFragment=view.findViewById(R.id.tv5_newFragment);//车型
-//        relative3_newFragment=view.findViewById(R.id.relative3_newFragment);
-//        relative4_newFragment=view.findViewById(R.id.relative4_newFragment);
-//        relative5_newFragment=view.findViewById(R.id.relative5_newFragment);
         tv_time=view.findViewById(R.id.tv_time);//日期
 
         edt_price=view.findViewById(R.id.edt_price);//价格
@@ -163,11 +159,6 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
         img_paizhao.setOnClickListener(this);
         tv_time.setOnClickListener(this);
         btn_commit.setOnClickListener(this);
-        relative1_newFragment.setOnClickListener(this);
-        relative2_newFragment.setOnClickListener(this);
-//        relative3_newFragment.setOnClickListener(this);
-//        relative4_newFragment.setOnClickListener(this);
-//        relative5_newFragment.setOnClickListener(this);
 
         edit_num.addTextChangedListener(new MyEditTextChangeListener(edit_num));
         edt_licheng.addTextChangedListener(new MyEditTextChangeListener(edt_licheng));
@@ -180,13 +171,13 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
         tv_quyue.setOnClickListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.tv_quyue:
                 Intent intentS=new Intent(getContext(), MySerchActvity.class);
                 startActivity(intentS);
-
                 break;
             case R.id.img_paizhao:
                 getPopView();
@@ -211,55 +202,38 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
             case R.id.tv_time:
                 showDate(tv_time);
                 break;
-            case R.id.relative1_newFragment:
-                tv2_newFragment.setBackgroundResource(R.drawable.juxingnull);
-                break;
-            case R.id.relative2_newFragment:
-                tv1_newFragment.setBackgroundResource(R.drawable.juxingnull);
-                break;
-            case R.id.relative3_newFragment:
-//                tv3_newFragment.setBackgroundResource(R.drawable.juxingnull);
-//                getBrandPop();
-//                arrayAdapter=new ArrayAdapter(getActivity(),R.layout.item_getbrand,R.id.itemtv_getbrand,list);
-//                lv_brand.setAdapter(arrayAdapter);
-                PopupWindow win=window2.getPopupWindow();
-                window2.showAsDropDown(relative4_newFragment,0,40);
-                WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
-                lp.alpha=0.3f;
-                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                getActivity().getWindow().setAttributes(lp);
-                break;
-            case R.id.relative4_newFragment:
-                PopupWindow win1=window2.getPopupWindow();
-                window2.showAsDropDown(relative4_newFragment,0,40);
-                WindowManager.LayoutParams lp1=getActivity().getWindow().getAttributes();
-                lp1.alpha=0.3f;
-                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                getActivity().getWindow().setAttributes(lp1);
-                tv4_newFragment.setBackgroundResource(R.drawable.juxingnull);
-
-            case R.id.relative5_newFragment:
-                PopupWindow win2=window2.getPopupWindow();
-                window2.showAsDropDown(relative4_newFragment,0,40);
-                WindowManager.LayoutParams lp2=getActivity().getWindow().getAttributes();
-                lp2.alpha=0.3f;
-                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                getActivity().getWindow().setAttributes(lp2);
-                tv5_newFragment.setBackgroundResource(R.drawable.juxingnull);
-                break;
             case R.id.btn_commit:
-                IsNull(tv1_newFragment);
-                IsNull(tv2_newFragment);
-                IsNull(tv3_newFragment);
-                IsNull(tv4_newFragment);
-                IsNull(tv5_newFragment);
-                IsNull(tv_time);
+                Log.e("TAG","pinpao=="+(TextUtils.isEmpty(tv_cartmodel.getText().toString())||tv_cartmodel.getText().toString().trim().equals("请选择品牌，车系和车型"))) ;
+               Log.e("TAG","tupain=="+(img_newfragment.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zq45d).getConstantState()));
+                if (TextUtils.isEmpty(tv_time.getText().toString())||tv_time.getText().toString().trim().equals("请选择日期")) {
+                    tv_time.setBackgroundResource(R.drawable.rednull);
+                }
+                if(TextUtils.isEmpty(tv_cartmodel.getText().toString())||tv_cartmodel.getText().toString().trim().equals("请选择品牌，车系和车型")){
+                    tv_cartmodel.setBackgroundResource(R.drawable.rednull);
+                }
+                if (TextUtils.isEmpty(tv_quyue.getText().toString())||tv_quyue.getText().toString().trim().equals("请选择车辆区域")){
+                    tv_quyue.setBackgroundResource(R.drawable.rednull);
+                }
+                if (img_newfragment.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zq45d).getConstantState()){
+                    img_newfragment.setImageDrawable(getActivity().getDrawable(R.drawable.rednull));
+                }
+                if (img2_newfragment.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zqf).getConstantState()){
+                    img2_newfragment.setImageDrawable(getActivity().getDrawable(R.drawable.rednull));
+                }
+                if (img3_newfragment.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zhf).getConstantState()){
+                    img3_newfragment.setImageDrawable(getActivity().getDrawable(R.drawable.rednull));
+                }
                 IsNullEdit(edit_num);
                 IsNull(edt_licheng);
                 IsNull(edt_price);
                 IsNullImg(img_newfragment);
                 IsNullImg(img2_newfragment);
                 IsNullImg(img3_newfragment);
+                updateImag();
+//                mydialog.show();
+//                new MySuccess(getContext()).show();
+//                Intent intent2=new Intent(getActivity(),MySuccess.class);
+//                startActivity(intent2);
                 break;
             case R.id.img_newfragment:
                 img_newfragment.setBackgroundResource(0);
@@ -349,6 +323,7 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
         intentFilter.addAction("vin");
         intentFilter.addAction("quyu");
         intentFilter.addAction("cartmodel");
+        intentFilter.addAction("update");
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //显示日期
@@ -368,6 +343,7 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
                                           int dayOfMonth) {
                         Tv.setText(year + "-" + (monthOfYear + 1)
                                 + "-" + dayOfMonth );
+                        Tv.setBackgroundResource(R.drawable.juxingnull);
                     }
                 }, year, month, day);
         dialog3.show();
@@ -396,40 +372,29 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
                 }
             }
     }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Log.e("TAG","view.getId()=="+view.getId()+"=="+adapterView.getId());
-        adapterView.getId();
-        switch (adapterView.getId()){
-            case R.id.lv_brand:
-                tv3_newFragment.setText(brandList.get(i).brand_name);
-                Log.e("TAG","品牌listview监听");
-                serise_id=brandList.get(i).brand_id;
-                window.dismiss();
-                break;
-            case R.id.lv2_brand:
-                tv4_newFragment.setText(brandList.get(i).brand_name);
-                Log.e("TAG","品牌listview监听");
-                window.dismiss();
-                break;
-            case R.id.lv3_brand:
-                tv5_newFragment.setText(brandList.get(i).brand_name);
-                Log.e("TAG","品牌listview监听");
-                window.dismiss();
-                break;
-        }
-    }
-
     //接受广播退出APP
     public class MyBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
-            if(intent.getAction().equals("quyu")){
+            if(intent.getAction().equals("update")){
+                MyNewUpdate myNewUpdate=new MyNewUpdate();
+                edit_num.setText(MyNewUpdate.vinnum);
+                edit_num.setFocusable(false);
+                edit_num.setEnabled(false);
+                tv_quyue.setText(MyNewUpdate.quyu);
+//                edt_licheng.setText(intent.getStringExtra("licheng"));
+//                edt_price.setText(myNewUpdate.);
+                tv_cartmodel.setText(MyNewUpdate.cartmodel);
+                tv_time.setText(MyNewUpdate.time);
+                edt_licheng.setText(MyNewUpdate.licheng);
+                edt_price.setText(MyNewUpdate.price);
+            }
+            else if(intent.getAction().equals("quyu")){
                 String name=intent.getStringExtra("name");
                 tv_quyue.setText(name);
+                tv_quyue.setBackgroundResource(R.drawable.juxingnull);
             }else if(intent.getAction().equals("vin")){
                 String name = intent.getStringExtra("name");
                 if (!TextUtils.isEmpty(name)) {
@@ -466,6 +431,7 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
                 tv_cartmodel.setText(intent.getStringExtra("brand")+
                         intent.getStringExtra("serise")+
                 intent.getStringExtra("model"));
+                tv_cartmodel.setBackgroundResource(R.drawable.juxingnull);
             }
 //            Intent intent1=new Intent();
 //            intent1.setAction("close");
@@ -495,15 +461,12 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
     //点击提交判断图片是否为null
     private  void IsNullImg(ImageView imageView){
         if(imageView!=null) {
-            Resources res = this.getResources();
-            imageView.setDrawingCacheEnabled(true);
-            imageView.getDrawingCache();
-            Log.e("TAG","imageView.getResources()=="+imageView.getDrawable());
-            Log.e("TAG","img=="+(imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@54097a6")) );
-            if (imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@54097a6")
-                    ||imageView.getDrawable().toString() .equals( "android.graphics.drawable.BitmapDrawable@9a02594")
-                    ||imageView.getDrawable().toString().equals("android.graphics.drawable.BitmapDrawable@cce8832")) {
+            if (imageView.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zq45d).getConstantState()
+                    ||imageView.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zhf).getConstantState()
+                    ||imageView.getDrawable().getCurrent().getConstantState()==getResources().getDrawable(R.drawable.zhf).getConstantState()) {
+                Log.e("TAG","这里应该走的");
                 imageView.setBackgroundResource(R.drawable.rednull);
+                Log.e("TAG","设置背景");
             }
         }
     }
@@ -535,6 +498,37 @@ public class newFragment extends Fragment implements View.OnClickListener,Adapte
          */
         @Override
         public void afterTextChanged(Editable editable) {
+        }
+    }
+
+    private void updateImag(){
+        for(int i=0;i<imgListPath.size();i++){
+            RequestParams params=new RequestParams(getInterface.UpdateImag);
+            params.addBodyParameter("imgdata",new File(imgListPath.get(i).toString()));
+            Log.e("TAG","上传图片=="+params);
+            Log.e("TAG","参数--"+params.getParams("imgdata"));
+            x.http().post(params, new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    mydialog.dismiss();
+                    Log.e("TAG","图片上传结果---"+result);
+                }
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+
+                }
+
+                @Override
+                public void onCancelled(CancelledException cex) {
+
+                }
+
+                @Override
+                public void onFinished() {
+
+                }
+            });
         }
     }
 

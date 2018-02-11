@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
        >
 
         <ImageView
@@ -78,17 +77,66 @@
                 android:textColor="#000"
                 android:textSize="14sp" />
             <TextView
-                android:id="@+id/btn_xiajia"
+                android:id="@+id/tvprice_mylvitem"
                 android:layout_below="@id/tv_num2_mylvitem"
                 android:layout_alignParentRight="true"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_marginRight="10dp"
                 android:layout_height="35dp"
-                android:background="@drawable/denglu_bg"
-                android:text="下架"
-                android:textColor="#fff"
+                android:text="23.12"
+                android:textColor="#000000"
                 android:layout_gravity="right"/>
+
         </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:visibility="invisible"
+            android:layout_width="67dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:scaleType="fitXY"
+             />
+        <TextView
+            android:textColor="#000000"
+            android:text="shijian "
+            android:id="@+id/tv_time_itemylv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="67dp">
+        <TextView
+
+            android:text="shijian "
+            android:id="@+id/tv_user_itemylv2"
+            android:layout_weight="8"
+            android:layout_width="150dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            />
+        <TextView
+            android:id="@+id/btn_xiajia"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="@drawable/denglu_bg"
+            android:text="下架"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:textColor="#fff"
+            android:layout_gravity="right"/>
     </LinearLayout>
 
     <View

@@ -45,6 +45,7 @@ import bean.JaShiZhengBean;
 import jiekou.getInterface;
 import mycamare.utils.Utils;
 import utils.BitToByte;
+import utils.Mydialog;
 
 public class ShowImageActivity extends Activity {
 	
@@ -57,7 +58,7 @@ public class ShowImageActivity extends Activity {
 	
 	private Uri uri ;
 	private List<JaShiZhengBean> list=new ArrayList<JaShiZhengBean>();
-
+	Mydialog mydialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -106,6 +107,7 @@ public class ShowImageActivity extends Activity {
 				
 			case R.id.rc_send:
 //				Log.e("TAG","上传图片"+(name!=null)+"===="+name.equals("zhengqian"));
+
 				if(!TextUtils.isEmpty(name)){
 					sendMyReciver(name);
 					finish();
@@ -120,6 +122,8 @@ public class ShowImageActivity extends Activity {
 //				}
 //				String str=Base64.encodeToString(BitToByte.bmpToByteArray(bitmap,false),Base64.DEFAULT);
 				else {
+					mydialog=new Mydialog(ShowImageActivity.this,"正在识别请稍等......");
+					mydialog.show();
 					String url;
 					if (CameraActivity.DST_CENTER_RECT_HEIGHT == 70) {
 						url = getInterface.getVin;
@@ -143,9 +147,10 @@ public class ShowImageActivity extends Activity {
 						@Override
 						public void onSuccess(String result) {
 							Log.e("TAG", "请求成功==" + result);
+							mydialog.dismiss();
 							//{"status":0,"msg":"要识别的图片不能为空"}
 							list=GetJsonUtils.getJSZMsgList(ShowImageActivity.this, result);
-							if(list.get(0).status.equals("0")){
+							if(list.size()==0){
 								Toast.makeText(ShowImageActivity.this,""+list.get(0).msg,Toast.LENGTH_LONG).show();
 							}else {
 								//发送广播
@@ -158,7 +163,10 @@ public class ShowImageActivity extends Activity {
 						@Override
 						public void onError(Throwable ex, boolean isOnCallback) {
 							Log.e("TAG", "请求失败===");
-//							Toast.makeText(ShowImageActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
+							if(!TextUtils.isEmpty(ex.getMessage().toString())){
+								mydialog.dismiss();
+								Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
+							}
 						}
 
 						@Override
@@ -168,7 +176,6 @@ public class ShowImageActivity extends Activity {
 
 						@Override
 						public void onFinished() {
-							Toast.makeText(ShowImageActivity.this,"请求完成",Toast.LENGTH_LONG).show();
 						}
 					});
 				}

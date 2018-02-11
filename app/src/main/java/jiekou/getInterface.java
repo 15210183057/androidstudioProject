@@ -25,4 +25,6 @@ public class getInterface {
     public static String getModels=host+"/api/api_car/getModels?";
     //获取区域
     public static String getA =host+"/api/api_merchant/getlist";
+    //上传三张图片
+    public static String UpdateImag=host+"/api/vehicle/upfile";
 }
