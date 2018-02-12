@@ -50,7 +50,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     private MyCartModel myCartModel;
     private MyCartModel2 myCartModel2;
     private MyCartModel3 myCartModel3;
-    private String BrandID,SeriseID;//需要回传的所有ID
+    private String BrandID,SeriseID,ModelID;//需要回传的所有ID
     Mydialog mydialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +108,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
                     intent.putExtra("model",tv5_newFragment.getText().toString());
                     intent.putExtra("barndID",BrandID);
                     intent.putExtra("seriseID",SeriseID);
+                    intent.putExtra("modelID",ModelID);
 //                    intent.putExtra("brandID",brandList.get())
                     sendBroadcast(intent);
                     Log.e("TAG","发送");
@@ -134,6 +135,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
                 getModel(model_id);
                 break;
             case R.id.lv3:
+                ModelID=ModelList.get(i).model_id;
                 tv5_newFragment.setText(ModelList.get(i).model_name);
                 linear_model.setVisibility(View.GONE);
                 btn_ok.setVisibility(View.VISIBLE);

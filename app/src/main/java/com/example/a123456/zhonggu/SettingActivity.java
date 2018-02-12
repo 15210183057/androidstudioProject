@@ -12,7 +12,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import application.MyApplication;
 import base.BaseActivity;
+import utils.SharedUtils;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener{
     private ImageView img_back;
@@ -21,12 +23,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_setting);
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-//        if (getSupportActionBar() != null){
-//            getSupportActionBar().hide();
-//        }
         initView();
     }
 
@@ -112,12 +109,22 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 }
                 break;
             case R.id.tv_tuichu:
-//                System.exit(0);
                 //Toast.makeText(this,"推出");
-                Intent intent=new Intent();
-                intent.setAction("closeSetting");
-                sendBroadcast(intent);
-                Log.e("TAG","发送广播");
+//                Intent intent=new Intent();
+//                intent.setAction("closeSetting");
+//                sendBroadcast(intent);
+//                Log.e("TAG","发送广播");
+                //推出登陆状态
+                SharedUtils sharedUtils=new SharedUtils();
+                sharedUtils.saveXML(MyApplication.usermsg,"username","",this);
+                sharedUtils.saveXML(MyApplication.usermsg,"password","",this);
+                sharedUtils.saveXML(MyApplication.usermsg,"groupids","",this);
+                sharedUtils.saveXML(MyApplication.usermsg,"userid","",this);
+                Intent intent2=new Intent();
+                intent2.setAction("aogo");
+                sendBroadcast(intent2);
+                Intent intent=new Intent(this,LoginActivity.class);
+                startActivity(intent);
                 finish();
                 break;
         }

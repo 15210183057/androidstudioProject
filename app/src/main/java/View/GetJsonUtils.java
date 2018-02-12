@@ -157,6 +157,7 @@ public class GetJsonUtils {
     },
      * "status":0,"msg":"要识别的图片不能为空"}
      */
+//    {"status":1,"vin":"LE4GG8BB0DL211446","mileage":3.4434,"price":0,"regdate":"0--","model":[{"series_group_name":"北京奔驰","color":"","model_liter":"3.0L","model_year":2013,"brand_name":"奔驰","model_id":1914,"brand_id":9,"series_id":135,"model_name":"2013款 奔驰GLK级 GLK300 4MATIC 动感型","model_price":41.8,"model_emission_standard":"国4","model_gear":"自动","series_name":"奔驰GLK级","min_reg_year":2012,"max_reg_year":2016,"ext_model_id":1914}]}
     public static List getJSZMsgList(Context ctx,String result){
         List list=new ArrayList();
         try {
@@ -165,15 +166,30 @@ public class GetJsonUtils {
             jaShiZhengBean.status=jsonObject.getString("status");
             if(jaShiZhengBean.status.equals("0")){
                  jaShiZhengBean.msg=jsonObject.getString("msg");
-                Toast.makeText(ctx,""+jaShiZhengBean.msg,Toast.LENGTH_LONG).show();
+//                Toast.makeText(ctx,""+jaShiZhengBean.msg,Toast.LENGTH_LONG).show();
+                list.add(jaShiZhengBean);
             }else if(jaShiZhengBean.status.equals("1")){
                 jaShiZhengBean.vin=jsonObject.getString("vin");
-                jaShiZhengBean.licheng=jsonObject.getString("mileage");
-                jaShiZhengBean.data=jsonObject.getString("regdate");
-                jaShiZhengBean.price=jsonObject.getString("price");
-                jaShiZhengBean.brand_id=jsonObject.getString("brand_id");//品牌
-                jaShiZhengBean.series_id=jsonObject.getString("series_id");//车系id
-                jaShiZhengBean.CartName=jsonObject.getString("model_name");//车型
+                JSONArray jsonArray=jsonObject.getJSONArray("model");
+//                Log.e("TAG","result.contains(\"price\")==="+TextUtils.isEmpty(jsonObject.getString("price")));
+                if(result.contains("mileage")) {
+                    jaShiZhengBean.licheng = jsonObject.getString("mileage");
+                }
+//                if(result.contains("price")&&TextUtils.isEmpty(jsonObject.getString("price"))){
+//                    jaShiZhengBean.price=jsonObject.getString("price");
+//                }
+                if(result.contains("regdate")) {
+                    jaShiZhengBean.data = jsonObject.getString("regdate");//注册时间
+                }
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+
+                    jaShiZhengBean.brand_id=jsonObject1.getString("brand_id");//品牌
+                    jaShiZhengBean.series_id=jsonObject1.getString("series_id");//车系id
+                    jaShiZhengBean.CartName=jsonObject1.getString("model_name");//车型
+                    jaShiZhengBean.model_id=jsonObject1.getString("model_id");//车型ID
+                }
+
 //                "brand_id": 1,
 //                        "series_id": 3,
                 list.add(jaShiZhengBean);
@@ -376,5 +392,86 @@ public class GetJsonUtils {
             e.printStackTrace();
         }
         return path;
+    }
+    //待补充车源
+
+    /**
+     * [{
+     "carinfo": {
+     "carid": "2303",
+     "mileage": "12.12",
+     "target_price": "1",
+     "creatime": "2018-02-12 19:21:16",
+     "retDate": "2018-3-12",
+     "licensePlate": null,
+     "vin": "11111111111111111",
+     "car_name": "2013款阿斯顿马丁Rapide6.0LS",
+     "modelid": "510",
+     "model_name": "2013款 阿斯顿马丁Rapide 6.0L S",
+     "brandid": "2",
+     "brand_name": "阿斯顿·马丁",
+     "seriesid": "32",
+     "series_name": "阿斯顿马丁Rapide"
+     },
+     "merchant": {
+     "merchantid": "239",
+     "name": "天津明洋二手车经纪有限公司",
+     "tel": "13332010888"
+     },
+     "pic": {
+     "zhengqian45": "http:\/\/imgwang.oss-cn-beijing.aliyuncs.com\/2018-02-12\/c0c8bf1d83891af3e4e9fab82a55c9f0.jpg",
+     "zhengqian": "http:\/\/imgwang.oss-cn-beijing.aliyuncs.com\/2018-02-12\/6d7240dca9ab13a56ac30da0502edc7f.jpg",
+     "zhenghou": "http:\/\/imgwang.oss-cn-beijing.aliyuncs.com\/2018-02-12\/c0c8bf1d83891af3e4e9fab82a55c9f0.jpg"
+     }
+     }
+     * @param ctc
+     * @param result
+     * @return
+     */
+    public static List getCartList(Context ctc,String result){
+        List<BuCartListBean>list=new ArrayList<BuCartListBean>();
+        try {
+            JSONArray jsonArray=new JSONArray(result);
+
+            Log.e("TAG","jay==="+jsonArray.length());
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject=jsonArray.getJSONObject(i);
+                String carinfo=jsonObject.getString("carinfo");
+                BuCartListBean buCartListBean=new BuCartListBean();
+                //里程
+                JSONObject jsonObject1=new JSONObject(carinfo);
+                buCartListBean.mileage=jsonObject1.getString("mileage");
+                buCartListBean.ListID=jsonObject1.getString("carid");
+                buCartListBean.price=jsonObject1.getString("target_price");
+                buCartListBean.licensePlate=jsonObject1.getString("licensePlate");
+                buCartListBean.time=jsonObject1.getString("creatime");
+                buCartListBean.regTime=jsonObject1.getString("retDate");
+                buCartListBean.time=jsonObject1.getString("creatime");
+                buCartListBean.vin=jsonObject1.getString("vin");
+                buCartListBean.modelID=jsonObject1.getString("model_name");
+                buCartListBean.modelName=jsonObject1.getString("model_name");
+                buCartListBean.brandid=jsonObject1.getString("brandid");
+                buCartListBean.brandName=jsonObject1.getString("brand_name");
+                buCartListBean.cardType=jsonObject1.getString("brand_name");
+                buCartListBean.seriseID=jsonObject1.getString("seriesid");
+                buCartListBean.seriseName=jsonObject1.getString("series_name");
+                Log.e("TAG","mileage==="+buCartListBean.mileage);
+
+                String merchant=jsonObject.getString("merchant");
+                JSONObject jsonObject2=new JSONObject(merchant);
+                buCartListBean.quyuID=jsonObject2.getString("merchantid");
+                buCartListBean.name=jsonObject2.getString("name");
+
+                String pic=jsonObject.getString("pic");
+                JSONObject jsonObject3=new JSONObject(pic);
+                buCartListBean.img1=jsonObject3.getString("zhengqian45");
+                buCartListBean.img2=jsonObject3.getString("zhengqian");
+                buCartListBean.img3=jsonObject3.getString("zhenghou");
+                list.add(buCartListBean);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

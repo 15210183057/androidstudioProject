@@ -147,18 +147,27 @@ public class ShowImageActivity extends Activity {
 							mydialog.dismiss();
 							//{"status":0,"msg":"要识别的图片不能为空"}
 							list=GetJsonUtils.getJSZMsgList(ShowImageActivity.this, result);
-							if(list.size()==0){
+							Log.e("TAG","1111111"+list.size()+"===="+list.get(0).status);
+							if(list.get(0).status.equals("0")){
+								Log.e("TAG","list.get(0).msg.equals(\"识别失败\")-"+list.get(0).msg.equals("识别失败"));
 								Toast.makeText(ShowImageActivity.this,""+list.get(0).msg,Toast.LENGTH_LONG).show();
-							}else {
+//								ShowImageActivity.this.finish();
+							}
+							if(list.get(0).status.equals("1")){
 								//发送广播
 								sendMyReciver("");
 								Log.e("TAG", "发送广播vin");
+//								ShowImageActivity.this.finish();
 							}
+							Log.e("TAG","222222");
 							finish();
 						}
 
 						@Override
 						public void onError(Throwable ex, boolean isOnCallback) {
+							if(!TextUtils.isEmpty(ex.getMessage().toString())){
+								mydialog.dismiss();
+							}
 							Log.e("TAG", "请求失败===");
 //							Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
 //							if(!TextUtils.isEmpty(ex.getMessage().toString())){
@@ -202,6 +211,7 @@ public class ShowImageActivity extends Activity {
 			intent.putExtra("vinbrand_id",list.get(0).brand_id);
 			intent.putExtra("vinseries_id",list.get(0).series_id);
 			intent.putExtra("CartName",list.get(0).CartName);
+			intent.putExtra("model_id",list.get(0).model_id);
 		}
 		sendBroadcast(intent);
 	}

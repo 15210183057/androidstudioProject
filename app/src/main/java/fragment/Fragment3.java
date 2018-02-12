@@ -1,7 +1,10 @@
 package fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -54,12 +57,18 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     public Fragment3() {
         // Required empty public constructor
     }
+    BroadcastReceiver my;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment'
+        my=new MyBroadcastReceiver();
+        //注册广播
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("delete");
+        getActivity().registerReceiver(my,intentFilter);
         list=new ArrayList<BuCartListBean>();
 
         getBuCartList(i);
@@ -75,7 +84,15 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
         mydialog.show();
         return view;
+
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(my);
+    }
+
     private void initView() {
         setDate();
         refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
@@ -155,18 +172,27 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("vinnum",list.get(i).vin);
         intent.putExtra("time",list.get(i).time);
         intent.putExtra("quyu",list.get(i).name);
-        intent.putExtra("cartmodel",list.get(i).cardType+list.get(i).carName);
+        intent.putExtra("cartmodel",list.get(i).brandName+list.get(i).seriseName+list.get(i).modelName);
         intent.putExtra("licheng",list.get(i).mileage);
+        Log.e("TAG","家啊风格==="+list.get(i).price);
         intent.putExtra("price",list.get(i).price);
+
+        intent.putExtra("quyuID",list.get(i).quyuID);
+        intent.putExtra("brandID",list.get(i).brandid);
+        intent.putExtra("seriseID",list.get(i).seriseID);
+        intent.putExtra("modelID",list.get(i).modelID);
+        intent.putExtra("modelName",list.get(i).modelName);
+        intent.putExtra("seriseName",list.get(i).seriseName);
+        intent.putExtra("brandName",list.get(i).brandName);
+        intent.putExtra("img1",list.get(i).img1);
+        intent.putExtra("img2",list.get(i).img2);
+        intent.putExtra("img3",list.get(i).img3);
+        intent.putExtra("ID",list.get(i).ListID);
         getActivity().sendBroadcast(intent);
     }
     private void getBuCartList(int current_page){
-        RequestParams requestParams=new RequestParams(getInterface.getBuCartList);
-//        json=1&pagesize=10&where=blu=1 and groupid in(5,3,2) and status = 1
-        requestParams.addBodyParameter("json","1");
-        requestParams.addBodyParameter("pagesize","10");
-        requestParams.addBodyParameter("current_page",current_page+"");
-        requestParams.addBodyParameter("where","blu=0 and groupid in("+ UserBean.groupids+") and status=1");
+        RequestParams requestParams=new RequestParams(getInterface.getList);
+        requestParams.addBodyParameter("userid",UserBean.id);
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
@@ -174,17 +200,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
                 Log.e("TAG","resulr=="+result);
                 mydialog.dismiss();
                 List<BuCartListBean>listBeans=new ArrayList<BuCartListBean>();
-                listBeans= GetJsonUtils.getBuCartList(getActivity(),result);
+                listBeans= GetJsonUtils.getCartList(getActivity(),result);
+//                listBeans= GetJsonUtils.getBuCartList(getActivity(),result);
+                list.clear();
                 list.addAll(listBeans);
                 if (list!=null) {
                     adapter = new MyLvAdapter3(list, getActivity());
                     lv.setAdapter(adapter);
                 }
-//                List<CarBean>list=new ArrayList<CarBean>();
-//                list=GetJsonUtils.getBuCartList(getActivity(),"");
-//                for(int i=0;i<list.size();i++){
-//                    Log.e("TAG","list数据name=="+list.get(i).tv_name);
-//                }
             }
 
             @Override
@@ -210,6 +233,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         super.onHiddenChanged(hidden);
         if(!hidden){
             getBuCartList(i);
+        }
+    }
+
+    public class MyBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getBuCartList(1);
         }
     }
 }

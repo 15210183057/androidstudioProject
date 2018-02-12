@@ -34,10 +34,9 @@ public class MySuccess extends AlertDialog {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent=new Intent();
-//                intent.setAction("success");
-//                intent.putExtra("f","1");
-//                getContext().sendBroadcast(intent);
+                Intent intent=new Intent();
+                intent.setAction("goon");
+                getContext().sendBroadcast(intent);
                 dismiss();
             }
         });

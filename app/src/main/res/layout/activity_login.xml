@@ -63,6 +63,7 @@
         android:textSize="20sp"
         />
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_password2"
         android:layout_width="wrap_content"
         android:layout_height="30dp"

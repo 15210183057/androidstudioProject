@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import bean.BeanFlag;
 import bean.MyNewUpdate;
 import fragment.Fragment1;
 import fragment.Fragment2;
@@ -176,7 +177,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         if(fragment4!=null){
             ft.hide(fragment4);
         }
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
     //所有底部图片以及textview编程灰色
     private void clearBottem(){
@@ -197,6 +198,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         intentFilter.addAction("closeSetting");
         intentFilter.addAction("new");
         intentFilter.addAction("success");
+        intentFilter.addAction("aogo");
         this.registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //接受广播退出APP
@@ -214,6 +216,19 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 MyNewUpdate.vinnum=(intent.getStringExtra("vinnum"));
                 MyNewUpdate.licheng=intent.getStringExtra("licheng");
                 MyNewUpdate.price=intent.getStringExtra("price");
+
+//                intent.putExtra("modelName",list.get(i).modelName);
+//                intent.putExtra("seriseName",list.get(i).seriseName);
+//                intent.putExtra("brandName",list.get(i).brandName);
+                MyNewUpdate.quyuID=intent.getStringExtra("quyuID");
+                MyNewUpdate.seriseID=intent.getStringExtra("seriseID");
+                MyNewUpdate.brandid=intent.getStringExtra("brandID");
+                MyNewUpdate.modelID=intent.getStringExtra("modelID");
+                MyNewUpdate.img1=intent.getStringExtra("img1");
+                MyNewUpdate.img2=intent.getStringExtra("img2");
+                MyNewUpdate.img3=intent.getStringExtra("img3");
+                MyNewUpdate.ItemID=intent.getStringExtra("ID");
+                MyNewUpdate.cartmodel=intent.getStringExtra("modelName");
                 //通知Fragment vin不可编辑
                 Intent intent1=new Intent();
                 intent1.setAction("update");
@@ -230,7 +245,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 }else{
                     ft.show(newfragment);
                 }
-                ft.commit();
+                ft.commitAllowingStateLoss();
 
             }else if(intent.getAction().equals("closeSetting")){
                 finish();
@@ -248,9 +263,8 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                     }else{
                         ft.show(newfragment);
                     }
-                    ft.commit();
+                    ft.commitAllowingStateLoss();
                 }else{
-                    Log.e("TAG","走这里吗？？？？/");
                     HideFragement();
                     FragmentTransaction   ft=fragmentManager.beginTransaction();
                     tv3.setTextColor(Color.WHITE);
@@ -261,9 +275,10 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                     }else{
                         ft.show(fragment3);
                     }
-                    ft.commit();
-                    Log.e("TAG","为什么");
+                    ft.commitAllowingStateLoss();
                 }
+            }else if(intent.getAction().equals("aogo")){
+                finish();
             }
         }
     }

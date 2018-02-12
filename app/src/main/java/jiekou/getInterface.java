@@ -29,4 +29,7 @@ public class getInterface {
     public static String UpdateImag="http://open.zgcw.cn/api/vehicle/upfile";
     //上传车辆补录信息
     public static String UpCartData=host+"/api/api_car/addcar";
+    public static String getList="http://mkerp.zgcw.cn/api/api_car/getmylist";
+    //获取价格
+    public static String getPrice="http://open.zgcw.cn/api/vehicle/getVinByStr";
 }
