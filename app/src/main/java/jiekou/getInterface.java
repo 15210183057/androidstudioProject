@@ -26,5 +26,7 @@ public class getInterface {
     //获取区域
     public static String getA =host+"/api/api_merchant/getlist";
     //上传三张图片
-    public static String UpdateImag=host+"/api/vehicle/upfile";
+    public static String UpdateImag="http://open.zgcw.cn/api/vehicle/upfile";
+    //上传车辆补录信息
+    public static String UpCartData=host+"/api/api_car/addcar";
 }

@@ -1,5 +1,6 @@
 package com.example.a123456.zhonggu;
 import base.BaseActivity;
+import bean.CartMsgBean;
 import bean.UserBean;
 import jiekou.getInterface;
 
@@ -22,16 +23,22 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 import View.GetJsonUtils;
+import utils.Mydialog;
+
 public class MySerchActvity extends BaseActivity {
 private SearchView search;
 private List<String>list=new ArrayList<String>();
 private List<String>findList=new ArrayList<String>();
+private List<CartMsgBean>cartList=new ArrayList<CartMsgBean>();
 private ListView listView;
 private ArrayAdapter adapter,findAdapter;
+Mydialog mydialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_serch_actvity);
+        mydialog=new Mydialog(this,"正在获取车商信息请稍后");
+        mydialog.show();
         initView();
     }
 
@@ -101,30 +108,11 @@ private ArrayAdapter adapter,findAdapter;
                 Intent intent=new Intent();
                 intent.setAction("quyu");
                 intent.putExtra("name",list.get(i).toString());
+                intent.putExtra("ID",cartList.get(i).cartMsgId.toString());
                 sendBroadcast(intent);
                 finish();
             }
         });
-    }
-    private void setData(){
-        list.add("app");
-        list.add("android");
-        list.add("ios");
-        list.add("inert");
-        list.add("bsdj");
-        list.add("window");
-        list.add("image");
-        list.add("text");
-        list.add("button");
-        list.add("listview");
-        list.add("edit");
-        list.add("hight");
-        list.add("中古");
-        list.add("中国");
-        list.add("中共");
-        list.add("天天");
-        list.add("天下");
-        list.add("ha");
     }
     private void getData(){
         //：json=1&pagesize=10&where=blu=1 and groupid in(5,3,2) and status = 1
@@ -133,14 +121,22 @@ private ArrayAdapter adapter,findAdapter;
         params.addBodyParameter("pagesize","100");
         params.addBodyParameter("where","groupid in("+ UserBean.groupids+") and status=1");
         Log.e("TAG","params=="+params);
+        Log.e("TAG","车商-=="+params.getParams("where"));
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.e("TAG","reulst=="+result);
-                list= GetJsonUtils.getQuYu(MySerchActvity.this,result);
+                mydialog.dismiss();
+                cartList= GetJsonUtils.getQuYu(MySerchActvity.this,result);
                 Log.e("TAG","list=="+list.size());
-                adapter=new ArrayAdapter(MySerchActvity.this,R.layout.item,R.id.tvitem_xiala,list);
-                listView.setAdapter(adapter);
+                list.clear();
+                for(int i=0;i<cartList.size();i++){
+                    list.add(cartList.get(i).cartmsgname);
+                }
+                if(list.size()>0) {
+                    adapter = new ArrayAdapter(MySerchActvity.this, R.layout.item, R.id.tvitem_xiala, list);
+                    listView.setAdapter(adapter);
+                }
             }
 
             @Override

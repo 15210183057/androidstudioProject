@@ -100,6 +100,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         utils.saveXML(MyApplication.usermsg,"username", UserBean.username, LoginActivity.this);
                         utils.saveXML(MyApplication.usermsg,"password", password, LoginActivity.this);
                         utils.saveXML(MyApplication.usermsg,"groupids", UserBean.groupids, LoginActivity.this);
+                        utils.saveXML(MyApplication.usermsg,"userid",UserBean.id,LoginActivity.this);
                         Intent intent = new Intent(LoginActivity.this, FrameActivity.class);
                         startActivity(intent);
                         finish();

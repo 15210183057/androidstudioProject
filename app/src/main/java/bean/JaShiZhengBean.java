@@ -5,5 +5,5 @@ package bean;
  */
 
 public class JaShiZhengBean {
-    public String vin,data,licheng,price,status,msg;
+    public String vin,data,licheng,price,status,msg,brand_id,series_id,CartName;
 }

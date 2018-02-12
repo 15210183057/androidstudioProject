@@ -31,6 +31,8 @@ import bean.ModelBean;
 import bean.SeriseBean;
 import jiekou.getInterface;
 import View.GetJsonUtils;
+import utils.Mydialog;
+
 public class CartModelActivity extends BaseActivity implements View.OnClickListener,AdapterView.OnItemClickListener, MyCartModel.SelectCallBack{
     private RelativeLayout relative3_newFragment,relative4_newFragment,relative5_newFragment;
     private TextView tv3_newFragment,tv4_newFragment,tv5_newFragment;
@@ -48,11 +50,14 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     private MyCartModel myCartModel;
     private MyCartModel2 myCartModel2;
     private MyCartModel3 myCartModel3;
-
+    private String BrandID,SeriseID;//需要回传的所有ID
+    Mydialog mydialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_model);
+        mydialog=new Mydialog(this,"正在获取信息，请稍等....");
+        mydialog.show();
         initView();
         getBrand();
     }
@@ -101,6 +106,9 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
                     intent.putExtra("brand",tv3_newFragment.getText().toString());
                     intent.putExtra("serise",tv4_newFragment.getText().toString());
                     intent.putExtra("model",tv5_newFragment.getText().toString());
+                    intent.putExtra("barndID",BrandID);
+                    intent.putExtra("seriseID",SeriseID);
+//                    intent.putExtra("brandID",brandList.get())
                     sendBroadcast(intent);
                     Log.e("TAG","发送");
                     finish();
@@ -114,12 +122,14 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         switch (adapterView.getId()){
             case R.id.lv1:
+                BrandID=brandList.get(i).brand_id;
                 tv3_newFragment.setText(brandList.get(i).brand_name);
                 Serise_id=brandList.get(i).brand_id;
                 getSerise(Serise_id);
                 break;
             case R.id.lv2:
-                tv4_newFragment.setText(SeriseList.get(i).serise);
+                SeriseID=SeriseList.get(i).serise_id;
+                tv4_newFragment.setText(SeriseList.get(i).serise.trim());
                 model_id=SeriseList.get(i).serise_id;
                 getModel(model_id);
                 break;
@@ -139,7 +149,8 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-
+                Log.e("TAG","resutl=="+result);
+                mydialog.dismiss();
                 brandList=(GetJsonUtils.getBrand(CartModelActivity.this,result));
                 list.clear();
                 for(int i=0;i<brandList.size();i++){

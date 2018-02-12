@@ -129,7 +129,7 @@
                 android:id="@+id/tv_cart_model"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text=" 车系 ："
+                android:text=" 车型 ："
                 android:gravity="center_vertical"/>
             <ImageView
                 android:visibility="gone"

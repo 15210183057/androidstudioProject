@@ -220,6 +220,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 sendBroadcast(intent1);
                 Log.e("TAG","发送广播");
                 clearBottem();
+                HideFragement();
                 FragmentTransaction   ft=fragmentManager.beginTransaction();
                 tv1.setTextColor(Color.WHITE);
                 img1.setImageResource(R.mipmap.banyuan_c);

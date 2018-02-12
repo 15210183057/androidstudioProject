@@ -131,9 +131,6 @@ public class ShowImageActivity extends Activity {
 						url = getInterface.getJaShiZheng;
 					}
 					RequestParams params = new RequestParams(url);
-//					for(int i=0;i<3;i++){
-//
-//					}
 					params.addBodyParameter("imgdata", new File(thumbPath));
 					params.setConnectTimeout(80000);
 					params.setMaxRetryCount(5);//
@@ -163,10 +160,10 @@ public class ShowImageActivity extends Activity {
 						@Override
 						public void onError(Throwable ex, boolean isOnCallback) {
 							Log.e("TAG", "请求失败===");
-							if(!TextUtils.isEmpty(ex.getMessage().toString())){
-								mydialog.dismiss();
-								Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
-							}
+//							Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
+//							if(!TextUtils.isEmpty(ex.getMessage().toString())){
+//								mydialog.dismiss();
+//							}
 						}
 
 						@Override
@@ -202,6 +199,9 @@ public class ShowImageActivity extends Activity {
 			intent.putExtra("data", list.get(0).data);
 			intent.putExtra("licheng", list.get(0).licheng);
 			intent.putExtra("price", list.get(0).price);
+			intent.putExtra("vinbrand_id",list.get(0).brand_id);
+			intent.putExtra("vinseries_id",list.get(0).series_id);
+			intent.putExtra("CartName",list.get(0).CartName);
 		}
 		sendBroadcast(intent);
 	}

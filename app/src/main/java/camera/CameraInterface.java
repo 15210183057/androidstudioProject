@@ -69,11 +69,12 @@ public class CameraInterface extends Service{
 	 */
 	public void doOpenCamera(CamOpenOverCallback callback){
 		Log.i(TAG, "Camera open ...");
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		//TODO 取消休眠
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		mCamera = Camera.open();
 		Log.i(TAG, "Camera open over..");
 		if(callback != null){
@@ -154,9 +155,9 @@ public class CameraInterface extends Service{
 			mCamera.takePicture(mShutterCallback, null, mRectJpegPictureCallback);
 		}
 	}
-	
+
 	public Point doGetPrictureSize(){
-		Size s = mCamera.getParameters().getPictureSize();
+		Size s= mCamera.getParameters().getPictureSize();
 		return new Point(s.width,s.height);
 	}
 	

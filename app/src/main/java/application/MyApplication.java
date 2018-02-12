@@ -25,6 +25,7 @@ public class MyApplication extends Application {
         userBean.username= sharedUtils.readXML(usermsg,"username",this);
         userBean.password= sharedUtils.readXML(usermsg,"password",this);
         userBean.groupids=sharedUtils.readXML(usermsg,"groupids",this);
+        userBean.id=sharedUtils.readXML(usermsg,"userid",this);
     }
     public static MyApplication getInstance(){
         myApplication=new MyApplication();
