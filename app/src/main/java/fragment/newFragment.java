@@ -57,6 +57,7 @@ import java.util.List;
 
 import bean.BeanFlag;
 import bean.BrandBean;
+import bean.ModelNameandID;
 import bean.MyNewUpdate;
 import bean.UserBean;
 import bean.ZHFBean;
@@ -65,6 +66,7 @@ import bean.ZQFBean;
 import camera.CameraActivity;
 import camera.FileUtil;
 import jiekou.getInterface;
+import utils.MyModelDialog;
 import utils.MySuccess;
 import utils.Mydialog;
 import View.GetJsonUtils;
@@ -376,6 +378,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         intentFilter.addAction("cartmodel");
         intentFilter.addAction("update");
         intentFilter.addAction("goon");
+        intentFilter.addAction("modelname");
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //显示日期
@@ -442,6 +445,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 edit_num.setFocusableInTouchMode(false);
                 edit_num.setFocusable(false);
                 tv_quyue.setText(MyNewUpdate.quyu);
+                Log.e("TAG","品牌，车型=="+MyNewUpdate.cartmodel);
                 tv_cartmodel.setText(MyNewUpdate.cartmodel);
                 tv_time.setText(MyNewUpdate.time);
                 edt_licheng.setText(MyNewUpdate.licheng);
@@ -493,6 +497,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         if (TextUtils.isEmpty(vinStr)) {
                             linear3_newfragment.setVisibility(View.VISIBLE);
                         } else {
+                            Log.e("TAG","MyodelIDandName=="+ModelNameandID.list.size());
+                            MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
+                            myModelDialog.show();
                             linear3_newfragment.setVisibility(View.GONE);
                             edit_num.setText(vinStr);
                             edt_licheng.setText(intent.getStringExtra("licheng"));
@@ -500,8 +507,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             tv_time.setText(intent.getStringExtra("data"));
                             brandid=intent.getStringExtra("vinbrand_id");
                             seriesid=intent.getStringExtra("vinseries_id");
+                            List list=new ArrayList();
                             cartName=intent.getStringExtra("CartName");
+                            list.add(cartName);
                             modelid=intent.getStringExtra("model_id");
+                            Log.e("TAG","model=="+cartName);
+                            tv_cartmodel.setText(cartName);
                         }
                     }
                 }
@@ -527,6 +538,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 img_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zq45d));
                 img2_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zqf));
                 img3_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zhf));
+            }else if(intent.getAction().equals("modelname")){
+                cartName=intent.getStringExtra("modelname");
+                linear3_newfragment.setVisibility(View.VISIBLE);
+                tv_cartmodel.setText(cartName);
+                modelid=intent.getStringExtra("modelID");
+                Log.e("TAG","接收广播---"+intent.getStringExtra("modelname")+"==ID=="+intent.getStringExtra("modelID"));
             }
         }
     }
@@ -652,6 +669,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("zhengqian45",ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian",ZQBean.zqpath);
         requestParams.addBodyParameter("zhenghou",ZHFBean.zhfpath);
+        Log.e("TAG","modelid=="+modelid);
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
         Log.e("TAG","上传地址=="+requestParams.getUri());

@@ -18,6 +18,7 @@ import bean.BuCartListBean;
 import bean.CartMsgBean;
 import bean.JaShiZhengBean;
 import bean.ModelBean;
+import bean.ModelNameandID;
 import bean.SeriseBean;
 import bean.UserBean;
 import bean.ZQFBean;
@@ -182,11 +183,13 @@ public class GetJsonUtils {
                 }
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject1=jsonArray.getJSONObject(i);
-
                     jaShiZhengBean.brand_id=jsonObject1.getString("brand_id");//品牌
                     jaShiZhengBean.series_id=jsonObject1.getString("series_id");//车系id
                     jaShiZhengBean.CartName=jsonObject1.getString("model_name");//车型
                     jaShiZhengBean.model_id=jsonObject1.getString("model_id");//车型ID
+
+                    Log.e("TAG","解析vin的modelid为："+jaShiZhengBean.model_id+"=="+jsonObject1.getString("model_id"));
+                    ModelNameandID.list.add(jaShiZhengBean);
                 }
 
 //                "brand_id": 1,

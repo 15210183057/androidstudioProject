@@ -211,7 +211,12 @@ public class ShowImageActivity extends Activity {
 			intent.putExtra("vinbrand_id",list.get(0).brand_id);
 			intent.putExtra("vinseries_id",list.get(0).series_id);
 			intent.putExtra("CartName",list.get(0).CartName);
+			Log.e("TAG","获取识别的modelid=="+list.get(0).model_id);
 			intent.putExtra("model_id",list.get(0).model_id);
+			for(int i=0;i<list.size();i++){
+				intent.putExtra("CartName",list.get(i).CartName);
+				intent.putExtra("model_id",list.get(i).model_id);
+			}
 		}
 		sendBroadcast(intent);
 	}

@@ -223,7 +223,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
             @Override
             public void onFinished() {
-                tv_topcenter.setText(BUCartListBeanNUm.total);//设置title
+                Log.e("TAG","list=="+list.size());
+                tv_topcenter.setText(list.size()+"");//设置title
                 Log.e("TAG","title=="+BUCartListBeanNUm.total);
             }
         });
