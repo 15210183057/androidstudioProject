@@ -174,10 +174,9 @@ public class GetJsonUtils {
 //                Log.e("TAG","result.contains(\"price\")==="+TextUtils.isEmpty(jsonObject.getString("price")));
                 if(result.contains("mileage")) {
                     jaShiZhengBean.licheng = jsonObject.getString("mileage");
+                    jaShiZhengBean.price=jsonObject.getString("price");
                 }
-//                if(result.contains("price")&&TextUtils.isEmpty(jsonObject.getString("price"))){
-//                    jaShiZhengBean.price=jsonObject.getString("price");
-//                }
+//
                 if(result.contains("regdate")) {
                     jaShiZhengBean.data = jsonObject.getString("regdate");//注册时间
                 }
@@ -465,6 +464,7 @@ public class GetJsonUtils {
                 String pic=jsonObject.getString("pic");
                 JSONObject jsonObject3=new JSONObject(pic);
                 buCartListBean.img1=jsonObject3.getString("zhengqian45");
+                Log.e("TAG","buCartListBean.img1=="+buCartListBean.img1);
                 buCartListBean.img2=jsonObject3.getString("zhengqian");
                 buCartListBean.img3=jsonObject3.getString("zhenghou");
                 list.add(buCartListBean);

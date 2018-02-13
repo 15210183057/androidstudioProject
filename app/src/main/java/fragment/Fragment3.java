@@ -83,6 +83,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         initView();
         mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
         mydialog.show();
+        Log.e("TAG","标题；"+tv_topcenter.getText().toString());
         return view;
 
     }

@@ -25,7 +25,7 @@ import bean.BuCartListBean;
 import bean.CarBean;
 import bean.UserBean;
 import utils.Mydialog;
-
+import jiekou.getInterface;
 public class MyLvAdapter3 extends BaseAdapter{
     private List<BuCartListBean> list;
     private Context ctx;
@@ -49,7 +49,7 @@ public class MyLvAdapter3 extends BaseAdapter{
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         if(view==null){
             view= View.inflate(ctx, R.layout.item_mylv2,null);
@@ -88,6 +88,7 @@ public class MyLvAdapter3 extends BaseAdapter{
             public void onClick(View view) {
                 Toast.makeText(ctx,"点击下架",Toast.LENGTH_LONG);
                 Log.e("TAG","点击下架");
+                Delete(i);
 
             }
         });
@@ -105,8 +106,9 @@ public class MyLvAdapter3 extends BaseAdapter{
     private void Delete(int i){
         final Mydialog mydialog=new Mydialog(ctx,"正在下架，请稍等...");
         mydialog.show();
-        RequestParams params=new RequestParams("");
+        RequestParams params=new RequestParams(getInterface.UpCartData);
         params.addBodyParameter("id",list.get(i).ListID);
+        params.addBodyParameter("status","0");
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -115,6 +117,7 @@ public class MyLvAdapter3 extends BaseAdapter{
                 Intent intent=new Intent();
                 intent.setAction("delete");
                 ctx.sendBroadcast(intent);
+                mydialog.dismiss();
             }
 
             @Override

@@ -38,10 +38,10 @@ public class CameraInterface extends Service{
 	public interface CamOpenOverCallback{
 		public void cameraHasOpened();
 	}
-	
-//	private CameraInterface(){
-//		
-//	}
+
+	public CameraInterface(){
+
+	}
 	
 	public CameraInterface(Context mContext) {
 		super();

@@ -131,6 +131,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         }
         getSubStr(edt_licheng);
         getSubStr(edt_price);
+        linear3_newfragment.setVisibility(View.VISIBLE);
     }
 
     private void initView() {
@@ -246,13 +247,14 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }
                 else{
                      if(BeanFlag.Flag){
+                         Log.e("TAG","先上传图片===="+zqfPath);
+                         Log.e("TAG","先上传图片"+(TextUtils.isEmpty(zqfPath)&&TextUtils.isEmpty(zqPath)&&TextUtils.isEmpty(zhfPath)));
                          if(TextUtils.isEmpty(zqfPath)&&TextUtils.isEmpty(zqPath)&&TextUtils.isEmpty(zhfPath)){
                              //走修改接口
                              setCartMsg();
                              mydialog.show();
                              Log.e("TAG","走修改接口");
                          }else{
-                             Log.e("TAG","先上传图pain");
                              if(!TextUtils.isEmpty(zhfPath)){
                                  updateImag(zhfPath);
                              }else if(!TextUtils.isEmpty(zqPath)){
@@ -585,7 +587,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 public void onSuccess(String result) {
                     Log.e("TAG","图片上传结果---"+result);
                     if(!TextUtils.isEmpty(path)&&path.equals(zqfPath)){
-                      ZQFBean.zqpath=  GetJsonUtils.getZQF(getContext(),result);
+                      ZQFBean.zqpath=GetJsonUtils.getZQF(getContext(),result);
                     }else if(!TextUtils.isEmpty(path)&&path.equals(zqPath)){
                         //正前方图pain
                         ZQBean.zqpath=GetJsonUtils.getZQF(getContext(),result);
@@ -594,7 +596,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         //正前方图pain
                         ZHFBean.zhfpath=GetJsonUtils.getZQF(getContext(),result);
                     }
-                    Log.e("TAG","左前方图片=="+ ZQFBean.zqpath);
+                    Log.e("TAG","左前方图片=="+zqfPath+ ZQFBean.zqpath);
                     Log.e("TAg","正后方图片="+ ZHFBean.zhfpath);
                     Log.e("TAg","正前方图片="+ZQBean.zqpath);
                     Log.e("TAG","三张大图上传结果=="+(!TextUtils.isEmpty(ZHFBean.zhfpath)&&!TextUtils.isEmpty(ZQBean.zqpath)&&!TextUtils.isEmpty(ZQFBean.zqpath)));
@@ -711,16 +713,14 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("regDate",tv_time.getText().toString().trim());
         requestParams.addBodyParameter("mileage",edt_licheng.getText().toString().trim());
         requestParams.addBodyParameter("target_price",edt_price.getText().toString().trim());
-        Log.e("TAG","路径---"+ZHFBean.zhfpath);
+        Log.e("TAG","路径---"+ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian45",ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian",ZQBean.zqpath);
         requestParams.addBodyParameter("zhenghou",ZHFBean.zhfpath);
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
-        requestParams.addBodyParameter("status","0");
-        Log.e("TAG","上传地址=="+requestParams.getUri());
+//        requestParams.addBodyParameter("status","0");
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
-        Log.e("TAG","上传URL=="+requestParams);
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -766,17 +766,24 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private void getPrice(){
         mydialog.show();
         RequestParams requestParams=new RequestParams(getInterface.getPrice);
-        requestParams.addBodyParameter("vin","LE4GG8BB0DL211446");
+        requestParams.addBodyParameter("vin",edit_num.getText().toString());
         requestParams.addBodyParameter("regdate",tv_time.getText().toString());
         Log.e("TAG","获取价格params="+requestParams);
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.e("TAg","获取价格为："+result);
+//                {"status":0,"vin":"12345678901472589","msg":"获取VIN信息失败"}
                 mydialog.dismiss();
                 try {
                     JSONObject jsonObject=new JSONObject(result);
-                    edt_price.setText(jsonObject.getString("price"));
+                    String status=jsonObject.getString("status");
+                    if(status.equals("0")){
+                         String msg=jsonObject.getString("msg");
+                         Toast.makeText(getContext(),""+msg,Toast.LENGTH_LONG).show();
+                    }else {
+                        edt_price.setText(jsonObject.getString("price"));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
