@@ -16,6 +16,7 @@ import bean.BUCartListBeanNUm;
 import bean.BrandBean;
 import bean.BuCartListBean;
 import bean.CartMsgBean;
+import bean.CartMsgPrice;
 import bean.JaShiZhengBean;
 import bean.ModelBean;
 import bean.ModelNameandID;
@@ -161,6 +162,7 @@ public class GetJsonUtils {
 //    {"status":1,"vin":"LE4GG8BB0DL211446","mileage":3.4434,"price":0,"regdate":"0--","model":[{"series_group_name":"北京奔驰","color":"","model_liter":"3.0L","model_year":2013,"brand_name":"奔驰","model_id":1914,"brand_id":9,"series_id":135,"model_name":"2013款 奔驰GLK级 GLK300 4MATIC 动感型","model_price":41.8,"model_emission_standard":"国4","model_gear":"自动","series_name":"奔驰GLK级","min_reg_year":2012,"max_reg_year":2016,"ext_model_id":1914}]}
     public static List getJSZMsgList(Context ctx,String result){
         List list=new ArrayList();
+        ModelNameandID.list.clear();
         try {
             JSONObject jsonObject=new JSONObject(result);
             JaShiZhengBean jaShiZhengBean=new JaShiZhengBean();
@@ -471,6 +473,67 @@ public class GetJsonUtils {
                 buCartListBean.img2=jsonObject3.getString("zhengqian");
                 buCartListBean.img3=jsonObject3.getString("zhenghou");
                 list.add(buCartListBean);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    //通过vin码获取车型，车系，车牌，价格，里程
+
+    /**
+     * {
+     "status": 1,
+     "vin": "LSGGG54Y7DS011485",
+     "mileage": 0,
+     "price": 0,
+     "regdate": "0--",
+     "model": [{
+     "series_group_name": "上海通用雪佛兰",
+     "color": "",
+     "model_liter": "2.0L",
+     "model_year": 2013,
+     "brand_name": "雪佛兰",
+     "model_id": 17372,
+     "brand_id": 126,
+     "series_id": 1239,
+     "model_name": "2013款 迈锐宝 2.0L 手自一体 舒适版",
+     "model_price": 16.99,
+     "model_emission_standard": "国4",
+     "model_gear": "自动",
+     "series_name": "迈锐宝",
+     "min_reg_year": 2013,
+     "max_reg_year": 2015,
+     "ext_model_id": 17372
+     }
+     * @param context
+     * @param result
+     * @return
+     */
+    public static List getCartMsg(Context context,String result){
+        List<JaShiZhengBean>list=new ArrayList<JaShiZhengBean>();
+        ModelNameandID.list.clear();
+        try {
+            JSONObject jsonObject=new JSONObject(result);
+            String status=jsonObject.getString("status");
+            if(status.equals("0")){
+                String msg=jsonObject.getString("msg");
+                Toast.makeText(context,""+msg,Toast.LENGTH_LONG).show();
+            }else {
+                JaShiZhengBean cartMsgBean=new JaShiZhengBean();
+                cartMsgBean.licheng=jsonObject.getString("mileage");
+                cartMsgBean.price=jsonObject.getString("price");
+                cartMsgBean.data=jsonObject.getString("regdate");
+                JSONArray jsonArray=jsonObject.getJSONArray("model");
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject1=jsonArray.getJSONObject(i);
+                    cartMsgBean.brand_id=jsonObject1.getString("brand_id");
+                    cartMsgBean.model_id=jsonObject1.getString("model_id");
+                    cartMsgBean.series_id=jsonObject1.getString("series_id");
+                    cartMsgBean.CartName=jsonObject1.getString("model_name");
+                    list.add(cartMsgBean);
+                    ModelNameandID.list.add(cartMsgBean);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

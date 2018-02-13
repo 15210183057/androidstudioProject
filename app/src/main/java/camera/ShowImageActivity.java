@@ -133,7 +133,7 @@ public class ShowImageActivity extends Activity {
 					RequestParams params = new RequestParams(url);
 					params.addBodyParameter("imgdata", new File(thumbPath));
 					params.setConnectTimeout(80000);
-					params.setMaxRetryCount(5);//
+					params.setMaxRetryCount(7);//
 					params.setMultipart(true);
 					Log.e("TAG","params.getUri()=="+params.getUri());
 					Log.e("TAG","params.getFileParams()=="+params.getFileParams());
@@ -167,6 +167,7 @@ public class ShowImageActivity extends Activity {
 						public void onError(Throwable ex, boolean isOnCallback) {
 							if(!TextUtils.isEmpty(ex.getMessage().toString())){
 								mydialog.dismiss();
+								Toast.makeText(ShowImageActivity.this,"上传失败，请重新上传",Toast.LENGTH_LONG).show();
 							}
 							Log.e("TAG", "请求失败===");
 //							Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();

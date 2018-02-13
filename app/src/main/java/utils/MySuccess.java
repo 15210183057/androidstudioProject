@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a123456.zhonggu.FrameActivity;
 import com.example.a123456.zhonggu.R;
@@ -20,9 +23,11 @@ import fragment.Fragment3;
  */
 public class MySuccess extends AlertDialog {
     private Button btn1,btn2;
-
-    public MySuccess(Context context) {
+    private TextView tv_success;
+    private String string;
+    public MySuccess(Context context,String string) {
         super(context);
+        this.string=string;
     }
 
     @Override
@@ -31,6 +36,8 @@ public class MySuccess extends AlertDialog {
         setContentView(R.layout.mysuccesslog);
         btn1=findViewById(R.id.btn1);
         btn2=findViewById(R.id.btn2);
+        tv_success=findViewById(R.id.tv_success);
+        tv_success.setText(string);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

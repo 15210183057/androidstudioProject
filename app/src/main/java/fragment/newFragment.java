@@ -57,6 +57,8 @@ import java.util.List;
 
 import bean.BeanFlag;
 import bean.BrandBean;
+import bean.CartMsgPrice;
+import bean.JaShiZhengBean;
 import bean.ModelNameandID;
 import bean.MyNewUpdate;
 import bean.UserBean;
@@ -99,7 +101,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
     String zqfPath,zqPath,zhfPath;
     String quyuID,brandid,modelid,seriesid,cartName;//商家信息ID,品牌ID，车系ID,车型
     MySuccess mySuccess;
-    private TextView tv_getprice;
+    private TextView tv_getprice,tv_getmodel;
+    Mydialog mydialog1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,6 +112,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
         view=inflater.inflate(R.layout.fragment_new, container, false);
         initView();
         MyRegistReciver();
+        mydialog1=new Mydialog(getContext(),"正在获取请稍后");
+
         mydialog=new Mydialog(getContext(),"正在上传.....");
         return view;
     }
@@ -137,7 +142,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initView() {
-        mySuccess=new MySuccess(getContext());
+        mySuccess=new MySuccess(getContext(),"提交成功");
         img_topleft=view.findViewById(R.id.img_left);
         img_topright=view.findViewById(R.id.img_right);
         tv_topcenter=view.findViewById(R.id.tv_center);
@@ -182,19 +187,32 @@ public class newFragment extends Fragment implements View.OnClickListener{
         img3_newfragment.setOnClickListener(this);
         tv_cartmodel.setOnClickListener(this);
         tv_quyue.setOnClickListener(this);
+
+        tv_getmodel=view.findViewById(R.id.tv_getmodel);
+        tv_getmodel.setOnClickListener(this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.tv_getmodel:
+                //获取车型车系车牌
+                if(!TextUtils.isEmpty(edit_num.getText().toString())
+                        &&!TextUtils.isEmpty(tv_time.getText().toString())
+                        &&!tv_time.getText().toString().equals("请选择日期")){
+                    getPrice("model");
+                }else{
+                    Toast.makeText(getContext(),"vin不能为空",Toast.LENGTH_LONG).show();
+                }
+                break;
             case R.id.tv_getprice:
                 //获取价格
                 Log.e("TAG","TextUtils.isEmpty(tv_time.getText().toString()=="+TextUtils.isEmpty(tv_time.getText().toString()));
                 if(!TextUtils.isEmpty(edit_num.getText().toString())
                         &&!TextUtils.isEmpty(tv_time.getText().toString())
                         &&!tv_time.getText().toString().equals("请选择日期")){
-                    getPrice();
+                    getPrice("price");
                 }else {
                     Toast.makeText(getContext(),"vin或者注册时间不能为空",Toast.LENGTH_LONG).show();
                 }
@@ -453,9 +471,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 ZQFBean.zqpath=MyNewUpdate.img1;
                 ZQBean.zqpath=MyNewUpdate.img2;
                 ZHFBean.zhfpath=MyNewUpdate.img3;
-                Glide.with(getContext()).load(MyNewUpdate.img1).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).into(img_newfragment);
-                Glide.with(getContext()).load(MyNewUpdate.img2).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).into(img2_newfragment);
-                Glide.with(getContext()).load(MyNewUpdate.img3).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).into(img3_newfragment);
+                Glide.with(getContext()).load(MyNewUpdate.img1).placeholder(R.drawable.zq45d).error(R.drawable.zq45d).into(img_newfragment);
+                Glide.with(getContext()).load(MyNewUpdate.img2).placeholder(R.drawable.zqf).error(R.drawable.zqf).into(img2_newfragment);
+                Glide.with(getContext()).load(MyNewUpdate.img3).placeholder(R.drawable.zhf).error(R.drawable.zhf).into(img3_newfragment);
                 quyuID=MyNewUpdate.quyuID;
                 seriesid=MyNewUpdate.seriseID;
                 modelid=MyNewUpdate.modelID;
@@ -481,7 +499,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         zqfPath=path;
                         Log.e("TAG","path=="+path);
                         Log.e("TAG","拍照返回=="+zqfPath);
-                        img_newfragment.setImageBitmap(fileUtil.readBitmap(path));
+                        img_newfragment.setImageBitmap(BitmapFactory.decodeFile(path));
+//                        img_newfragment.setImageBitmap(fileUtil.readBitmap(path));
                     } else if (name.equals("zhenghou")) {
                         zhfPath=path;
                         img3_newfragment.setImageBitmap(fileUtil.readBitmap(path));
@@ -597,6 +616,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             params.setConnectTimeout(80000);
             params.setMaxRetryCount(5);//
             params.addBodyParameter("imgdata",new File(path));
+        params.setMaxRetryCount(2);
             Log.e("TAG","参数--"+params.getParams("imgdata"));
             Log.e("TAG","params=="+params);
             x.http().post(params, new Callback.CommonCallback<String>() {
@@ -672,6 +692,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         Log.e("TAG","modelid=="+modelid);
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
+        requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
         Log.e("TAG","上传URL=="+requestParams);
@@ -679,6 +700,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onSuccess(String result) {
                 Log.e("TAG","上传成功=="+result);
+                mydialog.dismiss();
 //                {"status":1,"msg":"添加成功","id":"2261"}
                 try {
                     JSONObject jsonObject=new JSONObject(result);
@@ -686,14 +708,16 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     String msg;
                     if (status.equals("1")){
                        msg=jsonObject.getString("msg");
+                        mySuccess=new MySuccess(getContext(),"上传成功");
+                        mySuccess.show();
                     }else{
                         msg=jsonObject.getString("msg");
+                        Toast.makeText(getContext(),""+msg,Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mydialog.dismiss();
-                mySuccess.show();
+
             }
 
             @Override
@@ -737,6 +761,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("zhenghou",ZHFBean.zhfpath);
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
+        requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
@@ -751,14 +776,17 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     if (status.equals("1")){
                         msg=jsonObject.getString("msg");
                         Toast.makeText(getContext(),"修改成功",Toast.LENGTH_LONG).show();
+                        mydialog.dismiss();
+                        mySuccess=new MySuccess(getContext(),"修改成功");
+                        mySuccess.show();
                     }else{
                         msg=jsonObject.getString("msg");
+                        Toast.makeText(getContext(),""+msg,Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mydialog.dismiss();
-                mySuccess.show();
+
             }
 
             @Override
@@ -781,29 +809,30 @@ public class newFragment extends Fragment implements View.OnClickListener{
         });
     }
     //获取价格
-    private void getPrice(){
-        mydialog.show();
-        RequestParams requestParams=new RequestParams(getInterface.getPrice);
+    private void getPrice(final String string){
+        mydialog1.show();
+        final RequestParams requestParams=new RequestParams(getInterface.getPrice);
         requestParams.addBodyParameter("vin",edit_num.getText().toString());
-        requestParams.addBodyParameter("regdate",tv_time.getText().toString());
+        Log.e("TAG","string.equals(\"model\")&&!tv_time.equals(\"请选择日期\")=="+(!tv_time.equals("请选择日期")));
+        if(string.equals("model")&&!tv_time.equals("请选择日期")){
+            requestParams.addBodyParameter("regdate",tv_time.getText().toString());
+        }
+        requestParams.setMaxRetryCount(5);
         Log.e("TAG","获取价格params="+requestParams);
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.e("TAg","获取价格为："+result);
+                Log.e("TAg", "获取价格为：" + result);
 //                {"status":0,"vin":"12345678901472589","msg":"获取VIN信息失败"}
-                mydialog.dismiss();
-                try {
-                    JSONObject jsonObject=new JSONObject(result);
-                    String status=jsonObject.getString("status");
-                    if(status.equals("0")){
-                         String msg=jsonObject.getString("msg");
-                         Toast.makeText(getContext(),""+msg,Toast.LENGTH_LONG).show();
-                    }else {
-                        edt_price.setText(jsonObject.getString("price"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                mydialog1.dismiss();
+                List<JaShiZhengBean>list=new ArrayList<JaShiZhengBean>();
+                list=GetJsonUtils.getCartMsg(getContext(),result);
+                if(!TextUtils.isEmpty(string)&&string.equals("model")){
+                    edt_price.setText(list.get(0).price.toString());
+                    edt_licheng.setText(list.get(0).licheng.toString());
+                    tv_time.setText(list.get(0).data.toString());
+                    MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
+                    myModelDialog.show();
                 }
             }
 
@@ -811,6 +840,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             public void onError(Throwable ex, boolean isOnCallback) {
                 if(!TextUtils.isEmpty(ex.getMessage().toString())){
                     mydialog.dismiss();
+                    Log.e("TAG","ex.getMessage().toString()="+ex.getMessage().toString());
                     Toast.makeText(getContext(),"获取失败",Toast.LENGTH_LONG).show();
                 }
             }

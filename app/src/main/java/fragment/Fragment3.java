@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,12 +138,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 //                            list.add(carBean);
 //                        }
 //                        count=list.size();
-                        if(i<Integer.parseInt(BUCartListBeanNUm.last_page)) {
-                            i++;
-                            getBuCartList(i);
-                        }else{
-                            Toast.makeText(getContext(),"数据加载完毕",Toast.LENGTH_SHORT).show();
-                        }
+                        i++;
+                        getBuCartList(i);
+//                        if(!TextUtils.isEmpty(BUCartListBeanNUm.last_page)&&i<Integer.parseInt(BUCartListBeanNUm.last_page)) {
+//                            i++;
+//                            getBuCartList(i);
+//                        }else{
+//                            Toast.makeText(getContext(),"数据加载完毕",Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 },3000);
 
@@ -194,6 +197,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     private void getBuCartList(int current_page){
         RequestParams requestParams=new RequestParams(getInterface.getList);
         requestParams.addBodyParameter("userid",UserBean.id);
+        requestParams.addBodyParameter("page",current_page+"");
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override

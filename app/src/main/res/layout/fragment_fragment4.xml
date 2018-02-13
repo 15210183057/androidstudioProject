@@ -26,6 +26,7 @@
         android:textColor="#000"
         android:textSize="20sp"/>
     <View
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="#000"
@@ -33,6 +34,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"/>
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="horizontal">
@@ -97,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="#000"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"/>
     <LinearLayout
@@ -208,6 +210,13 @@
             android:textColor="#ff0000"
             android:layout_gravity="center_horizontal"
             android:textSize="16sp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="欢迎大家到中古官网，查看更多二手车信息"
+            android:textColor="#ff0000"
+            android:layout_gravity="center_horizontal"
+            android:textSize="16sp"/>
     </LinearLayout>
 </LinearLayout>

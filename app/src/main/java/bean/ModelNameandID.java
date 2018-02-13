@@ -10,4 +10,5 @@ import java.util.List;
 public class ModelNameandID {
     public static String ModelName,ModelId;
     public static List<JaShiZhengBean>list=new ArrayList<JaShiZhengBean>();
+    public static List<CartMsgPrice>list2=new ArrayList<CartMsgPrice>();
 }

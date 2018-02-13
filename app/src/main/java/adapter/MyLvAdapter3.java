@@ -1,7 +1,9 @@
 package adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,12 +28,20 @@ import bean.CarBean;
 import bean.UserBean;
 import utils.Mydialog;
 import jiekou.getInterface;
+import utils.newAlert;
+
 public class MyLvAdapter3 extends BaseAdapter{
     private List<BuCartListBean> list;
     private Context ctx;
+    int count;
+    private MyBroad myBroad;
     public MyLvAdapter3 (List<BuCartListBean>list, Context ctx){
         this.ctx=ctx;
         this.list=list;
+        myBroad=new MyBroad();
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("deleteitem");
+        ctx.registerReceiver(myBroad,intentFilter);
     }
     @Override
     public int getCount() {
@@ -63,6 +73,7 @@ public class MyLvAdapter3 extends BaseAdapter{
             holder.tv_user=view.findViewById(R.id.tv_user_itemylv2);
             holder.tv_price=view.findViewById(R.id.tvprice_mylvitem);
             holder.tv_time=view.findViewById(R.id.tv_time_itemylv2);
+            holder.tv_model_mylvitem=view.findViewById(R.id.tv_model_mylvitem);
             view.setTag(holder);
         }else{
             holder= (ViewHolder) view.getTag();
@@ -83,13 +94,14 @@ public class MyLvAdapter3 extends BaseAdapter{
         holder.tv_company.setText(list.get(i).name);
         holder.tv_num1.setText(list.get(i).vin);
         holder.tv_num2.setText(list.get(i).licensePlate);
+        holder.tv_model_mylvitem.setText(list.get(i).modelName);
         holder.btn_xiajia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(ctx,"点击下架",Toast.LENGTH_LONG);
-                Log.e("TAG","点击下架");
-                Delete(i);
-
+                Log.e("TAG","点击下架=="+i);
+                newAlert alert=new newAlert(ctx,i);
+                alert.show();
             }
         });
         holder.tv_time.setText("采集时间："+list.get(i).time);
@@ -102,8 +114,9 @@ public class MyLvAdapter3 extends BaseAdapter{
         TextView tv_name,tv_company,tv_num1,tv_num2;
         private ImageView img_item_mylv;
         TextView btn_xiajia,tv_user,tv_time,tv_price;
+        TextView tv_model_mylvitem;
     }
-    private void Delete(int i){
+    private void Delete(final int i){
         final Mydialog mydialog=new Mydialog(ctx,"正在下架，请稍等...");
         mydialog.show();
         RequestParams params=new RequestParams(getInterface.UpCartData);
@@ -112,7 +125,7 @@ public class MyLvAdapter3 extends BaseAdapter{
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.e("TAG","下架成功="+result);
+                Log.e("TAG","下架成功=i"+i+"=="+result);
                 //刷新列表也
                 Intent intent=new Intent();
                 intent.setAction("delete");
@@ -137,5 +150,16 @@ public class MyLvAdapter3 extends BaseAdapter{
 
             }
         });
+    }
+
+    private class MyBroad extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           String i = intent.getStringExtra("i");
+            Log.e("TAG","count==="+i);
+
+            Delete(Integer.parseInt(i));
+        }
     }
 }

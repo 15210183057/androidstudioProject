@@ -12,6 +12,7 @@
             android:layout_height="40dp"
             android:background="@color/titleBar"/>
         <TextView
+            android:id="@+id/tv_success"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="上传成功"
