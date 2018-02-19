@@ -6,4 +6,5 @@ package bean;
 
 public class ModelBean {
     public String model_id,model_name;
+    public boolean Flag;
 }

@@ -48,6 +48,7 @@ Mydialog mydialog;
         search=findViewById(R.id.search);
         listView=findViewById(R.id.lv);
 
+        search.setIconifiedByDefault(false);
 
 //        search.setSubmitButtonEnabled();
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

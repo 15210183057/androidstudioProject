@@ -471,7 +471,9 @@ public class GetJsonUtils {
                 buCartListBean.img1=jsonObject3.getString("zhengqian45");
                 Log.e("TAG","buCartListBean.img1=="+buCartListBean.img1);
                 buCartListBean.img2=jsonObject3.getString("zhengqian");
+                Log.e("TAG","buCartListBean.img2=="+buCartListBean.img2);
                 buCartListBean.img3=jsonObject3.getString("zhenghou");
+                Log.e("TAG","buCartListBean.img3=="+buCartListBean.img3);
                 list.add(buCartListBean);
             }
         } catch (JSONException e) {

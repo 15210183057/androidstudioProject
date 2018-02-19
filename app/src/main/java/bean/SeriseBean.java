@@ -7,4 +7,5 @@ package bean;
 
  public class SeriseBean {
     public String serise,serise_id;
+    public boolean Flag;
 }

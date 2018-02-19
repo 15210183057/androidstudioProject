@@ -57,20 +57,12 @@ public class MyCartModel2 extends BaseAdapter {
         }
         holder.tv.setText(list.get(i).serise);
         Log.e("TAG","点击的是第+"+i);
-//        if(list.get(i).Flag){
-//            holder.tv.setBackgroundResource(R.color.titleBar);
-//            Log.e("TAG","这里走了为true");
-//        }else{
-//            holder.tv.setBackgroundResource(R.color.white);
-//        }
-//        list.get(i).Flag=false;
-//        holder.tv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                callBack.callcolor(i);
-//                Log.e("TAG","点击事件中途");
-//            }
-//        });
+        if(list.get(i).Flag){
+            holder.tv.setBackgroundResource(R.color.titleBar);
+            Log.e("TAG","这里走了为true");
+        }else{
+            holder.tv.setBackgroundResource(R.drawable.juxingnull);
+        }
         return view;
     }
 

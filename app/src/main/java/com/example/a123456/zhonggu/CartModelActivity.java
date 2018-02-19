@@ -88,6 +88,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.relative3_newFragment:
                 Log.e("TAG","list=="+list.size());
+                btn_ok.setVisibility(View.GONE);
                 linear_model.setVisibility(View.VISIBLE);
                 myCartModel=new MyCartModel(CartModelActivity.this,brandList);
                 myCartModel.setCall(this);
@@ -123,18 +124,43 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         switch (adapterView.getId()){
             case R.id.lv1:
+                for(int h=0;h<brandList.size();h++){
+                    if(i!=h){
+                        brandList.get(h).Flag=false;
+                    }
+                }
+                brandList.get(i).Flag=!brandList.get(i).Flag;
+                myCartModel.notifyDataSetChanged();
                 BrandID=brandList.get(i).brand_id;
                 tv3_newFragment.setText(brandList.get(i).brand_name);
                 Serise_id=brandList.get(i).brand_id;
                 getSerise(Serise_id);
+
                 break;
             case R.id.lv2:
+                for(int h=0;h<SeriseList.size();h++){
+                    if(i!=h){
+                        SeriseList.get(h).Flag=false;
+                    }
+                }
+                SeriseList.get(i).Flag=!SeriseList.get(i).Flag;
+                myCartModel2.notifyDataSetChanged();
+
                 SeriseID=SeriseList.get(i).serise_id;
                 tv4_newFragment.setText(SeriseList.get(i).serise.trim());
                 model_id=SeriseList.get(i).serise_id;
                 getModel(model_id);
                 break;
             case R.id.lv3:
+                for(int h=0;h<ModelList.size();h++){
+                    if(i!=h){
+                        ModelList.get(h).Flag=false;
+                    }
+                }
+                ModelList.get(i).Flag=!ModelList.get(i).Flag;
+                myCartModel3.notifyDataSetChanged();
+
+
                 ModelID=ModelList.get(i).model_id;
                 tv5_newFragment.setText(ModelList.get(i).model_name);
                 linear_model.setVisibility(View.GONE);
