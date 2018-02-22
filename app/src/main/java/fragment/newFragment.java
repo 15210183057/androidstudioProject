@@ -1,11 +1,13 @@
 package fragment;
 
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +17,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -195,46 +199,50 @@ public class newFragment extends Fragment implements View.OnClickListener{
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.tv_getmodel:
                 //获取车型车系车牌
-                if(!TextUtils.isEmpty(edit_num.getText().toString())
-                        &&!TextUtils.isEmpty(tv_time.getText().toString())
-                        &&!tv_time.getText().toString().equals("请选择日期")){
+                if (!TextUtils.isEmpty(edit_num.getText().toString())
+                        && !TextUtils.isEmpty(tv_time.getText().toString())
+                        && !tv_time.getText().toString().equals("请选择日期")) {
                     getPrice("model");
-                }else{
-                    Toast.makeText(getContext(),"vin码或注册日期不能为空",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "vin码或注册日期不能为空", Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.tv_getprice:
                 //获取价格
-                Log.e("TAG","TextUtils.isEmpty(tv_time.getText().toString()=="+TextUtils.isEmpty(tv_time.getText().toString()));
-                if(!TextUtils.isEmpty(edit_num.getText().toString())
-                        &&!TextUtils.isEmpty(tv_time.getText().toString())
-                        &&!tv_time.getText().toString().equals("请选择日期")){
+                Log.e("TAG", "TextUtils.isEmpty(tv_time.getText().toString()==" + TextUtils.isEmpty(tv_time.getText().toString()));
+                if (!TextUtils.isEmpty(edit_num.getText().toString())
+                        && !TextUtils.isEmpty(tv_time.getText().toString())
+                        && !tv_time.getText().toString().equals("请选择日期")) {
                     getPrice("price");
-                }else {
-                    Toast.makeText(getContext(),"vin或者注册时间不能为空",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "vin或者注册时间不能为空", Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.tv_quyue:
-                Intent intentS=new Intent(getContext(), MySerchActvity.class);
+                Intent intentS = new Intent(getContext(), MySerchActvity.class);
                 startActivity(intentS);
                 break;
             case R.id.img_paizhao:
                 getPopView();
                 break;
             case R.id.tv_paizhao:
-                Intent intent=new Intent(getContext(), CameraActivity.class);
-                intent.putExtra("height","70");
-                startActivity(intent);
-                window.dismiss();
+                if(setPermissions()) {
+                    Intent intent = new Intent(getContext(), CameraActivity.class);
+                    intent.putExtra("height", "70");
+                    startActivity(intent);
+                    window.dismiss();
+                }
                 break;
             case R.id.tv_xiangce:
-                Intent intent1=new Intent(getContext(),CameraActivity.class);
-                intent1.putExtra("height","300");
-                startActivity(intent1);
+                if (setPermissions()) {
+                    Intent intent1 = new Intent(getContext(), CameraActivity.class);
+                    intent1.putExtra("height", "300");
+                    startActivity(intent1);
                 window.dismiss();
+               }
                 break;
             case R.id.tv_canle:
                 if(window!=null&&window.isShowing()){
@@ -310,24 +318,31 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.img_newfragment:
                 img_newfragment.setBackgroundResource(0);
+               if( setPermissions()) {
                 Intent intent3=new Intent(getContext(),CameraActivity.class);
                 intent3.putExtra("name","zuoqian");
                 intent3.putExtra("height","350");
                 startActivity(intent3);
+               }
                 break;
             case R.id.img2_newfragment:
                 img2_newfragment.setBackgroundResource(0);
-                Intent intent4=new Intent(getContext(),CameraActivity.class);
-                intent4.putExtra("name","zhengqian");
-                intent4.putExtra("height","350");
-                startActivity(intent4);
+                if(setPermissions()){
+                    Intent intent4=new Intent(getContext(),CameraActivity.class);
+                    intent4.putExtra("name","zhengqian");
+                    intent4.putExtra("height","350");
+                    startActivity(intent4);
+                }
+
                 break;
             case R.id.img3_newfragment:
                 img3_newfragment.setBackgroundResource(0);
-                Intent intent5=new Intent(getContext(),CameraActivity.class);
-                intent5.putExtra("name","zhenghou");
-                intent5.putExtra("height","350");
-                startActivity(intent5);
+                if(setPermissions()) {
+                    Intent intent5 = new Intent(getContext(), CameraActivity.class);
+                    intent5.putExtra("name", "zhenghou");
+                    intent5.putExtra("height", "350");
+                    startActivity(intent5);
+                }
                 break;
             case R.id.tv_cartmodel:
                 Intent intent6=new Intent(getContext(), CartModelActivity.class);
@@ -416,8 +431,19 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     public void onDateSet(DatePicker view,
                                           int year, int monthOfYear,
                                           int dayOfMonth) {
-                        Tv.setText(year + "-" + (monthOfYear + 1)
-                                + "-" + dayOfMonth );
+                        String month="";
+                        String day="";
+                        if((monthOfYear+1)<10){
+                            month="0"+(monthOfYear+1);
+                        }else{
+                            month=""+(monthOfYear+1);
+                        }
+                        if(dayOfMonth<10){
+                            day="0"+dayOfMonth;
+                        }else{
+                           day=dayOfMonth+"";
+                        }
+                        Tv.setText(year+"-"+month+"-"+day);
                         Tv.setBackgroundResource(R.drawable.juxingnull);
                     }
                 }, year, month, day);
@@ -426,11 +452,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
     //判断小数点后面是否都为"0",截取字符串
     private void getSubStr(EditText editText){
         String editStr=editText.getText().toString();
-
+        Log.e("TAG","editStr==="+editStr);
         if(editStr.contains(".")) {
-            if(editStr.length()>5){
-                editStr=editStr.substring(0,5);
-             }
+//            if(editStr.length()>5){
+//                Log.e("TAG","一共长的=="+editStr.length());
+//                Log.e("TAG","小数点的位置"+editStr.indexOf(".")+"hhh=="+editStr.substring(0,editStr.indexOf(".")+3));
+//                editStr=editStr.substring(0,5);
+//             }
                 int i = editStr.indexOf(".");
                 String subStr = editStr.substring(i, editStr.length() - 1);
                 int count = 0;
@@ -443,7 +471,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 if (count == subStr.length() - 1) {
                     editText.setText(editStr.substring(0, i));
                 }else{
-                    editText.setText(editStr);
+                    editText.setText(editStr.substring(0,editStr.indexOf(".")+3));
                 }
             }
     }
@@ -656,10 +684,11 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             Log.e("TAG","上传接口");
                             updateCartMsg();
                         }
-                    }else{
-                        mydialog.dismiss();
-                        Toast.makeText(getContext(),"图片上传失败",Toast.LENGTH_LONG).show();
                     }
+//                    else{
+//                        mydialog.dismiss();
+//                        Toast.makeText(getContext(),"图片上传失败",Toast.LENGTH_LONG).show();
+//                    }
                 }
 
                 @Override
@@ -668,6 +697,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     if(!TextUtils.isEmpty(ex.getMessage().toString())) {
                         Log.e("TAG","ex.getMessage().toString()=="+ex.getMessage().toString());
                         mydialog.dismiss();
+                        Toast.makeText(getContext(),"图片上传失败",Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -841,7 +871,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 if(!TextUtils.isEmpty(string)&&string.equals("model")){
                     edt_price.setText(list.get(0).price.toString());
                     edt_licheng.setText(list.get(0).licheng.toString());
-                    tv_time.setText(list.get(0).data.toString());
+                    getSubStr(edt_price);
+                    getSubStr(edt_licheng);
+//                    tv_time.setText(list.get(0).data.toString());
                     MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
                     myModelDialog.show();
                 }
@@ -871,5 +903,27 @@ public class newFragment extends Fragment implements View.OnClickListener{
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(myBroadcastReceiver);
+    }
+
+    static final String[] PERMISSION = new String[]{
+            Manifest.permission.READ_CONTACTS,// 写入权限
+            Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
+            Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
+            Manifest.permission.CAMERA
+    };
+    /**
+     * 设置Android6.0的权限申请
+     */
+    private boolean setPermissions() {
+        Log.e("TAG","有权限"+(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED));
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            //Android 6.0申请权限
+            Toast.makeText(getActivity(),"没有相关权限，请先开启",Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(getActivity(),PERMISSION,1);
+        }else{
+            return true;
+        }
+        return false;
     }
 }

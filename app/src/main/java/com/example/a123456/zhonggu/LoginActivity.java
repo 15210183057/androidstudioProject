@@ -23,6 +23,7 @@ import application.MyApplication;
 import base.BaseActivity;
 import bean.UserBean;
 import jiekou.getInterface;
+import utils.Mydialog;
 import utils.SharedUtils;
 import View.GetJsonUtils;
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
@@ -32,6 +33,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private TextView tv_password2;
     //记录用户首次点击返回键的时间
     private long firstTime = 0;
+    Mydialog mydialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +66,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
     StringBuilder stringBuilder;
     private void getLogin(){
+        mydialog=new Mydialog(LoginActivity.this,"正在登陆，请稍后...");
+        mydialog.show();
         //登陆
         final String username=edt_username.getText().toString();
         final String password=edt_password.getText().toString();
@@ -79,6 +83,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 @Override
                 public void onSuccess(String result) {
                     Log.e("TAG","result=="+result);
+                    mydialog.dismiss();
                    List<UserBean> list= GetJsonUtils.getLogin(LoginActivity.this,result);
                    //打印groups
 //                    String str=UserBean.groups.substring(1,UserBean.groups.length());

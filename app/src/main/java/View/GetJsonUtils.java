@@ -194,11 +194,7 @@ public class GetJsonUtils {
                     modelNameBean modelNameBean=new modelNameBean();
                     modelNameBean.CartName=jsonObject1.getString("model_name");//车型
                     modelNameBean.model_id=jsonObject1.getString("model_id");//车型ID
-                    Log.e("TAG","解析vin的modelid和name为："+jaShiZhengBean.model_id+"=="+jsonObject1.getString("model_id")+"===="+jaShiZhengBean.CartName);
                     ModelNameandID.list.add(modelNameBean);
-                }
-                for(int i=0;i<ModelNameandID.list.size();i++){
-                    Log.e("TAG","循环=="+ModelNameandID.list.get(i).CartName);
                 }
 //                "brand_id": 1,
 //                        "series_id": 3,

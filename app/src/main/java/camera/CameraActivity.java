@@ -206,7 +206,6 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 	 * @return
 	 */
 	private Point createCenterPictureRect(int w, int h){
-		
 		int wScreen = DisplayUtil.getScreenMetrics(this).x;
 		int hScreen = DisplayUtil.getScreenMetrics(this).y;
 		int wSavePicture = CameraInterface.getInstance(CameraActivity.this).doGetPrictureSize().y;//因为图片旋转了，所以宽高换位
@@ -214,11 +213,14 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 		float wRate = (float)(wSavePicture) / (float)(wScreen);
 		float hRate = (float)(hSavePicture) / (float)(hScreen);
 		float rate = (wRate <= hRate) ? wRate : hRate;//也可以按照最小比率计算
-		
+
+		Log.e("TAG","w==wRate=wScreen="+w+"="+wRate+"="+wScreen);
+
 		int wRectPicture = (int)(w * wRate);
 		int hRectPicture = (int)(h * hRate);
-
-		Log.e("TAG","hre==="+hRectPicture);
+		Log.e("TAG","wRectPicture==w * wRate=="+w * wRate+"="+wRectPicture);
+		Log.e("TAG","hRectPicture==hre==="+h * hRate+"="+hRectPicture);
+		Log.e("TAG","re==="+wRectPicture);
 		return new Point(wRectPicture,hRectPicture);
 	}
 	

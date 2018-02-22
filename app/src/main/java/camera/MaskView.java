@@ -66,7 +66,7 @@ public class MaskView extends android.support.v7.widget.AppCompatImageView {
 		
 		//绘制拍照的透明区域
 		canvas.drawRect(mCenterRect, mLinePaint);
-		
+//		canvas.drawLine(mCenterRect.centerX(), mCenterRect.top, 55, mCenterRect.bottom + 1,mAreaPaint);
 		super.onDraw(canvas);
 	}
 	

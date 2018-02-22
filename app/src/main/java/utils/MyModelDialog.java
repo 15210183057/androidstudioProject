@@ -80,7 +80,6 @@ public class MyModelDialog extends AlertDialog{
             }else{
                 holder= (MyViewHolder) view.getTag();
             }
-            Log.e("TAG","model的名字为：=="+list.get(i).CartName);
             holder.tv.setText(list.get(i).CartName);
             return view;
         }

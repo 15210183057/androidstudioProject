@@ -229,6 +229,7 @@ public class CameraInterface extends Service{
 				//设置FOCUS_MODE_CONTINUOUS_VIDEO 之后，myParam.set("rotation",90);失效
 				//图片不能旋转，在这里旋转
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
+				Log.e("TAG","b图pain高=="+b.getHeight());
 				//压缩图片
 				rotaBitmap=BitZip.compressImage(rotaBitmap);
 				new FileUtil(mContext).saveBitmap(rotaBitmap);
@@ -260,11 +261,10 @@ public class CameraInterface extends Service{
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
 				int x = rotaBitmap.getWidth()/2 - DST_RECT_WIDTH/2;
 				int y = rotaBitmap.getHeight()/2 - DST_RECT_HEIGHT/2;				
-				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth());
+				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth()+"x==y=="+x+"="+y);
 				Log.i(TAG, "rotaBitmap.getHeight() = " + rotaBitmap.getHeight());
 				Bitmap rectBitmap = Bitmap.createBitmap(rotaBitmap, x, y, DST_RECT_WIDTH, DST_RECT_HEIGHT);
-
-				Log.e("TAG","26666=");
+				Log.e("TAG","b图pain高=="+rectBitmap.getHeight());
 //				Bitmap bitmap=BitZip.compressImage(rectBitmap);
 				new FileUtil(mContext).saveBitmap(BitZip.compressImage(rectBitmap));
 				if(rotaBitmap.isRecycled()){
