@@ -915,8 +915,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
      * 设置Android6.0的权限申请
      */
     private boolean setPermissions() {
-        Log.e("TAG","有权限"+(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED));
-
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             //Android 6.0申请权限
             Toast.makeText(getActivity(),"没有相关权限，请先开启",Toast.LENGTH_SHORT).show();
