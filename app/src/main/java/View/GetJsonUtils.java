@@ -23,6 +23,7 @@ import bean.ModelNameandID;
 import bean.SeriseBean;
 import bean.UserBean;
 import bean.ZQFBean;
+import bean.modelNameBean;
 import camera.ShowImageActivity;
 
 /**
@@ -190,10 +191,15 @@ public class GetJsonUtils {
                     jaShiZhengBean.CartName=jsonObject1.getString("model_name");//车型
                     jaShiZhengBean.model_id=jsonObject1.getString("model_id");//车型ID
 
-                    Log.e("TAG","解析vin的modelid为："+jaShiZhengBean.model_id+"=="+jsonObject1.getString("model_id"));
-                    ModelNameandID.list.add(jaShiZhengBean);
+                    modelNameBean modelNameBean=new modelNameBean();
+                    modelNameBean.CartName=jsonObject1.getString("model_name");//车型
+                    modelNameBean.model_id=jsonObject1.getString("model_id");//车型ID
+                    Log.e("TAG","解析vin的modelid和name为："+jaShiZhengBean.model_id+"=="+jsonObject1.getString("model_id")+"===="+jaShiZhengBean.CartName);
+                    ModelNameandID.list.add(modelNameBean);
                 }
-
+                for(int i=0;i<ModelNameandID.list.size();i++){
+                    Log.e("TAG","循环=="+ModelNameandID.list.get(i).CartName);
+                }
 //                "brand_id": 1,
 //                        "series_id": 3,
                 list.add(jaShiZhengBean);
@@ -534,7 +540,11 @@ public class GetJsonUtils {
                     cartMsgBean.series_id=jsonObject1.getString("series_id");
                     cartMsgBean.CartName=jsonObject1.getString("model_name");
                     list.add(cartMsgBean);
-                    ModelNameandID.list.add(cartMsgBean);
+
+                    modelNameBean modelNameBean=new modelNameBean();
+                    modelNameBean.CartName=jsonObject1.getString("model_name");//车型
+                    modelNameBean.model_id=jsonObject1.getString("model_id");//车型ID
+                    ModelNameandID.list.add(modelNameBean);
                 }
             }
         } catch (JSONException e) {

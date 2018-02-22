@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import com.example.a123456.zhonggu.R;
 import java.util.List;
 import bean.ModelNameandID;
 import bean.JaShiZhengBean;
+import bean.modelNameBean;
 
 /**
  * Created by 123456 on 2018/2/13.
@@ -25,7 +27,7 @@ import bean.JaShiZhengBean;
 
 public class MyModelDialog extends AlertDialog{
     private ListView listView;
-    private List<JaShiZhengBean>list;
+    private List<modelNameBean>list;
     public MyModelDialog(Context context, List list) {
         super(context);
         this.list=list;
@@ -78,6 +80,7 @@ public class MyModelDialog extends AlertDialog{
             }else{
                 holder= (MyViewHolder) view.getTag();
             }
+            Log.e("TAG","model的名字为：=="+list.get(i).CartName);
             holder.tv.setText(list.get(i).CartName);
             return view;
         }

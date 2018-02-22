@@ -203,7 +203,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         &&!tv_time.getText().toString().equals("请选择日期")){
                     getPrice("model");
                 }else{
-                    Toast.makeText(getContext(),"vin不能为空",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"vin码或注册日期不能为空",Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.tv_getprice:
@@ -267,6 +267,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }
                 else{
                      if(BeanFlag.Flag){
+                         mydialog=new Mydialog(getContext(),"正在修改，请稍等...");
                          Log.e("TAG","先上传图片===="+zqfPath);
                          Log.e("TAG","先上传图片"+(TextUtils.isEmpty(zqfPath)&&TextUtils.isEmpty(zqPath)&&TextUtils.isEmpty(zhfPath)));
                          if(TextUtils.isEmpty(zqfPath)&&TextUtils.isEmpty(zqPath)&&TextUtils.isEmpty(zhfPath)){
@@ -275,6 +276,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                              mydialog.show();
                              Log.e("TAG","走修改接口");
                          }else{
+                             mydialog.show();
                              if(!TextUtils.isEmpty(zhfPath)){
                                  updateImag(zhfPath);
                              }else if(!TextUtils.isEmpty(zqPath)){
@@ -471,9 +473,15 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 ZQFBean.zqpath=MyNewUpdate.img1;
                 ZQBean.zqpath=MyNewUpdate.img2;
                 ZHFBean.zhfpath=MyNewUpdate.img3;
-                Glide.with(getContext()).load(MyNewUpdate.img1).placeholder(R.drawable.zq45d).error(R.drawable.zq45d).into(img_newfragment);
-                Glide.with(getContext()).load(MyNewUpdate.img2).placeholder(R.drawable.zqf).error(R.drawable.zqf).into(img2_newfragment);
-                Glide.with(getContext()).load(MyNewUpdate.img3).placeholder(R.drawable.zhf).error(R.drawable.zhf).into(img3_newfragment);
+                if(!TextUtils.isEmpty(MyNewUpdate.img1)) {
+                     Glide.with(getContext()).load(MyNewUpdate.img1).placeholder(R.drawable.zq45d).error(R.drawable.zq45d).into(img_newfragment);
+                }
+                if(!TextUtils.isEmpty(MyNewUpdate.img2)) {
+                      Glide.with(getContext()).load(MyNewUpdate.img2).placeholder(R.drawable.zqf).error(R.drawable.zqf).into(img2_newfragment);
+                }
+                if(!TextUtils.isEmpty(MyNewUpdate.img3)) {
+                    Glide.with(getContext()).load(MyNewUpdate.img3).placeholder(R.drawable.zhf).error(R.drawable.zhf).into(img3_newfragment);
+                }
                 quyuID=MyNewUpdate.quyuID;
                 seriesid=MyNewUpdate.seriseID;
                 modelid=MyNewUpdate.modelID;
@@ -616,7 +624,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             params.setConnectTimeout(80000);
             params.setMaxRetryCount(5);//
             params.addBodyParameter("imgdata",new File(path));
-        params.setMaxRetryCount(2);
+           params.setMaxRetryCount(2);
             Log.e("TAG","参数--"+params.getParams("imgdata"));
             Log.e("TAG","params=="+params);
             x.http().post(params, new Callback.CommonCallback<String>() {
@@ -635,7 +643,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     }
                     Log.e("TAG","左前方图片=="+zqfPath+ ZQFBean.zqpath);
                     Log.e("TAg","正后方图片="+ ZHFBean.zhfpath);
-                    Log.e("TAg","正前方图片="+ZQBean.zqpath);
+                    Log.e("TAg","正前方图片="+zqPath+ZQBean.zqpath);
                     Log.e("TAG","三张大图上传结果=="+(!TextUtils.isEmpty(ZHFBean.zhfpath)&&!TextUtils.isEmpty(ZQBean.zqpath)&&!TextUtils.isEmpty(ZQFBean.zqpath)));
                     if(!TextUtils.isEmpty(ZHFBean.zhfpath)&&!TextUtils.isEmpty(ZQBean.zqpath)&&!TextUtils.isEmpty(ZQFBean.zqpath)){
                         //上传全部信息
@@ -648,16 +656,19 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             Log.e("TAG","上传接口");
                             updateCartMsg();
                         }
+                    }else{
+                        mydialog.dismiss();
+                        Toast.makeText(getContext(),"图片上传失败",Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
                     Log.e("TAG","上传失败===");
-//                    if(!TextUtils.isEmpty(ex.getMessage().toString())) {
-//                        Log.e("TAG","ex.getMessage().toString()=="+ex.getMessage().toString());
-//                        mydialog.dismiss();
-//                    }
+                    if(!TextUtils.isEmpty(ex.getMessage().toString())) {
+                        Log.e("TAG","ex.getMessage().toString()=="+ex.getMessage().toString());
+                        mydialog.dismiss();
+                    }
                 }
 
                 @Override
