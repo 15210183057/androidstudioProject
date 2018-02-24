@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,7 +27,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //
+        getBan();
         findViewById(R.id.HelloTV).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,5 +57,20 @@ public class MainActivity extends BaseActivity {
             }
         });
         myThread.start();
+    }
+    //获取版本号
+    private void getBan(){
+        PackageInfo pi = null;
+
+        try {
+            PackageManager pm = getPackageManager();
+            pi = pm.getPackageInfo(getPackageName(),
+                    PackageManager.GET_CONFIGURATIONS);
+            Log.e("TAG","版本号----"+pi.versionCode);
+            Log.e("TAG","版本名字----"+pi.packageName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

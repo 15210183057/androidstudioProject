@@ -99,8 +99,8 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.img_circle:
-                Toast.makeText(getContext(),"点击头像",Toast.LENGTH_SHORT).show();
-                getPopView(img_circle);
+//                Toast.makeText(getContext(),"点击头像",Toast.LENGTH_SHORT).show();
+//                getPopView(img_circle);
                 break;
             case R.id.tv_paizhao:
                 //调取相机功能

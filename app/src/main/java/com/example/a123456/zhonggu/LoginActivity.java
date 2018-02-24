@@ -130,7 +130,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
                 }
             });
-            Toast.makeText(LoginActivity.this,"点击登陆",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this,"点击登陆",Toast.LENGTH_SHORT).show();
 
 
         }else{

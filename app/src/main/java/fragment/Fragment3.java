@@ -13,11 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import View.GetJsonUtils;
+
+import com.example.a123456.zhonggu.MySerchActvity;
 import com.example.a123456.zhonggu.R;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -42,7 +45,7 @@ import utils.Mydialog;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fragment3 extends Fragment implements AdapterView.OnItemClickListener{
+public class Fragment3 extends Fragment implements AdapterView.OnItemClickListener,View.OnClickListener{
 
     private View view;
     private ImageView img_topleft,img_topright;
@@ -55,6 +58,9 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     private int count;
     private int i=1;//默认加载第一页数据
     Mydialog mydialog;
+    TextView tv_quyu;
+    String quyu_ID;
+    Button btn_serach;
     public Fragment3() {
         // Required empty public constructor
     }
@@ -69,6 +75,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         //注册广播
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction("delete");
+        intentFilter.addAction("f3");
         getActivity().registerReceiver(my,intentFilter);
         list=new ArrayList<BuCartListBean>();
 
@@ -78,6 +85,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         img_topright=view.findViewById(R.id.img_right);
         tv_topcenter=view.findViewById(R.id.tv_center);
 
+        tv_quyu=view.findViewById(R.id.tv_quyue);
+        btn_serach=view.findViewById(R.id.btn_serach);
         img_topleft.setVisibility(View.GONE);
         tv_topcenter.setText("已上传车源");
         img_topright.setVisibility(View.GONE);
@@ -85,6 +94,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
         mydialog.show();
         Log.e("TAG","标题；"+tv_topcenter.getText().toString());
+        tv_quyu.setOnClickListener(this);
+        btn_serach.setOnClickListener(this);
         return view;
 
     }
@@ -98,7 +109,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     private void initView() {
         setDate();
         refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
-
         lv=view.findViewById(R.id.lv);
         lv.setOnItemClickListener(this);
         adapter=new MyLvAdapter3(list,getActivity());
@@ -169,7 +179,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Toast.makeText(getContext(),"点击第+"+i+"条数据",Toast.LENGTH_SHORT).show();
         Intent intent=new Intent();
         intent.setAction("new");
         intent.putExtra("Flag","true");
@@ -178,7 +187,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("quyu",list.get(i).name);
         intent.putExtra("cartmodel",list.get(i).brandName+list.get(i).seriseName+list.get(i).modelName);
         intent.putExtra("licheng",list.get(i).mileage);
-        Log.e("TAG","家啊风格==="+list.get(i).price);
         intent.putExtra("price",list.get(i).price);
 
         intent.putExtra("quyuID",list.get(i).quyuID);
@@ -194,10 +202,12 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("ID",list.get(i).ListID);
         getActivity().sendBroadcast(intent);
     }
+    //网络请求，获取数据源,
     private void getBuCartList(int current_page){
         RequestParams requestParams=new RequestParams(getInterface.getList);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
+        requestParams.addBodyParameter("merchantid",quyu_ID);
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
@@ -212,6 +222,9 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
                 if (list!=null) {
                     adapter = new MyLvAdapter3(list, getActivity());
                     lv.setAdapter(adapter);
+                }
+                if (list.size()==0){
+                    Toast.makeText(getContext(),"没有符合该车商的车辆信息",Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -239,14 +252,52 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         super.onHiddenChanged(hidden);
         if(!hidden){
             getBuCartList(i);
+            Log.e("TAG","显示11");
+
+        }else{
+            Log.e("TAG","显示22");
+            tv_quyu.setText("按车商信息搜索");
+            quyu_ID="";
+            btn_serach.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.tv_quyue:
+                Intent intentS = new Intent(getContext(), MySerchActvity.class);
+                intentS.putExtra("f3","f3");
+                startActivity(intentS);
+                break;
+            case R.id.btn_serach:
+                //开始搜索
+                Log.e("TAG","开始搜索="+quyu_ID);
+                getBuCartList(1);
+                break;
+        }
+
     }
 
     public class MyBroadcastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            getBuCartList(1);
+            if(intent.getAction().equals("delete")) {
+                getBuCartList(1);
+            }
+            if(intent.getAction().equals("f3")){
+                String name=intent.getStringExtra("name");
+                tv_quyu.setText(name);
+                quyu_ID=intent.getStringExtra("ID");
+                Log.e("TAG","quyu_ID=="+quyu_ID);
+                if(!TextUtils.isEmpty(quyu_ID)){
+                    btn_serach.setVisibility(View.VISIBLE);
+                }else{
+                    btn_serach.setVisibility(View.GONE);
+                }
+            }
         }
     }
+
 }

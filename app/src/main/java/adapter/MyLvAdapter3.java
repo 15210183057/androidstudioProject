@@ -131,6 +131,7 @@ public class MyLvAdapter3 extends BaseAdapter{
                 intent.setAction("delete");
                 ctx.sendBroadcast(intent);
                 mydialog.dismiss();
+//                notifyDataSetChanged();
             }
 
             @Override

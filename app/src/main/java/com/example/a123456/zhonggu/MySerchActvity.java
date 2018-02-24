@@ -33,12 +33,14 @@ private List<CartMsgBean>cartList=new ArrayList<CartMsgBean>();
 private ListView listView;
 private ArrayAdapter adapter,findAdapter;
 Mydialog mydialog;
+String str;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_serch_actvity);
         mydialog=new Mydialog(this,"正在获取车商信息请稍后");
         mydialog.show();
+        str=getIntent().getStringExtra("f3");
         initView();
     }
 
@@ -107,7 +109,11 @@ Mydialog mydialog;
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.e("TAG","i=="+list.get(i).toString());
                 Intent intent=new Intent();
-                intent.setAction("quyu");
+                if(!TextUtils.isEmpty(str)&&str.equals("f3")){
+                    intent.setAction("f3");
+                }else {
+                    intent.setAction("quyu");
+                }
                 intent.putExtra("name",list.get(i).toString());
                 intent.putExtra("ID",cartList.get(i).cartMsgId.toString());
                 sendBroadcast(intent);

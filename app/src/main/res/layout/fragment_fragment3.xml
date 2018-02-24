@@ -8,7 +8,28 @@
 
     <include
         layout="@layout/top_titlebar"/>
-
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/tv_quyue"
+        android:text="按车商信息搜索"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/juxingnull"
+       />
+    <Button
+        android:id="@+id/btn_serach"
+        android:layout_width="100dp"
+        android:layout_gravity="right"
+        android:layout_height="30dp"
+        android:textColor="#fff"
+        android:background="@drawable/denglu_bg"
+        android:visibility="gone"
+        android:layout_marginRight="10dp"
+        android:text="点击搜索"/>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
