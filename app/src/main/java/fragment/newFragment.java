@@ -909,7 +909,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
             Manifest.permission.READ_CONTACTS,// 写入权限
             Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
             Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     /**
      * 设置Android6.0的权限申请
