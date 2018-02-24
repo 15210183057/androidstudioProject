@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        //停留1秒自动跳转哈哈哈
+        //停留1秒自动跳转哈哈哈，第一次合并分支
         Thread myThread=new Thread(new Runnable() {
             @Override
             public void run() {
