@@ -202,6 +202,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("ID",list.get(i).ListID);
 
         intent.putExtra("tel",list.get(i).tel);
+        intent.putExtra("contact_name",list.get(i).contact_name);
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,
@@ -209,7 +210,9 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         RequestParams requestParams=new RequestParams(getInterface.getList);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
-        requestParams.addBodyParameter("merchantid",quyu_ID);
+        if(!TextUtils.isEmpty(quyu_ID)) {
+            requestParams.addBodyParameter("merchantid", quyu_ID);
+        }
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override

@@ -1,7 +1,6 @@
 package com.example.a123456.zhonggu;
 import base.BaseActivity;
 import bean.CartMsgBean;
-import bean.UserBean;
 import jiekou.getInterface;
 
 import android.content.BroadcastReceiver;
@@ -9,12 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.media.session.MediaButtonReceiver;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -34,11 +30,14 @@ import utils.addCartAlert;
 
 public class MySerchActvity extends BaseActivity {
 private SearchView search;
+    private List<CartMsgBean>cartList=new ArrayList<CartMsgBean>();
 private List<String>list=new ArrayList<String>();
     private List<String>listID=new ArrayList<String>();
+    private List<String>listName=new ArrayList<String>();
+    private List<String>listTel=new ArrayList<String>();
 private List<String>findList=new ArrayList<String>();
 private List<String>findListID=new ArrayList<String>();
-private List<CartMsgBean>cartList=new ArrayList<CartMsgBean>();
+private List<String>findListNameTel=new ArrayList<String>();
 private ListView listView;
 private ArrayAdapter adapter,findAdapter;
 Mydialog mydialog;
@@ -85,6 +84,7 @@ private String getIntentStr;
                         if(list.get(i).equals(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
+                            findListNameTel.add(listName.get(i)+"&"+listTel.get(i));
                             break;
                         }
                     }
@@ -120,6 +120,7 @@ private String getIntentStr;
                         if(list.get(i).contains(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
+                            findListNameTel.add(listName.get(i)+"&"+listTel.get(i));
                             Log.e("TAG","onQueryTextChangelist.get(i)=="+list.get(i));
                         }
                     }
@@ -149,9 +150,13 @@ private String getIntentStr;
                     Log.e("TAG","findListID.get(i).toString()=="+findListID.get(i).toString());
                     intent.putExtra("name", findList.get(i).toString());
                     intent.putExtra("ID", findListID.get(i).toString());
+                    if(!TextUtils.isEmpty(findListNameTel.get(i))) {
+                        intent.putExtra("tel", findListNameTel.get(i));
+                    }
                 }else{
                     intent.putExtra("name", list.get(i).toString());
                     intent.putExtra("ID", listID.get(i).toString());
+                    intent.putExtra("tel",listName.get(i).toString()+"&"+listTel.get(i).toString());
                 }
                 sendBroadcast(intent);
                 finish();
@@ -177,6 +182,8 @@ private String getIntentStr;
                 for(int i=0;i<cartList.size();i++){
                     list.add(cartList.get(i).cartmsgname);
                     listID.add(cartList.get(i).cartMsgId);
+                    listName.add(cartList.get(i).contact_name);
+                    listTel.add(cartList.get(i).tel);
                 }
                 if(list.size()>0) {
                     adapter = new ArrayAdapter(MySerchActvity.this, R.layout.item, R.id.tvitem_xiala, list);

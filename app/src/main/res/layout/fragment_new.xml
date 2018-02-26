@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     tools:context="fragment.newFragment"
     android:orientation="vertical">
+    <include
+        layout="@layout/top_titlebar"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,8 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <include
-                    layout="@layout/top_titlebar"/>
+
                 <LinearLayout
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -130,6 +131,7 @@
                         android:gravity="center_vertical"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:visibility="gone"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -138,7 +140,6 @@
                     android:layout_marginRight="10dp">
                     <EditText
                         android:hint="请输入联系电话"
-                        android:id="@+id/tv_tel"
                         android:layout_width="0dp"
                         android:layout_weight="5"
                         android:textSize="14sp"
@@ -153,6 +154,53 @@
                         android:textSize="16sp"
                         android:layout_marginLeft="10dp"
                         android:gravity="center_vertical"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linear_nameandtel"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/edt_name"
+                        android:layout_toLeftOf="@id/img_paizhao"
+                        android:layout_width="0dp"
+                        android:layout_weight="3"
+                        android:hint="请输入姓名"
+                        android:textSize="14sp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/juxingnull"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" 姓名 "
+                        android:textSize="14sp"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        />
+                    <EditText
+                        android:id="@+id/tv_tel"
+                        android:hint="请输入联系电话"
+                        android:layout_toLeftOf="@id/img_paizhao"
+                        android:layout_width="0dp"
+                        android:layout_weight="3"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/juxingnull"
+                        android:text=""
+                        android:textSize="14sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" 联系电话 "
+                        android:textSize="14sp"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center_horizontal"
+                        />
+
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/linear3_newfragment"
@@ -205,7 +253,7 @@
                             android:layout_toLeftOf="@id/img_paizhao"
                             android:layout_width="0dp"
                             android:layout_weight="3"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:layout_height="match_parent"
                             android:background="@drawable/juxingnull"
                             />
@@ -225,7 +273,7 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/juxingnull"
                             android:text=""
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             />
                         <TextView
                             android:layout_width="wrap_content"

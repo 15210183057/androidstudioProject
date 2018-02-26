@@ -351,6 +351,8 @@ public class GetJsonUtils {
                     JSONObject jsonObject2=jsonArray.getJSONObject(i);
                     cartMsgBean.cartmsgname=jsonObject2.getString("name");
                     cartMsgBean.cartMsgId=jsonObject2.getString("id");
+                    cartMsgBean.contact_name=jsonObject2.getString("contact_name");
+                    cartMsgBean.tel=jsonObject2.getString("tel");
                     list.add(cartMsgBean);
                 }
             }
@@ -466,9 +468,9 @@ public class GetJsonUtils {
                 String merchant=jsonObject.getString("merchant");
                 JSONObject jsonObject2=new JSONObject(merchant);
                 buCartListBean.quyuID=jsonObject2.getString("merchantid");
-                buCartListBean.name=jsonObject2.getString("name");
-                buCartListBean.tel=jsonObject2.getString("tel");
-
+                buCartListBean.name=jsonObject2.getString("name");//获取用户名
+                buCartListBean.tel=jsonObject2.getString("tel");//获取电话
+                buCartListBean.contact_name=jsonObject2.getString("contact_name");//获取姓名
                 String pic=jsonObject.getString("pic");
                 JSONObject jsonObject3=new JSONObject(pic);
                 buCartListBean.img1=jsonObject3.getString("zhengqian45");
