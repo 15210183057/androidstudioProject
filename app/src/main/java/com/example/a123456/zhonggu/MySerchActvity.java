@@ -69,7 +69,7 @@ private String getIntentStr;
         listView=findViewById(R.id.lv);
 
         search.setIconifiedByDefault(false);
-
+        search.setSubmitButtonEnabled(true);
 //        search.setSubmitButtonEnabled();
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -124,10 +124,10 @@ private String getIntentStr;
                         }
                     }
                     Log.e("TAG","TextUtils.isEmpty(str)"+TextUtils.isEmpty(str));
-                    if(findList.size()==0&&TextUtils.isEmpty(str)){
-                        addCartAlert addCartAlert=new addCartAlert(MySerchActvity.this);
-                        addCartAlert.show();
-                    }
+//                    if(findList.size()==0&&TextUtils.isEmpty(str)){
+//                        addCartAlert addCartAlert=new addCartAlert(MySerchActvity.this);
+//                        addCartAlert.show();
+//                    }
                     adapter=new ArrayAdapter(MySerchActvity.this,R.layout.item,R.id.tvitem_xiala,findList);
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
