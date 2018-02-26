@@ -32,4 +32,6 @@ public class getInterface {
     public static String getList="http://mkerp.zgcw.cn/api/api_car/getmylist";
     //获取价格
     public static String getPrice="http://open.zgcw.cn/api/vehicle/getVinByStr";
+    //上传商户信息http://mkerp.zgcw.cn/api/api_distributor/AddMerchant?groupid=2&name=%E7%8E%8B%E6%8C%AF%E6%9D%B0
+    public static String UpdateCartName="http://mkerp.zgcw.cn/api/api_distributor/AddMerchant";
 }

@@ -229,6 +229,8 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 MyNewUpdate.img3=intent.getStringExtra("img3");
                 MyNewUpdate.ItemID=intent.getStringExtra("ID");
                 MyNewUpdate.cartmodel=intent.getStringExtra("modelName");
+
+                MyNewUpdate.tel=intent.getStringExtra("tel");
                 //通知Fragment vin不可编辑
                 Intent intent1=new Intent();
                 intent1.setAction("update");

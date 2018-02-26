@@ -4,13 +4,19 @@ import bean.CartMsgBean;
 import bean.UserBean;
 import jiekou.getInterface;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -24,23 +30,35 @@ import java.util.ArrayList;
 import java.util.List;
 import View.GetJsonUtils;
 import utils.Mydialog;
+import utils.addCartAlert;
 
 public class MySerchActvity extends BaseActivity {
 private SearchView search;
 private List<String>list=new ArrayList<String>();
+    private List<String>listID=new ArrayList<String>();
 private List<String>findList=new ArrayList<String>();
+private List<String>findListID=new ArrayList<String>();
 private List<CartMsgBean>cartList=new ArrayList<CartMsgBean>();
 private ListView listView;
 private ArrayAdapter adapter,findAdapter;
 Mydialog mydialog;
-String str;
+String str="";
+private String getIntentStr;
+    MyBroadcastReceiver myBroad;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_serch_actvity);
+        registMy();
         mydialog=new Mydialog(this,"正在获取车商信息请稍后");
         mydialog.show();
         str=getIntent().getStringExtra("f3");
+        if(getWindow().getAttributes().softInputMode== WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED){
+            Log.e("TAG","打开");
+        }else{
+            Log.e("TAG","失败");
+        }
         initView();
     }
 
@@ -66,12 +84,19 @@ String str;
                     for(int i=0;i<list.size();i++){
                         if(list.get(i).equals(s)){
                             findList.add(list.get(i));
+                            findListID.add(listID.get(i));
                             break;
                         }
                     }
                     if(findList.size()==0){
                         Log.e("TAG","查找的商品不在列表中");
-                        Toast.makeText(MySerchActvity.this, "查找的商品不在列表中", Toast.LENGTH_SHORT).show();
+                        if(TextUtils.isEmpty(str)){
+                            addCartAlert addCartAlert=new addCartAlert(MySerchActvity.this);
+                            addCartAlert.show();
+                        }else{
+                            Toast.makeText(MySerchActvity.this, "查找的商品不在列表中", Toast.LENGTH_SHORT).show();
+                        }
+
                     }else{
                         Log.e("TAG","查找成功");
                         Toast.makeText(MySerchActvity.this, "查找成功", Toast.LENGTH_SHORT).show();
@@ -94,8 +119,14 @@ String str;
                     for(int i=0;i<list.size();i++){
                         if(list.get(i).contains(s)){
                             findList.add(list.get(i));
+                            findListID.add(listID.get(i));
                             Log.e("TAG","onQueryTextChangelist.get(i)=="+list.get(i));
                         }
+                    }
+                    Log.e("TAG","TextUtils.isEmpty(str)"+TextUtils.isEmpty(str));
+                    if(findList.size()==0&&TextUtils.isEmpty(str)){
+                        addCartAlert addCartAlert=new addCartAlert(MySerchActvity.this);
+                        addCartAlert.show();
                     }
                     adapter=new ArrayAdapter(MySerchActvity.this,R.layout.item,R.id.tvitem_xiala,findList);
                     adapter.notifyDataSetChanged();
@@ -114,8 +145,14 @@ String str;
                 }else {
                     intent.setAction("quyu");
                 }
-                intent.putExtra("name",list.get(i).toString());
-                intent.putExtra("ID",cartList.get(i).cartMsgId.toString());
+                if(findList.size()!=0&&findListID.size()!=0) {
+                    Log.e("TAG","findListID.get(i).toString()=="+findListID.get(i).toString());
+                    intent.putExtra("name", findList.get(i).toString());
+                    intent.putExtra("ID", findListID.get(i).toString());
+                }else{
+                    intent.putExtra("name", list.get(i).toString());
+                    intent.putExtra("ID", listID.get(i).toString());
+                }
                 sendBroadcast(intent);
                 finish();
             }
@@ -139,6 +176,7 @@ String str;
                 list.clear();
                 for(int i=0;i<cartList.size();i++){
                     list.add(cartList.get(i).cartmsgname);
+                    listID.add(cartList.get(i).cartMsgId);
                 }
                 if(list.size()>0) {
                     adapter = new ArrayAdapter(MySerchActvity.this, R.layout.item, R.id.tvitem_xiala, list);
@@ -161,5 +199,45 @@ String str;
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.e("TAG","按下了back键   onBackPressed()");
+        finish();
+    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        Log.e("TAG","物理监听");
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                finish();
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+    //注册广播
+    private void registMy(){
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("mysearch");
+        myBroad=new MyBroadcastReceiver();
+        this.registerReceiver(myBroad,intentFilter);
+    }
+    public class MyBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("TAG","接受广播--"+intent.getAction().equals("mysearch"));
+
+            if(intent.getAction().equals("mysearch")){
+                MySerchActvity.this.finish();
+            }
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroad);
     }
 }

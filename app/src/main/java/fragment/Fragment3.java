@@ -200,6 +200,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("img2",list.get(i).img2);
         intent.putExtra("img3",list.get(i).img3);
         intent.putExtra("ID",list.get(i).ListID);
+
+        intent.putExtra("tel",list.get(i).tel);
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,

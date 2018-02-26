@@ -90,7 +90,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
     private TextView tv_time;//注册日期
-    private EditText edt_licheng,edt_price;//里程，价格
+    private EditText edt_licheng,edt_price,tv_tel;//里程，价格,联系电话
     private ImageView img_newfragment,img2_newfragment,img3_newfragment;
     private Button btn_commit;
     private LinearLayout linear3_newfragment;
@@ -128,6 +128,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         if(hidden){
             edt_licheng.setText("");
             edit_num.setText("");
+            tv_tel.setText("");
             edt_price.setText("");
             tv_quyue.setText("请选择车商信息");
             tv_time.setText("请选择日期");
@@ -136,6 +137,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             edit_num.setFocusable(true);
             edit_num.requestFocus();
             BeanFlag.Flag=false;
+            zqfPath="";zqPath="";zhfPath="";
             img_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zq45d));
             img2_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zqf));
             img3_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(),R.drawable.zhf));
@@ -162,7 +164,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         linear3_newfragment=view.findViewById(R.id.linear3_newfragment);
         tv_cartmodel=view.findViewById(R.id.tv_cartmodel);
         tv_time=view.findViewById(R.id.tv_time);//日期
-
+        tv_tel=view.findViewById(R.id.tv_tel);//联系电话
         edt_price=view.findViewById(R.id.edt_price);//价格
         edt_licheng=view.findViewById(R.id.edt_licheng);//里程
         tv_quyue=view.findViewById(R.id.tv_quyue);
@@ -185,6 +187,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         edit_num.addTextChangedListener(new MyEditTextChangeListener(edit_num));
         edt_licheng.addTextChangedListener(new MyEditTextChangeListener(edt_licheng));
         edt_price.addTextChangedListener(new MyEditTextChangeListener(edt_price));
+        tv_tel.addTextChangedListener(new MyEditTextChangeListener(tv_tel));
 
         img_newfragment.setOnClickListener(this);
         img2_newfragment.setOnClickListener(this);
@@ -223,6 +226,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.tv_quyue:
                 Intent intentS = new Intent(getContext(), MySerchActvity.class);
+//                intentS.putExtra("myserch","update");
                 startActivity(intentS);
                 break;
             case R.id.img_paizhao:
@@ -259,6 +263,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }else if (!IsNullEdit(edit_num)||edit_num.getText().toString().length()!=17){
                     edit_num.setBackgroundResource(R.drawable.rednull);
                     Toast.makeText(getContext(),"VIN码不能为空并且只能为17位",Toast.LENGTH_LONG).show();
+                } else if (TextUtils.isEmpty(tv_time.getText().toString())||tv_time.getText().toString().trim().equals("请选择日期")) {
+                    tv_time.setBackgroundResource(R.drawable.rednull);
+                    Toast.makeText(getContext(),"注册日期不能为空",Toast.LENGTH_LONG).show();
+                }else if(!IsNullEdit(tv_tel)){
+                    tv_tel.setBackgroundResource(R.drawable.rednull);
+                    Toast.makeText(getContext(),"联系电话不能为空",Toast.LENGTH_LONG).show();
                 }
                 else if(TextUtils.isEmpty(tv_cartmodel.getText().toString())||tv_cartmodel.getText().toString().trim().equals("请选择品牌，车系和车型")){
                     tv_cartmodel.setBackgroundResource(R.drawable.rednull);
@@ -269,10 +279,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 else if(!IsNullEdit(edt_price)){
                     Toast.makeText(getContext(),"价格不能为空",Toast.LENGTH_LONG).show();
                 }
-                else if (TextUtils.isEmpty(tv_time.getText().toString())||tv_time.getText().toString().trim().equals("请选择日期")) {
-                    tv_time.setBackgroundResource(R.drawable.rednull);
-                    Toast.makeText(getContext(),"注册日期不能为空",Toast.LENGTH_LONG).show();
-                }
+
                 else{
                      if(BeanFlag.Flag){
                          mydialog=new Mydialog(getContext(),"正在修改，请稍等...");
@@ -414,6 +421,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         intentFilter.addAction("update");
         intentFilter.addAction("goon");
         intentFilter.addAction("modelname");
+        intentFilter.addAction("updataCart");//获取收到添加车商信息
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //显示日期
@@ -489,6 +497,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 img2_newfragment.setBackgroundResource(R.drawable.zqf);
                 img3_newfragment.setBackgroundResource(R.drawable.zhf);
                 MyNewUpdate myNewUpdate=new MyNewUpdate();
+                tv_tel.setText(MyNewUpdate.tel);
                 edit_num.setText(MyNewUpdate.vinnum);
                 edit_num.setFocusableInTouchMode(false);
                 edit_num.setFocusable(false);
@@ -499,6 +508,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 edt_licheng.setText(MyNewUpdate.licheng);
                 edt_price.setText(MyNewUpdate.price);
                 ZQFBean.zqpath=MyNewUpdate.img1;
+                Log.e("TAG","修改接受到的图片地址=="+ZQFBean.zqpath);
                 ZQBean.zqpath=MyNewUpdate.img2;
                 ZHFBean.zhfpath=MyNewUpdate.img3;
                 if(!TextUtils.isEmpty(MyNewUpdate.img1)) {
@@ -599,6 +609,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 tv_cartmodel.setText(cartName);
                 modelid=intent.getStringExtra("modelID");
                 Log.e("TAG","接收广播---"+intent.getStringExtra("modelname")+"==ID=="+intent.getStringExtra("modelID"));
+            }else if(intent.getAction().equals("updataCart")){
+                quyuID=intent.getStringExtra("quyuID");
+                tv_quyue.setText(intent.getStringExtra("quyuName"));
             }
         }
     }
@@ -730,7 +743,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("zhengqian45",ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian",ZQBean.zqpath);
         requestParams.addBodyParameter("zhenghou",ZHFBean.zhfpath);
-        Log.e("TAG","modelid=="+modelid);
+        requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
         requestParams.setMaxRetryCount(2);
@@ -788,6 +801,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         // mileage,target_price,userid,brandid,seriesid,zhengqian45,zhengqian,zhenghou
         requestParams.addBodyParameter("id",MyNewUpdate.ItemID);
 //        requestParams.addBodyParameter("vin",edit_num.getText().toString().trim());//vin码不可修改
+        Log.e("TAG","quyuID=="+quyuID);
         requestParams.addBodyParameter("merchant_code",quyuID);
         requestParams.addBodyParameter("groupid",UserBean.groupids);
         requestParams.addBodyParameter("userid",UserBean.id);
@@ -796,15 +810,17 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("regDate",tv_time.getText().toString().trim());
         requestParams.addBodyParameter("mileage",edt_licheng.getText().toString().trim());
         requestParams.addBodyParameter("target_price",edt_price.getText().toString().trim());
-        Log.e("TAG","路径---"+ZQFBean.zqpath);
+        Log.e("TAG","修改接受到的图片地址上传=="+ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian45",ZQFBean.zqpath);
         requestParams.addBodyParameter("zhengqian",ZQBean.zqpath);
         requestParams.addBodyParameter("zhenghou",ZHFBean.zhfpath);
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
+        requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
-        Log.e("TAG","上传参数=="+requestParams.getBodyParams());
+        Log.e("TAG","修改地址=="+requestParams);
+        Log.e("TAG","修改上传参数=="+requestParams.getBodyParams());
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {

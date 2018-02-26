@@ -467,6 +467,7 @@ public class GetJsonUtils {
                 JSONObject jsonObject2=new JSONObject(merchant);
                 buCartListBean.quyuID=jsonObject2.getString("merchantid");
                 buCartListBean.name=jsonObject2.getString("name");
+                buCartListBean.tel=jsonObject2.getString("tel");
 
                 String pic=jsonObject.getString("pic");
                 JSONObject jsonObject3=new JSONObject(pic);

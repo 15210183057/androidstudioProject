@@ -122,6 +122,7 @@ public class MyLvAdapter3 extends BaseAdapter{
         RequestParams params=new RequestParams(getInterface.UpCartData);
         params.addBodyParameter("id",list.get(i).ListID);
         params.addBodyParameter("status","0");
+        Log.e("TAG","下架url=="+params);
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -158,9 +159,11 @@ public class MyLvAdapter3 extends BaseAdapter{
         @Override
         public void onReceive(Context context, Intent intent) {
            String i = intent.getStringExtra("i");
-            Log.e("TAG","count==="+i);
+           if(intent.getAction().equals("deleteitem")){
+               Delete(Integer.parseInt(i));
+           }
+            Log.e("TAG","接受广播==="+i);
 
-            Delete(Integer.parseInt(i));
         }
     }
 }

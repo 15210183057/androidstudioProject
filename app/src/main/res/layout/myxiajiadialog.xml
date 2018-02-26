@@ -8,6 +8,7 @@
         android:orientation="vertical"
         >
         <TextView
+            android:id="@+id/tv_alert_title"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@drawable/readjuxing"
@@ -16,6 +17,7 @@
             android:gravity="center"
             android:textSize="16sp"/>
         <TextView
+            android:id="@+id/tv_alert_msg"
             android:text="确认是否要下架"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
