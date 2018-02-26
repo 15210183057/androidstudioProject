@@ -207,14 +207,6 @@ private String getIntentStr;
         Log.e("TAG","按下了back键   onBackPressed()");
         finish();
     }
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        Log.e("TAG","物理监听");
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                finish();
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
     //注册广播
     private void registMy(){
         IntentFilter intentFilter=new IntentFilter();
@@ -223,7 +215,6 @@ private String getIntentStr;
         this.registerReceiver(myBroad,intentFilter);
     }
     public class MyBroadcastReceiver extends BroadcastReceiver{
-
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接受广播--"+intent.getAction().equals("mysearch"));

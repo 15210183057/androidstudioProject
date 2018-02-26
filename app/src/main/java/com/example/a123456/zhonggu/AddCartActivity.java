@@ -53,7 +53,6 @@ private TextView tv_topcenter;
         //上传服务器
         final Mydialog mydialog=new Mydialog(this,"正在上传商户信息，请稍等...");
         mydialog.show();
-        Log.e("TAG","上传服务器=="+cartMeg);
         RequestParams params=new RequestParams(getInterface.UpdateCartName);
         params.addBodyParameter("groupid", "2");
         params.addBodyParameter("name",cartMeg);
