@@ -10,6 +10,8 @@
     <android.support.v7.widget.SearchView
         android:id="@+id/search"
         android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:iconifiedByDefault="false"
         android:layout_width="match_parent"
         app:queryHint="请输入有搜索的内容"
@@ -21,6 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         >
         <ListView
             android:layout_marginTop="5dp"

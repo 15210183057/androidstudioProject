@@ -36,6 +36,7 @@
                         android:gravity="center_vertical"
                         android:background="@drawable/juxingnull"/>
                     <RelativeLayout
+                        android:visibility="gone"
                         android:id="@+id/relative1_newFragment"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -59,6 +60,7 @@
 
                     </RelativeLayout>
                     <RelativeLayout
+                        android:visibility="gone"
                         android:id="@+id/relative2_newFragment"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -132,36 +134,12 @@
                 </LinearLayout>
                 <LinearLayout
                     android:visibility="gone"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
-                    <EditText
-                        android:hint="请输入联系电话"
-                        android:layout_width="0dp"
-                        android:layout_weight="5"
-                        android:textSize="14sp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/juxingnull"
-                        android:gravity="center_vertical"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-
-                        android:text="联系电话"
-                        android:textSize="16sp"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="center_vertical"/>
-                </LinearLayout>
-                <LinearLayout
                     android:id="@+id/linear_nameandtel"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="5dp"
                     android:orientation="horizontal">
                     <EditText
                         android:id="@+id/edt_name"
@@ -178,6 +156,7 @@
                         android:layout_height="wrap_content"
                         android:text=" 姓名 "
                         android:textSize="14sp"
+                        android:layout_marginRight="3dp"
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         />
@@ -196,9 +175,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" 联系电话 "
-                        android:textSize="14sp"
-                        android:layout_marginLeft="10dp"
-                        android:gravity="center_horizontal"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="8dp"
                         />
 
                 </LinearLayout>
@@ -214,6 +192,7 @@
                         android:id="@+id/tv_cartmodel"
                         android:layout_width="0dp"
                         android:layout_weight="5"
+                        android:layout_marginRight="7dp"
                         android:layout_height="match_parent"
                         android:text="请选择品牌，车系和车型"
                         android:background="@drawable/juxingnull"
@@ -230,7 +209,30 @@
                         android:paddingRight="5dp"
                         android:gravity="center_vertical"/>
                 </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <TextView
+                        android:id="@+id/tv_cartFenlei"
+                        android:layout_width="0dp"
+                        android:layout_weight="5"
+                        android:layout_height="match_parent"
+                        android:text="  请选取车辆分类信息"
+                        android:background="@drawable/juxingnull"
+                        android:gravity="center_vertical"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
 
+                        android:text="分类信息"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center_vertical"/>
+                </LinearLayout>
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"

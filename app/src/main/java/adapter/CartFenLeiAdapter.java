@@ -11,18 +11,18 @@ import com.example.a123456.zhonggu.R;
 
 import java.util.List;
 
-import bean.BrandBean;
-import bean.ModelBean;
+import bean.CartFenleiBean;
+import bean.SeriseBean;
 
 /**
  * Created by 123456 on 2018/2/11.
  */
 
-public class MyCartModel3 extends BaseAdapter {
+public class CartFenLeiAdapter extends BaseAdapter {
     public Context context;
-    public List<ModelBean> list;
+    public List<CartFenleiBean> list;
     public SelectCallBack callBack;
-    public MyCartModel3(Context context, List<ModelBean> list) {
+    public CartFenLeiAdapter(Context context, List<CartFenleiBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -55,7 +55,7 @@ public class MyCartModel3 extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv.setText(list.get(i).model_name);
+        holder.tv.setText(list.get(i).fenleiName);
         Log.e("TAG","点击的是第+"+i);
         if(list.get(i).Flag){
             holder.tv.setBackgroundResource(R.color.titleBar);
@@ -63,14 +63,6 @@ public class MyCartModel3 extends BaseAdapter {
         }else{
             holder.tv.setBackgroundResource(R.drawable.juxingnull);
         }
-//        list.get(i).Flag=false;
-//        holder.tv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                callBack.callcolor(i);
-//                Log.e("TAG","点击事件中途");
-//            }
-//        });
         return view;
     }
 

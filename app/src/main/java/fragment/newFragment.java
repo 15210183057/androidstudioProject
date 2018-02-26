@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.a123456.zhonggu.CartFenLei;
 import com.example.a123456.zhonggu.CartModelActivity;
 import com.example.a123456.zhonggu.MySerchActvity;
 import com.example.a123456.zhonggu.R;
@@ -97,13 +98,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private ArrayAdapter arrayAdapter;
     private LinearLayout linear_celiang;
     private String serise_id,model_id;
-    private TextView tv_quyue;
+    private TextView tv_quyue,tv_cartFenlei;//tv_cartFenlei 车辆分类
     CommonPopupWindow window2;
     private TextView tv_cartmodel;
     List imgListPath=new ArrayList();
     Mydialog mydialog;
     String zqfPath,zqPath,zhfPath;
-    String quyuID,brandid,modelid,seriesid,cartName;//商家信息ID,品牌ID，车系ID,车型
+    String quyuID,brandid,modelid,seriesid,cartName,fenleiID;//商家信息ID,品牌ID，车系ID,车型,分类
     MySuccess mySuccess;
     private TextView tv_getprice,tv_getmodel;
     Mydialog mydialog1;
@@ -113,7 +114,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        Log.e("TAG","onCreate==");
         view=inflater.inflate(R.layout.fragment_new, container, false);
         initView();
         MyRegistReciver();
@@ -134,7 +134,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
             tv_quyue.setText("请选择车商信息");
             tv_time.setText("请选择日期");
             tv_cartmodel.setText("请选择品牌，车系和车型");
-            linear_nameandtel.setVisibility(View.VISIBLE);
+            tv_cartFenlei.setText("请选取车辆分类信息");
+            linear_nameandtel.setVisibility(View.GONE);
             edit_num.setFocusableInTouchMode(true);
             edit_num.setFocusable(true);
             edit_num.requestFocus();
@@ -172,6 +173,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         edt_price=view.findViewById(R.id.edt_price);//价格
         edt_licheng=view.findViewById(R.id.edt_licheng);//里程
         tv_quyue=view.findViewById(R.id.tv_quyue);
+        tv_cartFenlei=view.findViewById(R.id.tv_cartFenlei);
         //设置里程和价格的数据，小数点后为0的话不现实0
         getSubStr(edt_price);
         getSubStr(edt_licheng);
@@ -199,6 +201,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         img3_newfragment.setOnClickListener(this);
         tv_cartmodel.setOnClickListener(this);
         tv_quyue.setOnClickListener(this);
+        tv_cartFenlei.setOnClickListener(this);
 
         tv_getmodel=view.findViewById(R.id.tv_getmodel);
         tv_getmodel.setOnClickListener(this);
@@ -220,7 +223,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.tv_getprice:
                 //获取价格
-                Log.e("TAG", "TextUtils.isEmpty(tv_time.getText().toString()==" + TextUtils.isEmpty(tv_time.getText().toString()));
                 if (!TextUtils.isEmpty(edit_num.getText().toString())
                         && !TextUtils.isEmpty(tv_time.getText().toString())
                         && !tv_time.getText().toString().equals("请选择日期")) {
@@ -261,6 +263,10 @@ public class newFragment extends Fragment implements View.OnClickListener{
             case R.id.tv_time:
                 showDate(tv_time);
                 break;
+            case R.id.tv_cartFenlei:
+                Intent intent=new Intent(getActivity(), CartFenLei.class);
+                startActivity(intent);
+                break;
             case R.id.btn_commit:
                 if (TextUtils.isEmpty(tv_quyue.getText().toString())||tv_quyue.getText().toString().trim().equals("请选择车商信息")){
                     tv_quyue.setBackgroundResource(R.drawable.rednull);
@@ -282,6 +288,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 else if(TextUtils.isEmpty(tv_cartmodel.getText().toString())||tv_cartmodel.getText().toString().trim().equals("请选择品牌，车系和车型")){
                     tv_cartmodel.setBackgroundResource(R.drawable.rednull);
                     Toast.makeText(getContext(),"品牌，车系，车型不能为空",Toast.LENGTH_LONG).show();
+                }else if (TextUtils.isEmpty(tv_cartFenlei.getText().toString())||tv_cartFenlei.getText().toString().trim().equals("请选取车辆分类信息")) {
+                    tv_cartFenlei.setBackgroundResource(R.drawable.rednull);
+                    Toast.makeText(getContext(),"车辆分类信息不能为空",Toast.LENGTH_LONG).show();
                 }else if(!IsNullEdit(edt_licheng)){
                     Toast.makeText(getContext(),"里程不能为空",Toast.LENGTH_LONG).show();
                 }
@@ -379,7 +388,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
         pop_linear.measure(w, h);
         int pop_height = pop_linear.getMeasuredHeight();
         int pop_width = pop_linear.getMeasuredWidth();
-        Log.e("TAG","测量h="+pop_height);
         int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
         window.setWidth(width/3);
@@ -416,7 +424,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
         tv_xiangce.setOnClickListener(this);
         tv_paizhao.setOnClickListener(this);
         tv_canle.setOnClickListener(this);
-        Log.e("TAG","window=="+window.getWidth()+"height=="+window.getHeight());
     }
 
     MyBroadcastReceiver myBroadcastReceiver;
@@ -431,6 +438,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         intentFilter.addAction("goon");
         intentFilter.addAction("modelname");
         intentFilter.addAction("updataCart");//获取收到添加车商信息
+        intentFilter.addAction("cartfenlei");//
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //显示日期
@@ -469,7 +477,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
     //判断小数点后面是否都为"0",截取字符串
     private void getSubStr(EditText editText){
         String editStr=editText.getText().toString();
-        Log.e("TAG","editStr==="+editStr);
         if(editStr.contains(".")) {
 //            if(editStr.length()>5){
 //                Log.e("TAG","一共长的=="+editStr.length());
@@ -499,6 +506,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
             if(intent.getAction().equals("update")){
+                linear_nameandtel.setVisibility(View.VISIBLE);
                 tv_quyue.setBackgroundResource(R.drawable.juxingnull);
                 tv_cartmodel.setBackgroundResource(R.drawable.juxingnull);
                 tv_time.setBackgroundResource(R.drawable.juxingnull);
@@ -512,7 +520,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 edit_num.setFocusableInTouchMode(false);
                 edit_num.setFocusable(false);
                 tv_quyue.setText(MyNewUpdate.quyu);
-                Log.e("TAG","品牌，车型=="+MyNewUpdate.cartmodel);
                 tv_cartmodel.setText(MyNewUpdate.cartmodel);
                 tv_time.setText(MyNewUpdate.time);
                 edt_licheng.setText(MyNewUpdate.licheng);
@@ -541,8 +548,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 String name=intent.getStringExtra("name");
                 quyuID=intent.getStringExtra("ID");
                 quyuTelName=intent.getStringExtra("tel");
-                Log.e("TAG","车商信息对应的用户名和电话=="+quyuTelName+"="+(TextUtils.isEmpty(quyuTelName)));
-                Log.e("TAG","车商信息对应的用户名和电话=="+quyuTelName+"="+(quyuTelName.equals("")));
                 if(TextUtils.isEmpty(quyuTelName)||quyuTelName.equals("null&null")){
                     linear_nameandtel.setVisibility(View.VISIBLE);
                 }else{
@@ -597,7 +602,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             cartName=intent.getStringExtra("CartName");
                             list.add(cartName);
                             modelid=intent.getStringExtra("model_id");
-                            Log.e("TAG","model=="+cartName);
                             tv_cartmodel.setText(cartName);
                         }
                     }
@@ -629,11 +633,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 linear3_newfragment.setVisibility(View.VISIBLE);
                 tv_cartmodel.setText(cartName);
                 modelid=intent.getStringExtra("modelID");
-                Log.e("TAG","接收广播---"+intent.getStringExtra("modelname")+"==ID=="+intent.getStringExtra("modelID"));
             }else if(intent.getAction().equals("updataCart")){
                 quyuID=intent.getStringExtra("quyuID");
                 tv_quyue.setText(intent.getStringExtra("quyuName"));
                 linear_nameandtel.setVisibility(View.VISIBLE);
+            }else if(intent.getAction().equals("cartfenlei")){
+                tv_cartFenlei.setText(intent.getStringExtra("fenleiname"));
+                fenleiID=intent.getStringExtra("fenleiID");
             }
         }
     }
@@ -771,6 +777,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
         //上传电话和名字
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
+        //车辆分类
+//        requestParams.addBodyParameter("",fenleiID);
         requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
@@ -844,6 +852,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
         //上传电话和名字
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
+        //车辆分类
+//        requestParams.addBodyParameter("",fenleiID);
         requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
         Log.e("TAG","修改地址=="+requestParams);
@@ -897,7 +907,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
         mydialog1.show();
         final RequestParams requestParams=new RequestParams(getInterface.getPrice);
         requestParams.addBodyParameter("vin",edit_num.getText().toString());
-        Log.e("TAG","string.equals(\"model\")&&!tv_time.equals(\"请选择日期\")=="+(!tv_time.equals("请选择日期")));
         if(string.equals("model")&&!tv_time.equals("请选择日期")){
             requestParams.addBodyParameter("regdate",tv_time.getText().toString());
         }
@@ -926,7 +935,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
             public void onError(Throwable ex, boolean isOnCallback) {
                 if(!TextUtils.isEmpty(ex.getMessage().toString())){
                     mydialog.dismiss();
-                    Log.e("TAG","ex.getMessage().toString()="+ex.getMessage().toString());
                     Toast.makeText(getContext(),"获取失败",Toast.LENGTH_LONG).show();
                 }
             }

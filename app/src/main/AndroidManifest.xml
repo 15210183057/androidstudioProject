@@ -64,7 +64,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".AddCartActivity"></activity>
+        <activity android:name=".AddCartActivity" />
+        <activity android:name=".CartFenLei"></activity>
     </application>
 
 </manifest>
