@@ -514,8 +514,29 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 img2_newfragment.setBackgroundResource(R.drawable.zqf);
                 img3_newfragment.setBackgroundResource(R.drawable.zhf);
                 MyNewUpdate myNewUpdate=new MyNewUpdate();
+
+               //TODO
+
+                fenleiID=MyNewUpdate.isDaTing;
+//                1=大厅车辆 ，2=市场车辆，3=商户自用车，4=新车登记商户卡车辆，5=职工车辆
+                if(fenleiID.equals("1")){
+                    tv_cartFenlei.setText("大厅车辆");
+                }else if(fenleiID.equals("2")){
+                    tv_cartFenlei.setText("大厅车辆");
+                }
+                else if(fenleiID.equals("3")){
+                    tv_cartFenlei.setText("商户自用车");
+                }
+                else if(fenleiID.equals("4")){
+                    tv_cartFenlei.setText("新车登记商户卡车辆");
+                }
+                else if(fenleiID.equals("5")){
+                    tv_cartFenlei.setText("职工车辆");
+                }
+
                 tv_tel.setText(MyNewUpdate.tel);
                 edt_name.setText(MyNewUpdate.contact_name);
+
                 edit_num.setText(MyNewUpdate.vinnum);
                 edit_num.setFocusableInTouchMode(false);
                 edit_num.setFocusable(false);
@@ -547,14 +568,25 @@ public class newFragment extends Fragment implements View.OnClickListener{
             else if(intent.getAction().equals("quyu")){
                 String name=intent.getStringExtra("name");
                 quyuID=intent.getStringExtra("ID");
+                Log.e("TAG","接受区域广播=="+intent.getStringExtra("tel"));
                 quyuTelName=intent.getStringExtra("tel");
+
                 if(TextUtils.isEmpty(quyuTelName)||quyuTelName.equals("null&null")){
                     linear_nameandtel.setVisibility(View.VISIBLE);
+                    tv_tel.setText("");
+                    edt_name.setText("");
                 }else{
-                    linear_nameandtel.setVisibility(View.GONE);
                     String []arr=quyuTelName.split("&");
-                    tv_tel.setText(arr[1]);
-                    edt_name.setText(arr[0]);
+                    tv_tel.setText(arr[0]);
+                    edt_name.setText(arr[1]);
+                    Log.e("TAG","判断=="+(TextUtils.isEmpty(tv_tel.getText().toString())||TextUtils.isEmpty(edt_name.getText().toString())));
+                    Log.e("TAG","判断1"+(tv_tel.getText().toString()==null)+"="+(tv_tel.getText().toString().equals("null"))+"==="+tv_tel.getText().toString()+"="+(!TextUtils.isEmpty(tv_tel.getText().toString())));
+                    Log.e("TAG","判断2=+"+edt_name.getText().toString()+"+="+!TextUtils.isEmpty(edt_name.getText().toString()));
+                    if(edt_name.getText().toString().equals("null")||tv_tel.getText().toString().equals("null")||TextUtils.isEmpty(tv_tel.getText().toString())||TextUtils.isEmpty(edt_name.getText().toString())){
+                        linear_nameandtel.setVisibility(View.VISIBLE);
+                    }else{
+                        linear_nameandtel.setVisibility(View.GONE);
+                    }
                 }
                 tv_quyue.setText(name);
                 tv_quyue.setBackgroundResource(R.drawable.juxingnull);
@@ -778,7 +810,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
-//        requestParams.addBodyParameter("",fenleiID);
+        requestParams.addBodyParameter("isDaTing",fenleiID);
         requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
@@ -853,7 +885,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
-//        requestParams.addBodyParameter("",fenleiID);
+        requestParams.addBodyParameter("isDaTing",fenleiID);
         requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
         Log.e("TAG","修改地址=="+requestParams);

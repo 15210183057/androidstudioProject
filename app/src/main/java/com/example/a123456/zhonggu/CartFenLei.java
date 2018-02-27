@@ -44,8 +44,6 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
     }
 
     private void initView() {
-        mydialog=new Mydialog(this,"正在获取车辆分类信息，请稍等....");
-        mydialog.show();
         lv=findViewById(R.id.lv1);
         btn_okmodel=findViewById(R.id.btn_okmodel);
         relative3_newFragment=findViewById(R.id.relative3_newFragment);
@@ -57,47 +55,29 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
         getData();
     }
     private void getData(){
+//        1=大厅车辆 ，2=市场车辆，3=商户自用车，4=新车登记商户卡车辆，5=职工车辆
         CartFenleiBean cartFenleiBean=new CartFenleiBean();
-        cartFenleiBean.fenleiName="1";
+        cartFenleiBean.fenleiName="大厅车辆";
         cartFenleiBean.fenleiName_id="1";
         CartFenleiBean cartFenleiBean2=new CartFenleiBean();
-        cartFenleiBean2.fenleiName="2";
+        cartFenleiBean2.fenleiName="市场车辆";
         cartFenleiBean2.fenleiName_id="2";
         CartFenleiBean cartFenleiBean3=new CartFenleiBean();
-        cartFenleiBean3.fenleiName="3";
+        cartFenleiBean3.fenleiName="商户自用车";
         cartFenleiBean3.fenleiName_id="3";
+        CartFenleiBean cartFenleiBean4=new CartFenleiBean();
+        cartFenleiBean4.fenleiName="新车登记商户卡车辆";
+        cartFenleiBean4.fenleiName_id="4";
+        CartFenleiBean cartFenleiBean5=new CartFenleiBean();
+        cartFenleiBean5.fenleiName="职工车辆";
+        cartFenleiBean5.fenleiName_id="5";
         list.add(cartFenleiBean);
         list.add(cartFenleiBean2);
         list.add(cartFenleiBean3);
+        list.add(cartFenleiBean4);
+        list.add(cartFenleiBean5);
         adapter=new CartFenLeiAdapter(this,list);
         lv.setAdapter(adapter);
-        RequestParams params=new RequestParams("");
-        x.http().post(params, new Callback.CommonCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                Log.e("TAG","获取车辆分类--"+result);
-                mydialog.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                if(!TextUtils.isEmpty(ex.getMessage().toString())){
-                    mydialog.dismiss();
-                    Toast.makeText(CartFenLei.this,"获取车辆分类信息失败",Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(CancelledException cex) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
-            }
-        });
     }
     @Override
     public void onClick(View view) {
@@ -105,7 +85,7 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
             //发送广播
             Intent intent= new Intent();
             intent.setAction("cartfenlei");
-            intent.putExtra("fenleiname","name");
+            intent.putExtra("fenleiname",tv3_newFragment.getText().toString());
             intent.putExtra("fenleiID",CartFenleiID);
             sendBroadcast(intent);
             finish();

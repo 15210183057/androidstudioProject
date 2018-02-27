@@ -232,6 +232,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
 
                 MyNewUpdate.tel=intent.getStringExtra("tel");
                 MyNewUpdate.contact_name=intent.getStringExtra("contact_name");
+                MyNewUpdate.isDaTing=intent.getStringExtra("isDaTing");
                 //通知Fragment vin不可编辑
                 Intent intent1=new Intent();
                 intent1.setAction("update");

@@ -5,5 +5,5 @@ package bean;
  */
 
 public class CartMsgBean {
-    public String cartmsgname,cartMsgId,contact_name,tel;
+    public String cartmsgname,cartMsgId,merchant_name,tel;
 }

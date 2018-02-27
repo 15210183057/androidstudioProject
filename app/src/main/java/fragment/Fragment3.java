@@ -203,6 +203,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
         intent.putExtra("tel",list.get(i).tel);
         intent.putExtra("contact_name",list.get(i).contact_name);
+        intent.putExtra("isDaTing",list.get(i).isDaTing);
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,

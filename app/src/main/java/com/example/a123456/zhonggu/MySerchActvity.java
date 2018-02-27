@@ -156,7 +156,20 @@ private String getIntentStr;
                 }else{
                     intent.putExtra("name", list.get(i).toString());
                     intent.putExtra("ID", listID.get(i).toString());
-                    intent.putExtra("tel",listName.get(i).toString()+"&"+listTel.get(i).toString());
+                    Log.e("TAG","判断"+listName.get(i)+"&"+listTel.get(i));
+                    Log.e("TAG","判断1=="+(!TextUtils.isEmpty(listTel.get(i))&&!TextUtils.isEmpty(listName.get(i))));
+                    Log.e("TAG","判断2=="+TextUtils.isEmpty(listName.get(i)));
+                    if(!TextUtils.isEmpty(listName.get(i))&&TextUtils.isEmpty(listTel.get(i))) {
+                        intent.putExtra("tel", listName.get(i).toString() + "&null" );
+                    }
+                    else if(!TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
+                        intent.putExtra("tel", listTel.get(i) + "&null" );
+                    }
+                     else if(!TextUtils.isEmpty(listTel.get(i))&&!TextUtils.isEmpty(listName.get(i))){
+                        intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
+                    }else if(TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
+                        intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
+                    }
                 }
                 sendBroadcast(intent);
                 finish();
@@ -177,13 +190,16 @@ private String getIntentStr;
                 Log.e("TAG","reulst=="+result);
                 mydialog.dismiss();
                 cartList= GetJsonUtils.getQuYu(MySerchActvity.this,result);
-                Log.e("TAG","list=="+list.size());
+                Log.e("TAG","cartList=="+cartList.size());
                 list.clear();
                 for(int i=0;i<cartList.size();i++){
                     list.add(cartList.get(i).cartmsgname);
                     listID.add(cartList.get(i).cartMsgId);
-                    listName.add(cartList.get(i).contact_name);
+                    listName.add(cartList.get(i).merchant_name);
+                    Log.e("TAG","这里添加=="+cartList.get(i).tel);
                     listTel.add(cartList.get(i).tel);
+                    Log.e("TAG","这里添加=="+listTel.get(i));
+
                 }
                 if(list.size()>0) {
                     adapter = new ArrayAdapter(MySerchActvity.this, R.layout.item, R.id.tvitem_xiala, list);

@@ -351,14 +351,22 @@ public class GetJsonUtils {
                     JSONObject jsonObject2=jsonArray.getJSONObject(i);
                     cartMsgBean.cartmsgname=jsonObject2.getString("name");
                     cartMsgBean.cartMsgId=jsonObject2.getString("id");
-                    cartMsgBean.contact_name=jsonObject2.getString("contact_name");
-                    cartMsgBean.tel=jsonObject2.getString("tel");
+                    JSONArray jsonArray1=jsonObject2.getJSONArray("people_info");
+                    Log.e("TAG","jsonarrayUQYU=="+jsonArray1.length());
+                    for(int k=0;k<jsonArray1.length();k++){
+                        JSONObject jsonObject3=jsonArray1.getJSONObject(k);
+                        Log.e("TAG","这里不走="+jsonObject3.toString().contains("name"));
+                            cartMsgBean.merchant_name = jsonObject3.getString("name");
+                            cartMsgBean.tel=jsonObject3.getString("tel");
+                            Log.e("TAG","cartMsgBeanName=="+cartMsgBean.merchant_name+"&"+cartMsgBean.tel);
+                    }
                     list.add(cartMsgBean);
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.e("TAG","quyu=="+list.size());
         return list;
     }
 
@@ -463,14 +471,14 @@ public class GetJsonUtils {
                 buCartListBean.cardType=jsonObject1.getString("brand_name");
                 buCartListBean.seriseID=jsonObject1.getString("seriesid");
                 buCartListBean.seriseName=jsonObject1.getString("series_name");
-                Log.e("TAG","mileage==="+buCartListBean.mileage);
+                buCartListBean.isDaTing=jsonObject1.getString("isDaTing");
+                Log.e("TAG","mileage==="+buCartListBean.isDaTing);
 
                 String merchant=jsonObject.getString("merchant");
                 JSONObject jsonObject2=new JSONObject(merchant);
                 buCartListBean.quyuID=jsonObject2.getString("merchantid");
                 buCartListBean.name=jsonObject2.getString("name");//获取用户名
-                buCartListBean.tel=jsonObject2.getString("tel");//获取电话
-                buCartListBean.contact_name=jsonObject2.getString("contact_name");//获取姓名
+//                buCartListBean.contact_name=jsonObject2.getString("contact_name");
                 String pic=jsonObject.getString("pic");
                 JSONObject jsonObject3=new JSONObject(pic);
                 buCartListBean.img1=jsonObject3.getString("zhengqian45");
@@ -479,6 +487,16 @@ public class GetJsonUtils {
                 Log.e("TAG","buCartListBean.img2=="+buCartListBean.img2);
                 buCartListBean.img3=jsonObject3.getString("zhenghou");
                 Log.e("TAG","buCartListBean.img3=="+buCartListBean.img3);
+
+//                String merchant_contacter=jsonObject.getString("merchant_contacter");
+//                JSONObject jsonObject4=new JSONObject(merchant_contacter);
+                JSONArray jsonArray1=jsonObject.getJSONArray("people_info");
+                Log.e("TAG","jsonArray1=="+jsonArray1.length());
+                for(int k=0;k<jsonArray1.length();k++){
+                    JSONObject jsonObject5=jsonArray1.getJSONObject(k);
+                    buCartListBean.tel=jsonObject5.getString("tel");
+                    buCartListBean.contact_name=jsonObject5.getString("name");//获取姓名
+                }
                 list.add(buCartListBean);
             }
         } catch (JSONException e) {

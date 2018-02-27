@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import utils.BitZip;
-
 @SuppressWarnings("deprecation")
 public class CameraInterface extends Service{
 	private static final String TAG = "CameraInterface";
@@ -38,7 +36,7 @@ public class CameraInterface extends Service{
 	public interface CamOpenOverCallback{
 		public void cameraHasOpened();
 	}
-
+	
 	public CameraInterface(){
 
 	}
@@ -69,12 +67,11 @@ public class CameraInterface extends Service{
 	 */
 	public void doOpenCamera(CamOpenOverCallback callback){
 		Log.i(TAG, "Camera open ...");
-		//TODO 取消休眠
-//		try {
-//			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		mCamera = Camera.open();
 		Log.i(TAG, "Camera open over..");
 		if(callback != null){
@@ -155,24 +152,61 @@ public class CameraInterface extends Service{
 			mCamera.takePicture(mShutterCallback, null, mRectJpegPictureCallback);
 		}
 	}
-
+	
 	public Point doGetPrictureSize(){
-		Size s= mCamera.getParameters().getPictureSize();
+		Size s = mCamera.getParameters().getPictureSize();
 		return new Point(s.width,s.height);
 	}
-	
+	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
+		final double ASPECT_TOLERANCE = 0.05;
+		double targetRatio = (double) w / h;
+		if (sizes == null)
+			return null;
+		Size optimalSize = null;
+		double minDiff = Double.MAX_VALUE;
+		int targetHeight = h;
+		// Try to find an size match aspect ratio and size
+		for (Size size : sizes) {
+			double ratio = (double) size.width / size.height;
+			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+				continue;
+			if (Math.abs(size.height - targetHeight) < minDiff) {
+				optimalSize = size;
+				minDiff = Math.abs(size.height - targetHeight);
+			}
+		}
+		// Cannot find the one match the aspect ratio, ignore the requirement
+		if (optimalSize == null) {
+			minDiff = Double.MAX_VALUE;
+			for (Size size : sizes) {
+				if (Math.abs(size.height - targetHeight) < minDiff) {
+					optimalSize = size;
+					minDiff = Math.abs(size.height - targetHeight);
+				}
+			}
+		}
+		return optimalSize;
+	}
 	private void initCamera(float previewRate) {
 		if(mCamera != null){
 			mParams = mCamera.getParameters();
 			mParams.setPictureFormat(PixelFormat.JPEG);//设置拍照后的存储的图片格式
 			
 			//设置PreviewSize 和 PictureSize
+//			List<Size> sizes = mParams.getSupportedPreviewSizes();
+//			Display display =(Activity)mContext.getWindowManager().getDefaultDisplay();
+//			Point p = new Point();
+//			display.getSize(p);
+//			Size optimalSize = getOptimalPreviewSize(sizes,p.x, p.y);
+//			mParams.setPreviewSize(optimalSize.width, optimalSize.height);
+
 			Size pictureSize = CamParaUtil.getInstance().getPropPictureSize(
 					mParams.getSupportedPictureSizes(), previewRate, 800);
 			mParams.setPictureSize(pictureSize.width, pictureSize.height);
-			
+
 			Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
 					mParams.getSupportedPreviewSizes(), previewRate, 800);
+
 			mParams.setPreviewSize(previewSize.width, previewSize.height);
 			
 			mCamera.setDisplayOrientation(90);
@@ -229,9 +263,6 @@ public class CameraInterface extends Service{
 				//设置FOCUS_MODE_CONTINUOUS_VIDEO 之后，myParam.set("rotation",90);失效
 				//图片不能旋转，在这里旋转
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
-				Log.e("TAG","b图pain高=="+b.getHeight());
-				//压缩图片
-				rotaBitmap=BitZip.compressImage(rotaBitmap);
 				new FileUtil(mContext).saveBitmap(rotaBitmap);
 			}
 			//再次进入预览
@@ -261,12 +292,10 @@ public class CameraInterface extends Service{
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
 				int x = rotaBitmap.getWidth()/2 - DST_RECT_WIDTH/2;
 				int y = rotaBitmap.getHeight()/2 - DST_RECT_HEIGHT/2;				
-				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth()+"x==y=="+x+"="+y);
+				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth());
 				Log.i(TAG, "rotaBitmap.getHeight() = " + rotaBitmap.getHeight());
 				Bitmap rectBitmap = Bitmap.createBitmap(rotaBitmap, x, y, DST_RECT_WIDTH, DST_RECT_HEIGHT);
-				Log.e("TAG","b图pain高=="+rectBitmap.getHeight());
-//				Bitmap bitmap=BitZip.compressImage(rectBitmap);
-				new FileUtil(mContext).saveBitmap(BitZip.compressImage(rectBitmap));
+				new FileUtil(mContext).saveBitmap(rectBitmap);
 				if(rotaBitmap.isRecycled()){
 					rotaBitmap.recycle();
 					rotaBitmap = null;

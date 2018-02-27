@@ -49,7 +49,7 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
         name=getIntent().getStringExtra("name");
         Log.e("TAG","getIntent().getStringExtra(\"height\")===name=="+getIntent().getStringExtra("height")+"==="+name);
 		DST_CENTER_RECT_HEIGHT=Integer.parseInt(getIntent().getStringExtra("height"));
-//        setPermissions();
+        setPermissions();
         initUI();
         initViewParams();
 //        Intent intent = new Intent(this,CameraActivity.class);
@@ -57,7 +57,23 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
         startCamera();
         RegisterReceiever();
     }
-
+	static final String[] PERMISSION = new String[]{
+			Manifest.permission.READ_CONTACTS,// 写入权限
+			Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
+			Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
+			Manifest.permission.CAMERA
+	};
+	/**
+	 * 设置Android6.0的权限申请
+	 */
+	private void setPermissions() {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+			//Android 6.0申请权限
+			ActivityCompat.requestPermissions(this,PERMISSION,1);
+		}else{
+			Log.i("TAG","权限申请ok");
+		}
+	}
 	private void startCamera() {
 		Thread openThread = new Thread(){
         	@Override
