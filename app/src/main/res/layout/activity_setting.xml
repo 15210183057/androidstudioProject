@@ -169,6 +169,21 @@
         android:background="#fff"
         android:layout_marginTop="20dp">
         <TextView
+            android:id="@+id/tv_banben"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="app版本"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#fff"
+        android:layout_marginTop="20dp">
+        <TextView
             android:id="@+id/tv_tuichu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

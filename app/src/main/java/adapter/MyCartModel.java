@@ -57,10 +57,10 @@ public class MyCartModel extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
         holder.tv.setText(list.get(i).brand_name);
-        Log.e("TAG","点击的是第+"+i);
+//        Log.e("TAG","点击的是第+"+i);
         if(list.get(i).Flag){
             holder.tv.setBackgroundResource(R.color.titleBar);
-            Log.e("TAG","这里走了为true");
+//            Log.e("TAG","这里走了为true");
         }else{
             holder.tv.setBackgroundResource(R.drawable.juxingnull);
         }

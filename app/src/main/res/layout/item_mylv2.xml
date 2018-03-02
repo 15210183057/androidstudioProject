@@ -6,6 +6,7 @@
     android:layout_marginBottom="5dp"
     >
     <LinearLayout
+        android:id="@+id/linear_shangbu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -22,7 +23,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tv_name_mylvitem"
@@ -49,8 +50,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_name_mylvitem"
-                android:layout_marginBottom="5dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="2dp"
                 android:text="1234244444444444"
                 android:textColor="#000"
                 android:textSize="14sp" />
@@ -59,7 +60,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/tv_model_mylvitem"
-                android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:background="#ff0000" />
 
@@ -69,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/line_mylvitem"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="2dp"
+                android:paddingBottom="2dp"
                 android:text="中古测试cescescecssddddddddddddddddddddddc"
                 android:textColor="#000"
                 android:textSize="14sp" />

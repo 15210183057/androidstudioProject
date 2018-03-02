@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -12,6 +13,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
@@ -20,6 +22,8 @@ import android.view.SurfaceHolder;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import utils.BitZip;
 
 @SuppressWarnings("deprecation")
 public class CameraInterface extends Service{
@@ -36,7 +40,7 @@ public class CameraInterface extends Service{
 	public interface CamOpenOverCallback{
 		public void cameraHasOpened();
 	}
-	
+
 	public CameraInterface(){
 
 	}
@@ -67,6 +71,7 @@ public class CameraInterface extends Service{
 	 */
 	public void doOpenCamera(CamOpenOverCallback callback){
 		Log.i(TAG, "Camera open ...");
+		//TODO 取消休眠
 		try {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
@@ -152,61 +157,24 @@ public class CameraInterface extends Service{
 			mCamera.takePicture(mShutterCallback, null, mRectJpegPictureCallback);
 		}
 	}
-	
+
 	public Point doGetPrictureSize(){
-		Size s = mCamera.getParameters().getPictureSize();
+		Size s= mCamera.getParameters().getPictureSize();
 		return new Point(s.width,s.height);
 	}
-	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
-		final double ASPECT_TOLERANCE = 0.05;
-		double targetRatio = (double) w / h;
-		if (sizes == null)
-			return null;
-		Size optimalSize = null;
-		double minDiff = Double.MAX_VALUE;
-		int targetHeight = h;
-		// Try to find an size match aspect ratio and size
-		for (Size size : sizes) {
-			double ratio = (double) size.width / size.height;
-			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-				continue;
-			if (Math.abs(size.height - targetHeight) < minDiff) {
-				optimalSize = size;
-				minDiff = Math.abs(size.height - targetHeight);
-			}
-		}
-		// Cannot find the one match the aspect ratio, ignore the requirement
-		if (optimalSize == null) {
-			minDiff = Double.MAX_VALUE;
-			for (Size size : sizes) {
-				if (Math.abs(size.height - targetHeight) < minDiff) {
-					optimalSize = size;
-					minDiff = Math.abs(size.height - targetHeight);
-				}
-			}
-		}
-		return optimalSize;
-	}
+	
 	private void initCamera(float previewRate) {
 		if(mCamera != null){
 			mParams = mCamera.getParameters();
 			mParams.setPictureFormat(PixelFormat.JPEG);//设置拍照后的存储的图片格式
 			
 			//设置PreviewSize 和 PictureSize
-//			List<Size> sizes = mParams.getSupportedPreviewSizes();
-//			Display display =(Activity)mContext.getWindowManager().getDefaultDisplay();
-//			Point p = new Point();
-//			display.getSize(p);
-//			Size optimalSize = getOptimalPreviewSize(sizes,p.x, p.y);
-//			mParams.setPreviewSize(optimalSize.width, optimalSize.height);
-
 			Size pictureSize = CamParaUtil.getInstance().getPropPictureSize(
 					mParams.getSupportedPictureSizes(), previewRate, 800);
 			mParams.setPictureSize(pictureSize.width, pictureSize.height);
-
+			
 			Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
 					mParams.getSupportedPreviewSizes(), previewRate, 800);
-
 			mParams.setPreviewSize(previewSize.width, previewSize.height);
 			
 			mCamera.setDisplayOrientation(90);
@@ -263,6 +231,9 @@ public class CameraInterface extends Service{
 				//设置FOCUS_MODE_CONTINUOUS_VIDEO 之后，myParam.set("rotation",90);失效
 				//图片不能旋转，在这里旋转
 				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
+				Log.e("TAG","b图pain高=="+b.getHeight());
+				//压缩图片
+				rotaBitmap= BitZip.compressImage(rotaBitmap);
 				new FileUtil(mContext).saveBitmap(rotaBitmap);
 			}
 			//再次进入预览
@@ -286,16 +257,40 @@ public class CameraInterface extends Service{
 				isPreviewing = false;
 			}
 			//保存图片到sdcard
+			Log.e("TAG","这里走吗==？");
 			if(b != null){
 				//设置FOCUS_MODE_CONTINUOUS_VIDEO 之后，myParam.set("rotation",90);失效
 				//图片不能旋转，在这里旋转
-				Bitmap rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
+				Bitmap rotaBitmap;
+				Log.e("TAG","高度==="+DST_RECT_HEIGHT);
+//				if(DST_RECT_HEIGHT>1000){
+//					rotaBitmap = ImageUtil.getRotateBitmap(b, 0f);
+//				}else{
+					rotaBitmap = ImageUtil.getRotateBitmap(b, 90.0f);
+//				}
+				Log.e("TAG","rotaBitmap=rotaBitmap.getHeight()/2="+rotaBitmap.getHeight()/2+rotaBitmap);
+//				int y =   rotaBitmap.getWidth()/2;
+//				int x =  rotaBitmap.getHeight()/2;
 				int x = rotaBitmap.getWidth()/2 - DST_RECT_WIDTH/2;
-				int y = rotaBitmap.getHeight()/2 - DST_RECT_HEIGHT/2;				
-				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth());
-				Log.i(TAG, "rotaBitmap.getHeight() = " + rotaBitmap.getHeight());
+				if(DST_RECT_HEIGHT>rotaBitmap.getHeight()){
+					DST_RECT_HEIGHT=rotaBitmap.getHeight();
+				}
+				int y = rotaBitmap.getHeight()/2 - DST_RECT_HEIGHT/2;
+//				if(x<=0){
+//					x = rotaBitmap.getWidth()/2;
+//				}
+//				if(y<=0){
+//					y=rotaBitmap.getHeight()/2;
+//				}
+//				if(y+DST_RECT_HEIGHT>rotaBitmap.getHeight()){
+//					y=rotaBitmap.getHeight();
+//				}
+				Log.i(TAG, " rotaBitmap.getWidth() = "+  rotaBitmap.getWidth()+"x==y=="+x+"="+y);
+				Log.i(TAG, "rotaBitmap.getHeight() = " + rotaBitmap.getHeight()+"=="+DST_RECT_HEIGHT);
 				Bitmap rectBitmap = Bitmap.createBitmap(rotaBitmap, x, y, DST_RECT_WIDTH, DST_RECT_HEIGHT);
-				new FileUtil(mContext).saveBitmap(rectBitmap);
+				Log.e("TAG","b图pain高=="+rectBitmap.getHeight());
+				Bitmap bitmap=BitZip.compressImage(rectBitmap);
+				new FileUtil(mContext).saveBitmap(BitZip.compressImage(bitmap));
 				if(rotaBitmap.isRecycled()){
 					rotaBitmap.recycle();
 					rotaBitmap = null;
@@ -329,6 +324,49 @@ public class CameraInterface extends Service{
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+	private int getBitmapDegree(String path) {
+		int degree = 0;
+		try {
+			// 从指定路径下读取图片，并获取其EXIF信息
+			ExifInterface exifInterface = new ExifInterface(path);
+			// 获取图片的旋转信息
+			int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+			switch (orientation) {
+				case ExifInterface.ORIENTATION_ROTATE_90:
+					degree = 90;
+					break;
+				case ExifInterface.ORIENTATION_ROTATE_180:
+					degree = 180;
+					break;
+				case ExifInterface.ORIENTATION_ROTATE_270:
+					degree = 270;
+					break;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return degree;
+	}
+	public static Bitmap rotateBitmapByDegree(Bitmap bm, int degree) {
+		Bitmap returnBm = null;
+
+		// 根据旋转角度，生成旋转矩阵
+		Matrix matrix = new Matrix();
+		matrix.postRotate(degree);
+		try {
+			// 将原始图片按照旋转矩阵进行旋转，并得到新的图片
+			returnBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+		} catch (OutOfMemoryError e) {
+		}
+		if (returnBm == null) {
+			returnBm = bm;
+		}
+		if (bm != returnBm) {
+			bm.recycle();
+		}
+		return returnBm;
 	}
 
 }

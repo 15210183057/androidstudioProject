@@ -229,7 +229,8 @@ public class GetJsonUtils {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     BrandBean brandBean=new BrandBean();
                     JSONObject jsonObject1=jsonArray.getJSONObject(i);
-                    brandBean.brand_id=jsonObject1.getString("brand_id");
+//                    brandBean.brand_id=jsonObject1.getString("brand_id");
+                    brandBean.brand_id=jsonObject1.getString("id");
                     brandBean.brand_name=jsonObject1.getString("brand_name");
                     brandBean.brand_initial=jsonObject1.getString("brand_initial");
                     list.add(brandBean);
@@ -464,7 +465,7 @@ public class GetJsonUtils {
                 buCartListBean.regTime=jsonObject1.getString("retDate");
                 buCartListBean.time=jsonObject1.getString("creatime");
                 buCartListBean.vin=jsonObject1.getString("vin");
-                buCartListBean.modelID=jsonObject1.getString("model_name");
+                buCartListBean.modelID=jsonObject1.getString("modelid");
                 buCartListBean.modelName=jsonObject1.getString("model_name");
                 buCartListBean.brandid=jsonObject1.getString("brandid");
                 buCartListBean.brandName=jsonObject1.getString("brand_name");

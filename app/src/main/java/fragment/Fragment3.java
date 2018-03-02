@@ -48,8 +48,9 @@ import utils.Mydialog;
 public class Fragment3 extends Fragment implements AdapterView.OnItemClickListener,View.OnClickListener{
 
     private View view;
-    private ImageView img_topleft,img_topright;
-    private TextView tv_topcenter;
+    private ImageView img_topleft;
+
+    private TextView tv_topcenter,img_topright;
 
     RefreshLayout refreshLayout;
     ListView lv;
@@ -61,6 +62,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     TextView tv_quyu;
     String quyu_ID;
     Button btn_serach;
+    boolean canlel=false;
     public Fragment3() {
         // Required empty public constructor
     }
@@ -71,6 +73,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment'
+        mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
+        mydialog.show();
         my=new MyBroadcastReceiver();
         //注册广播
         IntentFilter intentFilter=new IntentFilter();
@@ -89,13 +93,13 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         btn_serach=view.findViewById(R.id.btn_serach);
         img_topleft.setVisibility(View.GONE);
         tv_topcenter.setText("已上传车源");
-        img_topright.setVisibility(View.GONE);
+//        img_topright.setVisibility(View.GONE);
         initView();
-        mydialog=new Mydialog(getContext(),"正在加载请稍后.....");
-        mydialog.show();
+
         Log.e("TAG","标题；"+tv_topcenter.getText().toString());
         tv_quyu.setOnClickListener(this);
         btn_serach.setOnClickListener(this);
+        img_topright.setOnClickListener(this);
         return view;
 
     }
@@ -113,28 +117,34 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         lv.setOnItemClickListener(this);
         adapter=new MyLvAdapter3(list,getActivity());
         lv.setAdapter(adapter);
-//        refreshLayout.setEnableAutoLoadmore(true);
+//        refreshLayout.setEnableAutoLoadmore(false);
+//        refreshLayout.setEnableRefresh(false);
+        if(list!=null) {
+            adapter = new MyLvAdapter3(list, getActivity());
+            lv.setAdapter(adapter);
+        }
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 refreshlayout.finishRefresh(2000);
                 Log.e("TAG","上拉刷新");
+//                tv_quyu.setText("");
                 refreshlayout.getLayout().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(i>1){
-                            i--;
-                            getBuCartList(i);
-                        }
+//                        if(i>1){
+//                            i--;
+                        list.clear();
+                            getBuCartList(1);
+//                        }
                     }
-                },3000);
+                },0);
 
             }
         });
         refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-
+            public void onLoadmore(final RefreshLayout refreshlayout) {
                 Log.e("TAG","上拉加载");
                 refreshlayout.getLayout().postDelayed(new Runnable() {
                     @Override
@@ -148,8 +158,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 //                            list.add(carBean);
 //                        }
 //                        count=list.size();
+
                         i++;
                         getBuCartList(i);
+                        Log.e("TAG","list=="+list.size());
 //                        if(!TextUtils.isEmpty(BUCartListBeanNUm.last_page)&&i<Integer.parseInt(BUCartListBeanNUm.last_page)) {
 //                            i++;
 //                            getBuCartList(i);
@@ -157,9 +169,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 //                            Toast.makeText(getContext(),"数据加载完毕",Toast.LENGTH_SHORT).show();
 //                        }
                     }
-                },3000);
-
-                refreshlayout.finishLoadmore(2000);
+                },0);
+                refreshlayout.finishLoadmore(3000);
             }
         });
     }
@@ -183,15 +194,16 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.setAction("new");
         intent.putExtra("Flag","true");
         intent.putExtra("vinnum",list.get(i).vin);
-        intent.putExtra("time",list.get(i).time);
+        intent.putExtra("time",list.get(i).regTime);
         intent.putExtra("quyu",list.get(i).name);
         intent.putExtra("cartmodel",list.get(i).brandName+list.get(i).seriseName+list.get(i).modelName);
         intent.putExtra("licheng",list.get(i).mileage);
         intent.putExtra("price",list.get(i).price);
-
+Log.e("TAG","list=="+list.get(i).price);
         intent.putExtra("quyuID",list.get(i).quyuID);
         intent.putExtra("brandID",list.get(i).brandid);
         intent.putExtra("seriseID",list.get(i).seriseID);
+        Log.e("TAG","fragment=="+list.get(i).modelID);
         intent.putExtra("modelID",list.get(i).modelID);
         intent.putExtra("modelName",list.get(i).modelName);
         intent.putExtra("seriseName",list.get(i).seriseName);
@@ -208,6 +220,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     }
     //网络请求，获取数据源,
     private void getBuCartList(int current_page){
+        Log.e("TAG","page=="+current_page);
+
         RequestParams requestParams=new RequestParams(getInterface.getList);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
@@ -220,23 +234,28 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
             public void onSuccess(String result) {
                 Log.e("TAG","resulr=="+result);
                 mydialog.dismiss();
+
                 List<BuCartListBean>listBeans=new ArrayList<BuCartListBean>();
+                listBeans.clear();
                 listBeans= GetJsonUtils.getCartList(getActivity(),result);
 //                listBeans= GetJsonUtils.getBuCartList(getActivity(),result);
-                list.clear();
                 list.addAll(listBeans);
-                if (list!=null) {
-                    adapter = new MyLvAdapter3(list, getActivity());
-                    lv.setAdapter(adapter);
-                }
                 if (list.size()==0){
                     Toast.makeText(getContext(),"没有符合该车商的车辆信息",Toast.LENGTH_SHORT).show();
+                }else{
+
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+//                if(!TextUtils.isEmpty(ex.getMessage())){
+//
+//                };
+                if(mydialog.isShowing()){
+                    mydialog.dismiss();
+                }
+                Toast.makeText(getContext(),"没有获取到信息",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -246,9 +265,13 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
             @Override
             public void onFinished() {
+
                 Log.e("TAG","list=="+list.size());
                 tv_topcenter.setText(list.size()+"");//设置title
                 Log.e("TAG","title=="+BUCartListBeanNUm.total);
+                if(list!=null) {
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -256,16 +279,22 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
-            getBuCartList(i);
-            Log.e("TAG","显示11");
-
-        }else{
-            Log.e("TAG","显示22");
-            tv_quyu.setText("按车商信息搜索");
-            quyu_ID="";
-            btn_serach.setVisibility(View.GONE);
-        }
+//        if(!hidden){
+//            list.clear();
+//            if(!mydialog.isShowing()){
+//                mydialog.show();
+//            }
+//            getBuCartList(1);
+//            i=1;
+//            Log.e("TAG","显示11");
+//
+//        }
+//        else{
+//            Log.e("TAG","显示22");
+//            tv_quyu.setText("按车商信息搜索");
+//            quyu_ID="";
+//            btn_serach.setVisibility(View.GONE);
+//        }
     }
 
     @Override
@@ -278,7 +307,23 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
                 break;
             case R.id.btn_serach:
                 //开始搜索
+                if(!mydialog.isShowing()){
+                    mydialog.show();
+                }
                 Log.e("TAG","开始搜索="+quyu_ID);
+                list.clear();
+
+                getBuCartList(1);
+                 i=1;
+                break;
+            case R.id.img_right:
+                if(!mydialog.isShowing()){
+                    mydialog.show();
+                }
+                quyu_ID="";
+                tv_quyu.setText("按车商信息搜索");
+                i=1;
+                list.clear();
                 getBuCartList(1);
                 break;
         }

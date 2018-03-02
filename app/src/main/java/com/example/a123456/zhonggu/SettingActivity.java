@@ -14,12 +14,13 @@ import android.widget.Toast;
 
 import application.MyApplication;
 import base.BaseActivity;
+import utils.AppUtils;
 import utils.SharedUtils;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener{
     private ImageView img_back;
     private RelativeLayout relative1,relative11,relative2,relative22,relative3,relative33;
-    private TextView tv_tuichu;
+    private TextView tv_tuichu,tv_banben;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +38,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         relative3=findViewById(R.id.relative3);
         relative33=findViewById(R.id.relative33);
         tv_tuichu=findViewById(R.id.tv_tuichu);
-
+        tv_banben=findViewById(R.id.tv_banben);
+        tv_banben.setText("app版本为  v"+ AppUtils.getVersionCode(SettingActivity.this)+".8");
          img_back.setOnClickListener(this);
          relative1.setOnClickListener(this);
         relative11.setOnClickListener(this);

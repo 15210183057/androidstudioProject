@@ -146,6 +146,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 }
                 break;
             case R.id.TopView_Bottem4:
+                Log.e("TAG","点击了第四==");
                 tv4.setTextColor(Color.WHITE);
                 img4.setImageResource(R.mipmap.wode_c);
                 if(fragment4==null){
@@ -258,6 +259,10 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 clearBottem();
                 String str=intent.getStringExtra("f");
                 if(str.equals("1")){
+                    Intent intent1=new Intent();
+                    intent1.setAction("goon");
+                    FrameActivity.this.sendBroadcast(intent1);
+                    Log.e("TAG","发送默认显示广播");
                     FragmentTransaction   ft=fragmentManager.beginTransaction();
                     tv1.setTextColor(Color.WHITE);
                     img1.setImageResource(R.mipmap.banyuan_c);

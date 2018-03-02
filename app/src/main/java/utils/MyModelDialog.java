@@ -31,8 +31,10 @@ public class MyModelDialog extends AlertDialog{
     public MyModelDialog(Context context, List list) {
         super(context);
         this.list=list;
-        setCanceledOnTouchOutside(false);
-        setCancelable(false);
+        if(list.size()!=0) {
+            setCanceledOnTouchOutside(false);
+        }
+//        setCancelable(false);
     }
 
     @Override

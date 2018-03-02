@@ -6,8 +6,46 @@
     android:background="#fff"
     tools:context="fragment.Fragment3">
 
-    <include
-        layout="@layout/top_titlebar"/>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/titleBar"
+        >
+        <ImageView
+            android:id="@+id/img_left"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/qx"
+            android:scaleType="fitXY"/>
+        <TextView
+            android:id="@+id/tv_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测试"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"/>
+        <View
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            android:background="@drawable/titlebar"
+            android:layout_below="@id/tv_center"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"/>
+        <TextView
+            android:id="@+id/img_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:text="查看全部"
+            android:textSize="16sp"
+            android:textColor="#fff"
+           />
+    </RelativeLayout>
     <TextView
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"

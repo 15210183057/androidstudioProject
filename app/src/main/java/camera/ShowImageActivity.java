@@ -168,6 +168,7 @@ public class ShowImageActivity extends Activity {
 							if(!TextUtils.isEmpty(ex.getMessage().toString())){
 								mydialog.dismiss();
 								Toast.makeText(ShowImageActivity.this,"上传失败，请重新上传",Toast.LENGTH_LONG).show();
+								finish();
 							}
 							Log.e("TAG", "请求失败===");
 //							Toast.makeText(ShowImageActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
@@ -183,6 +184,10 @@ public class ShowImageActivity extends Activity {
 
 						@Override
 						public void onFinished() {
+							if(mydialog.isShowing()){
+								mydialog.dismiss();
+								finish();
+							}
 						}
 					});
 				}

@@ -112,7 +112,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
                     intent.putExtra("modelID",ModelID);
 //                    intent.putExtra("brandID",brandList.get())
                     sendBroadcast(intent);
-                    Log.e("TAG","发送");
+                    Log.e("TAG","发送BrandID="+BrandID+"=seriseID="+SeriseID+"=modelID="+ModelID);
                     finish();
                 }
                 break;

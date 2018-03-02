@@ -35,6 +35,7 @@ public class MyLvAdapter3 extends BaseAdapter{
     private Context ctx;
     int count;
     private MyBroad myBroad;
+    Mydialog mydialog;
     public MyLvAdapter3 (List<BuCartListBean>list, Context ctx){
         this.ctx=ctx;
         this.list=list;
@@ -42,6 +43,8 @@ public class MyLvAdapter3 extends BaseAdapter{
         IntentFilter intentFilter=new IntentFilter();
         intentFilter.addAction("deleteitem");
         ctx.registerReceiver(myBroad,intentFilter);
+        mydialog=new Mydialog(ctx,"正在下架，请稍等...");
+
     }
     @Override
     public int getCount() {
@@ -117,8 +120,8 @@ public class MyLvAdapter3 extends BaseAdapter{
         TextView tv_model_mylvitem;
     }
     private void Delete(final int i){
-        final Mydialog mydialog=new Mydialog(ctx,"正在下架，请稍等...");
         mydialog.show();
+        Log.e("TAG","走几遍");
         RequestParams params=new RequestParams(getInterface.UpCartData);
         params.addBodyParameter("id",list.get(i).ListID);
         params.addBodyParameter("status","0");
@@ -139,6 +142,7 @@ public class MyLvAdapter3 extends BaseAdapter{
             public void onError(Throwable ex, boolean isOnCallback) {
                 if(!TextUtils.isEmpty(ex.getMessage().toString())){
                     mydialog.dismiss();
+                    Log.e("TAG","error=="+ex.getMessage().toString());
                 }
             }
 
@@ -153,17 +157,22 @@ public class MyLvAdapter3 extends BaseAdapter{
             }
         });
     }
-
+    int h=0;
     private class MyBroad extends BroadcastReceiver{
-
         @Override
         public void onReceive(Context context, Intent intent) {
            String i = intent.getStringExtra("i");
-           if(intent.getAction().equals("deleteitem")){
-               Delete(Integer.parseInt(i));
-           }
-            Log.e("TAG","接受广播==="+i);
+           Log.e("TAG","下架接收广播=h="+h+"======"+(intent.getAction().equals("deleteitem")&&!TextUtils.isEmpty(i)));
+            if(h==0){
+                if(intent.getAction().equals("deleteitem")&&!TextUtils.isEmpty(i)){
+                    Delete(Integer.parseInt(i));
+                }
+                h++;
+            }
+
+            Log.e("TAG","接受广播==="+i+"==h="+h);
 
         }
     }
+
 }

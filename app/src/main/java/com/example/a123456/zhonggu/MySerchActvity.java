@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.xutils.common.Callback;
+import org.xutils.http.HttpMethod;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -84,7 +85,7 @@ private String getIntentStr;
                         if(list.get(i).equals(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
-                            findListNameTel.add(listName.get(i)+"&"+listTel.get(i));
+                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i));
                             break;
                         }
                     }
@@ -93,10 +94,13 @@ private String getIntentStr;
                         if(TextUtils.isEmpty(str)){
                             addCartAlert addCartAlert=new addCartAlert(MySerchActvity.this);
                             addCartAlert.show();
+
                         }else{
                             Toast.makeText(MySerchActvity.this, "查找的商品不在列表中", Toast.LENGTH_SHORT).show();
                         }
-
+                        if(adapter!=null) {
+                            adapter.notifyDataSetChanged();
+                        }
                     }else{
                         Log.e("TAG","查找成功");
                         Toast.makeText(MySerchActvity.this, "查找成功", Toast.LENGTH_SHORT).show();
@@ -116,12 +120,14 @@ private String getIntentStr;
                     listView.setAdapter(adapter);
                 }else{
                     findList.clear();
+                    findListID.clear();
+                    findListNameTel.clear();
                     for(int i=0;i<list.size();i++){
                         if(list.get(i).contains(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
-                            findListNameTel.add(listName.get(i)+"&"+listTel.get(i));
-                            Log.e("TAG","onQueryTextChangelist.get(i)=="+list.get(i));
+                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i));
+                            Log.e("TAG","onQueryTextChangelist.get(i)=="+list.get(i)+"==ID为=="+listID.get(i));
                         }
                     }
                     Log.e("TAG","TextUtils.isEmpty(str)"+TextUtils.isEmpty(str));
@@ -139,7 +145,6 @@ private String getIntentStr;
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e("TAG","i=="+list.get(i).toString());
                 Intent intent=new Intent();
                 if(!TextUtils.isEmpty(str)&&str.equals("f3")){
                     intent.setAction("f3");
@@ -147,18 +152,16 @@ private String getIntentStr;
                     intent.setAction("quyu");
                 }
                 if(findList.size()!=0&&findListID.size()!=0) {
-                    Log.e("TAG","findListID.get(i).toString()=="+findListID.get(i).toString());
+                    Log.e("TAG","findListID.get(i).toString()="+i+"="+findList.get(i).toString()+"="+findListID.get(i).toString());
                     intent.putExtra("name", findList.get(i).toString());
                     intent.putExtra("ID", findListID.get(i).toString());
+                    Log.e("TAG","sizeName=="+findList.size()+"sizeID=="+findListID.size()+"");
                     if(!TextUtils.isEmpty(findListNameTel.get(i))) {
                         intent.putExtra("tel", findListNameTel.get(i));
                     }
                 }else{
                     intent.putExtra("name", list.get(i).toString());
                     intent.putExtra("ID", listID.get(i).toString());
-                    Log.e("TAG","判断"+listName.get(i)+"&"+listTel.get(i));
-                    Log.e("TAG","判断1=="+(!TextUtils.isEmpty(listTel.get(i))&&!TextUtils.isEmpty(listName.get(i))));
-                    Log.e("TAG","判断2=="+TextUtils.isEmpty(listName.get(i)));
                     if(!TextUtils.isEmpty(listName.get(i))&&TextUtils.isEmpty(listTel.get(i))) {
                         intent.putExtra("tel", listName.get(i).toString() + "&null" );
                     }
@@ -179,6 +182,8 @@ private String getIntentStr;
     private void getData(){
         //：json=1&pagesize=10&where=blu=1 and groupid in(5,3,2) and status = 1
         RequestParams params=new RequestParams(getInterface.getA);
+//        params.setMethod(HttpMethod.POST);
+        params.setConnectTimeout(10000);
         params.addBodyParameter("json","1");
         params.addBodyParameter("pagesize","100");
         params.addBodyParameter("where","groupid in(2) and status=1");
@@ -189,6 +194,7 @@ private String getIntentStr;
             public void onSuccess(String result) {
                 Log.e("TAG","reulst=="+result);
                 mydialog.dismiss();
+                cartList.clear();
                 cartList= GetJsonUtils.getQuYu(MySerchActvity.this,result);
                 Log.e("TAG","cartList=="+cartList.size());
                 list.clear();
@@ -196,9 +202,7 @@ private String getIntentStr;
                     list.add(cartList.get(i).cartmsgname);
                     listID.add(cartList.get(i).cartMsgId);
                     listName.add(cartList.get(i).merchant_name);
-                    Log.e("TAG","这里添加=="+cartList.get(i).tel);
                     listTel.add(cartList.get(i).tel);
-                    Log.e("TAG","这里添加=="+listTel.get(i));
 
                 }
                 if(list.size()>0) {
@@ -209,7 +213,9 @@ private String getIntentStr;
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                if(!TextUtils.isEmpty(ex.getMessage())){
+                    mydialog.dismiss();
+                }
             }
 
             @Override

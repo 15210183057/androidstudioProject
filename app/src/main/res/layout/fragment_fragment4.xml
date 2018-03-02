@@ -8,6 +8,20 @@
 
     <include
         layout="@layout/top_titlebar"/>
+    <!--<ImageView-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:src="@mipmap/zgcwlogo"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="30dp"/>-->
+    <!--<ImageView-->
+    <!--android:id="@+id/img_circle"-->
+    <!--android:layout_width="80dp"-->
+    <!--android:layout_height="80dp"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_marginTop="30dp"-->
+        <!--android:src="@mipmap/zgcwlogo"-->
+    <!--/>-->
     <View.CircleImageView
         android:id="@+id/img_circle"
         android:layout_width="80dp"
@@ -15,7 +29,7 @@
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:src="@mipmap/zgcwlogo"
+        android:src="@mipmap/logo"
         />
     <TextView
         android:layout_width="wrap_content"
