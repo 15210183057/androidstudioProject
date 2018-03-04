@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -52,10 +53,14 @@ import com.example.a123456.zhonggu.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.ex.HttpException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -66,6 +71,7 @@ import bean.CartMsgPrice;
 import bean.JaShiZhengBean;
 import bean.ModelNameandID;
 import bean.MyNewUpdate;
+import bean.NameAndTel;
 import bean.UserBean;
 import bean.ZHFBean;
 import bean.ZQBean;
@@ -78,6 +84,8 @@ import utils.MySuccess;
 import utils.Mydialog;
 import View.GetJsonUtils;
 import View.CommonPopupWindow;
+import utils.NameAndTelDialog;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -91,7 +99,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
     private TextView tv_time;//注册日期
-    private EditText edt_licheng,edt_price,tv_tel,edt_name;//里程，价格,联系电话
+    private EditText edt_licheng,edt_price,tv_tel;
+            EditText edt_name;//里程，价格,联系电话
     private ImageView img_newfragment,img2_newfragment,img3_newfragment;
     private Button btn_commit;
     private LinearLayout linear3_newfragment,linear_nameandtel;
@@ -110,6 +119,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
     Mydialog mydialog1;
     String quyuTelName;//车商信息对于的用户和电话
     boolean IsClean=false;
+    String picID,currentID;//接收销售人员姓名和电话,当前ID
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -247,7 +257,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         tv_cartmodel.setOnClickListener(this);
         tv_quyue.setOnClickListener(this);
         tv_cartFenlei.setOnClickListener(this);
-
+        edt_name.setOnClickListener(this);
         tv_getmodel=view.findViewById(R.id.tv_getmodel);
         tv_getmodel.setOnClickListener(this);
     }
@@ -256,6 +266,16 @@ public class newFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.edt_name:
+                edt_name.setText("");
+//                if(BeanFlag.Flag){
+//                    if(NameAndTel.NameAndTellist!=null){
+//                        NameAndTelDialog nameAndTelDialog = new NameAndTelDialog(getContext(),NameAndTel.NameAndTellist.get(Integer.parseInt(currentID)));
+//                        nameAndTelDialog.show();
+//                    }
+//                }
+//                setName();
+                break;
             case R.id.tv_getmodel:
                 //获取车型车系车牌
                 if (!TextUtils.isEmpty(edit_num.getText().toString())
@@ -364,18 +384,20 @@ public class newFragment extends Fragment implements View.OnClickListener{
                              Log.e("TAG","走修改接口");
                          }else{
                              mydialog.show();
-                             Log.e("TAG","修改图片==zhfPath="+zhfPath);
-                             Log.e("TAG","修改图片==zqPath="+zqPath);
                              Log.e("TAG","修改图片==zqfPath="+zqfPath);
-                             if(!TextUtils.isEmpty(zhfPath)){
-                                 updateImag(zhfPath);
+                             Log.e("TAG","修改图片==zqPath="+zqPath);
+                             Log.e("TAG","修改图片==zhfPath="+zhfPath);
+                             if(!TextUtils.isEmpty(zqfPath)){
+                                 updateImag(zqfPath);
                              }
                              if(!TextUtils.isEmpty(zqPath)){
                                  updateImag(zqPath);
                              }
-                             if(!TextUtils.isEmpty(zqfPath)){
-                                 updateImag(zqfPath);
+                             if(!TextUtils.isEmpty(zhfPath)){
+                                 updateImag(zhfPath);
                              }
+
+
                          }
                      }else {
 
@@ -503,6 +525,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         intentFilter.addAction("modelname");
         intentFilter.addAction("updataCart");//获取收到添加车商信息
         intentFilter.addAction("cartfenlei");//
+        intentFilter.addAction("strNameAndTelAndID");
         getActivity().registerReceiver(myBroadcastReceiver,intentFilter);
     }
     //显示日期
@@ -597,9 +620,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 else if(fenleiID.equals("5")){
                     tv_cartFenlei.setText("职工车辆");
                 }
-
-                tv_tel.setText(MyNewUpdate.tel);
-                edt_name.setText(MyNewUpdate.contact_name);
+                if(!TextUtils.isEmpty(MyNewUpdate.tel)){
+                    tv_tel.setText(MyNewUpdate.tel.trim());
+                }
+                if(!TextUtils.isEmpty(MyNewUpdate.contact_name)) {
+                    edt_name.setText(MyNewUpdate.contact_name.trim());
+                }
 
                 edit_num.setText(MyNewUpdate.vinnum);
                 edit_num.setFocusableInTouchMode(false);
@@ -629,23 +655,34 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 modelid=MyNewUpdate.modelID;
                 brandid=MyNewUpdate.brandid;
                 cartName=MyNewUpdate.cartmodel;
+                picID=MyNewUpdate.NameTelID;
                 BeanFlag.Flag=true;
+                currentID=MyNewUpdate.currentID;
             }
             else if(intent.getAction().equals("quyu")){
+
                 String name=intent.getStringExtra("name");
                 quyuID=intent.getStringExtra("ID");
                 Log.e("TAG","接受区域广播=="+intent.getStringExtra("tel"));
                 quyuTelName=intent.getStringExtra("tel");
-
-                if(TextUtils.isEmpty(quyuTelName)||quyuTelName.equals("null&null")){
+                currentID=intent.getStringExtra("currentID");
+                if(TextUtils.isEmpty(quyuTelName)||quyuTelName.equals("&&&")){
                     tv_tel.setText("");
                     edt_name.setText("");
+                    picID="0";
                 }else{
                     String []arr=quyuTelName.split("&");
-                    if(!quyuTelName.equals("&")) {
+                    if(!quyuTelName.equals("&&&")) {
                         Log.e("TAG","quyuName--"+quyuTelName);
                         tv_tel.setText(arr[0]);
                         edt_name.setText(arr[1]);
+                        picID=arr[2];
+                        if(MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID))!=null) {
+                            Log.e("TAG","");
+                            NameAndTelDialog nameAndTelDialog = new NameAndTelDialog(getContext(), MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID)));
+                            nameAndTelDialog.show();
+
+                        }
                     }
 //                    Log.e("TAG","判断=="+(TextUtils.isEmpty(tv_tel.getText().toString())||TextUtils.isEmpty(edt_name.getText().toString())));
 //                    Log.e("TAG","判断1"+(tv_tel.getText().toString()==null)+"="+(tv_tel.getText().toString().equals("null"))+"==="+tv_tel.getText().toString()+"="+(!TextUtils.isEmpty(tv_tel.getText().toString())));
@@ -656,8 +693,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                        linear_nameandtel.setVisibility(View.GONE);
 //                    }
                 }
+                Log.e("TAG","接收到的销售人员电话和姓名为="+quyuTelName+"=ID="+picID);
                 tv_quyue.setText(name);
                 tv_quyue.setBackgroundResource(R.drawable.juxingnull);
+//                if(MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID))!=null){
+//                    if(!(MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID)).get(0).id).equals("")) {
+//                    }
+//                }
             }else if(intent.getAction().equals("vin")){
                 String name = intent.getStringExtra("name");
                 if (!TextUtils.isEmpty(name)) {
@@ -744,6 +786,17 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 tv_cartFenlei.setText(intent.getStringExtra("fenleiname"));
                 fenleiID=intent.getStringExtra("fenleiID");
                 tv_cartFenlei.setBackgroundResource(R.drawable.juxingnull);
+            }else if(intent.getAction().equals("strNameAndTelAndID")){
+                //广播返回姓名，电话，id
+                String str=intent.getStringExtra("strNameAndTelAndID");
+                if(!TextUtils.isEmpty(str)&&!str.equals("&&")){
+                    String [] arr=str.split("&");
+                    picID=arr[2];
+                    edt_name.setText(arr[0]);
+                    tv_tel.setText(arr[1]);
+                }else{
+                    picID="0";
+                }
             }
         }
     }
@@ -798,6 +851,17 @@ public class newFragment extends Fragment implements View.OnClickListener{
             params.setConnectTimeout(80000);
             params.setMaxRetryCount(5);//
             params.addBodyParameter("imgdata",new File(path));
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(new File(path));
+            int fileLen = fis.available();
+            Log.e("TAG","上传文件大小=="+fileLen/1024+"==path="+path.substring(path.length()-5,path.length()));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //           params.setMaxRetryCount(2);
             Log.e("TAG","参数--"+params.getParams("imgdata"));
             Log.e("TAG","上传图片URLparams=="+params);
@@ -867,6 +931,15 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
                     }else{
                         if(!TextUtils.isEmpty(ex.getMessage().toString())){
+                            if (ex instanceof HttpException) { // 网络错误
+                                HttpException httpEx = (HttpException) ex;
+                                int responseCode = httpEx.getCode();
+                                String responseMsg = httpEx.getMessage();
+                                String errorResult = httpEx.getResult();
+                                Log.e("TAG","responseCode=="+responseCode+"=responseMsg="+responseMsg+"=errorResult="+errorResult);
+                            } else {
+// 其他错误//
+                            }
                             Log.e("TAG","ex.getMessage().toString()=="+ex.getMessage().toString());
                             mydialog.dismiss();
                             ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
@@ -910,6 +983,18 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("modelid",modelid);//modelid
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
         //上传电话和名字
+        //有对应id直接传ID
+        if(quyuTelName!=null){
+            String arr[]=quyuTelName.split("&");
+            if(!edt_name.getText().toString().equals(arr[1])||!tv_tel.getText().toString().equals(arr[0])){
+                picID="0";
+            };
+        }
+        if(!picID.equals("0")&&!TextUtils.isEmpty(picID)){
+            requestParams.addBodyParameter("pid",picID);
+        }else{
+            requestParams.addBodyParameter("pid ","0");
+        }
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
@@ -997,6 +1082,22 @@ public class newFragment extends Fragment implements View.OnClickListener{
         Log.e("TAG","修改接口中modelid=="+modelid);
         requestParams.addBodyParameter("carName",cartName.replace(" ",""));
         //上传电话和名字
+        //有对应id直接传ID
+//        if(quyuTelName!=null){
+//            String arr[]=quyuTelName.split("&");
+            Log.e("TAG","修改edt_name=="+!edt_name.getText().toString().equals(MyNewUpdate.contact_name));
+            Log.e("TAG","修改tv_tel=="+(!tv_tel.getText().toString().equals(MyNewUpdate.tel)));
+            Log.e("TAG","!edt_name.getText().toString().equals(MyNewUpdate.contact_name)||!tv_tel.getText().toString().equals(MyNewUpdate.tel)=="+(!edt_name.getText().toString().equals(MyNewUpdate.contact_name)||!tv_tel.getText().toString().equals(MyNewUpdate.tel)));
+            if(!edt_name.getText().toString().equals(MyNewUpdate.contact_name)||!tv_tel.getText().toString().equals(MyNewUpdate.tel)){
+                picID="0";
+            };
+//        }
+        if(!picID.equals("0")&&!TextUtils.isEmpty(picID)){
+            requestParams.addBodyParameter("pid",picID);
+        }else{
+            requestParams.addBodyParameter("pid","0");
+        }
+        Log.e("TAG","修改tv_tel=="+tv_tel.getText().toString());
         requestParams.addBodyParameter("tel",tv_tel.getText().toString());
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
@@ -1151,4 +1252,28 @@ public class newFragment extends Fragment implements View.OnClickListener{
         }
         return false;
     }
+
+//    private void setName() {
+//
+//        edt_name.setDropDownVerticalOffset(10);
+//        Log.e("TAG", "currentID==" + currentID);
+//        List<String> list = new ArrayList<>();
+//        if (currentID != null) {
+//            List<NameAndTel> list1 = MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID));
+//            int count = MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID)).size();
+//            Log.e("TAG", "MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID))=" + MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID)).size());
+//            for (int i = 0; i < count; i++) {
+//                list.add(list1.get(i).name);
+//                Log.e("TAG","list=="+list1.get(i).name);
+//            }
+////        Log.e("TAG","list=="+list.size()+MySerchActvity.nameAndTelList.get(Integer.parseInt(currentID)).name);
+//            Log.e("TAG","list=="+list.size());
+//            for(int i=0;i<list.size();i++){
+//                Log.e("TAG","list=="+list.get(i));
+//            }
+//            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(),R.layout.textlayout, list);
+//            edt_name.setDropDownHeight(arrayAdapter.getCount()*30);
+//            edt_name.setAdapter(arrayAdapter);
+//        }
+//    }
 }

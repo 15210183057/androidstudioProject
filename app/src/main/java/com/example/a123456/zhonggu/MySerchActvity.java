@@ -1,6 +1,7 @@
 package com.example.a123456.zhonggu;
 import base.BaseActivity;
 import bean.CartMsgBean;
+import bean.NameAndTel;
 import jiekou.getInterface;
 
 import android.content.BroadcastReceiver;
@@ -36,13 +37,16 @@ private List<String>list=new ArrayList<String>();
     private List<String>listID=new ArrayList<String>();
     private List<String>listName=new ArrayList<String>();
     private List<String>listTel=new ArrayList<String>();
+    private List<String>listNameTelID=new ArrayList<String>();
 private List<String>findList=new ArrayList<String>();
 private List<String>findListID=new ArrayList<String>();
 private List<String>findListNameTel=new ArrayList<String>();
+private List<String>findListNameTelID=new ArrayList<String>();
 private ListView listView;
 private ArrayAdapter adapter,findAdapter;
 Mydialog mydialog;
 String str="";
+    public static  List<List<NameAndTel>>nameAndTelList=new ArrayList<List<NameAndTel>>();
 private String getIntentStr;
     MyBroadcastReceiver myBroad;
 
@@ -81,11 +85,15 @@ private String getIntentStr;
                     Toast.makeText(MySerchActvity.this, "请输入查找内容！", Toast.LENGTH_SHORT).show();
                 }else{
                     findList.clear();
+                    findListNameTel.clear();
+                    findListID.clear();
+                    nameAndTelList.clear();
                     for(int i=0;i<list.size();i++){
                         if(list.get(i).equals(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
-                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i));
+                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i)+"&"+listNameTelID.get(i));
+                            nameAndTelList.add(cartList.get(i).list);
                             break;
                         }
                     }
@@ -118,16 +126,22 @@ private String getIntentStr;
                     adapter=new ArrayAdapter(MySerchActvity.this,R.layout.item,R.id.tvitem_xiala,list);
 //                    adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
+                    findList.clear();
+                    findListID.clear();
+                    findListNameTel.clear();
                 }else{
                     findList.clear();
                     findListID.clear();
                     findListNameTel.clear();
+                    nameAndTelList.clear();
                     for(int i=0;i<list.size();i++){
+                        Log.e("TAG","list.get(i).contains(s)=="+list.get(i).contains(s));
                         if(list.get(i).contains(s)){
                             findList.add(list.get(i));
                             findListID.add(listID.get(i));
-                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i));
+                            findListNameTel.add(listTel.get(i)+"&"+listName.get(i)+"&"+listNameTelID.get(i));
                             Log.e("TAG","onQueryTextChangelist.get(i)=="+list.get(i)+"==ID为=="+listID.get(i));
+                            nameAndTelList.add(cartList.get(i).list);
                         }
                     }
                     Log.e("TAG","TextUtils.isEmpty(str)"+TextUtils.isEmpty(str));
@@ -151,8 +165,9 @@ private String getIntentStr;
                 }else {
                     intent.setAction("quyu");
                 }
+                Log.e("TAG","size=="+findList.size()+"=="+findListID.size());
                 if(findList.size()!=0&&findListID.size()!=0) {
-                    Log.e("TAG","findListID.get(i).toString()="+i+"="+findList.get(i).toString()+"="+findListID.get(i).toString());
+                    Log.e("TAG","findListID.get(i).toString()="+i+"="+findList.get(i).toString()+"="+findListID.get(i).toString()+"="+findList.get(i).toString());
                     intent.putExtra("name", findList.get(i).toString());
                     intent.putExtra("ID", findListID.get(i).toString());
                     Log.e("TAG","sizeName=="+findList.size()+"sizeID=="+findListID.size()+"");
@@ -162,18 +177,24 @@ private String getIntentStr;
                 }else{
                     intent.putExtra("name", list.get(i).toString());
                     intent.putExtra("ID", listID.get(i).toString());
-                    if(!TextUtils.isEmpty(listName.get(i))&&TextUtils.isEmpty(listTel.get(i))) {
-                        intent.putExtra("tel", listName.get(i).toString() + "&null" );
+                    if(!TextUtils.isEmpty(listNameTelID.get(i))){
+//                        if(!TextUtils.isEmpty(listName.get(i))&&TextUtils.isEmpty(listTel.get(i))) {
+//                            intent.putExtra("tel", "null"+listName.get(i).toString() + "&"+listNameTelID.get(i) );
+//                        }
+//                        else if(!TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
+//                            intent.putExtra("tel", listTel.get(i) + "&null" );
+//                        }
+//                        else if(!TextUtils.isEmpty(listTel.get(i))&&!TextUtils.isEmpty(listName.get(i))){
+//                            intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
+//                        }else if(TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
+//                            intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
+//                        }
+                        intent.putExtra("tel",listTel.get(i) + "&"+listName.get(i)+"&"+listNameTelID.get(i));
                     }
-                    else if(!TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
-                        intent.putExtra("tel", listTel.get(i) + "&null" );
-                    }
-                     else if(!TextUtils.isEmpty(listTel.get(i))&&!TextUtils.isEmpty(listName.get(i))){
-                        intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
-                    }else if(TextUtils.isEmpty(listTel.get(i))&&TextUtils.isEmpty(listName.get(i))){
-                        intent.putExtra("tel", listTel.get(i) + "&"+listName.get(i) );
-                    }
+
                 }
+                intent.putExtra("currentID",i+"");
+                Log.e("TAG","currentid=="+i);
                 sendBroadcast(intent);
                 finish();
             }
@@ -198,12 +219,30 @@ private String getIntentStr;
                 cartList= GetJsonUtils.getQuYu(MySerchActvity.this,result);
                 Log.e("TAG","cartList=="+cartList.size());
                 list.clear();
+                nameAndTelList.clear();
                 for(int i=0;i<cartList.size();i++){
                     list.add(cartList.get(i).cartmsgname);
                     listID.add(cartList.get(i).cartMsgId);
                     listName.add(cartList.get(i).merchant_name);
                     listTel.add(cartList.get(i).tel);
-
+                    listNameTelID.add(cartList.get(i).ID);
+                    List<NameAndTel> lis=cartList.get(i).list;
+                    nameAndTelList.add(lis);
+                    Log.e("TAG","lis=="+cartList.get(i).list.size());
+//                    for(int h=0;h<lis.size();h++){
+//                        Log.e("TAG","所有商户下的姓名和电话和ID=i="+i+"="+cartList.get(i).list.get(h).name+"="+lis.get(h).tel+"="+lis.get(h).id);
+//                        NameAndTel nameAndTel=new NameAndTel();
+//                        nameAndTel.tel=cartList.get(i).list.get(h).tel;
+//                        nameAndTel.name=cartList.get(i).list.get(h).name;
+//                        nameAndTel.id=cartList.get(i).list.get(h).id;
+//                        nameAndTelList.add(nameAndTel);
+//
+//
+//                    }
+//                    listTel.add(cartList.get(i).list.get(i).tel);
+//                    listName.add(cartList.get(i).list.get(i).name);
+//                    Log.e("TAG","")
+                    Log.e("TAG","nameAndTelList()=="+nameAndTelList.size());
                 }
                 if(list.size()>0) {
                     adapter = new ArrayAdapter(MySerchActvity.this, R.layout.item, R.id.tvitem_xiala, list);

@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import utils.BitZip;
+
 public class FileUtil {
 //	private static final  String TAG = "FileUtil";
 //
@@ -121,12 +123,18 @@ public class FileUtil {
 		//保存完整路径
 		long dataTake = System.currentTimeMillis();
 		String fileName = getFile()+"/"+dataTake+".jpg";
-//
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG,100, buffer);
 
+		int options = 100;
+		while ( buffer.toByteArray().length / 1024>=100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+			buffer.reset();//重置baos即清空baos
+			bitmap.compress(Bitmap.CompressFormat.JPEG, options, buffer);//这里压缩options%，把压缩后的数据存放到baos中
+			options -= 10;//每次都减少10
+		}
+
 		File file = new File(fileName);
-		Log.e("TAG","保存图片=="+fileName);
+		Log.e("TAG","保存图片=bitmap="+fileName+"=="+buffer.toByteArray().length/1024);
 		jpegName = fileName;
 		if(file.exists()){
 			return;
@@ -144,7 +152,6 @@ public class FileUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	/**

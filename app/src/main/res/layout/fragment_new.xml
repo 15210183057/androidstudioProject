@@ -140,8 +140,12 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal">
+
+                    <!--android:completionHint="Famous Citi"-->
+
                     <EditText
                         android:id="@+id/edt_name"
+                        android:completionThreshold="0"
                         android:layout_toLeftOf="@id/img_paizhao"
                         android:layout_width="0dp"
                         android:layout_weight="3"

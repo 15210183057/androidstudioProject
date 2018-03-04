@@ -2,11 +2,28 @@ package utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.xutils.common.Callback;
+import org.xutils.ex.HttpException;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import View.GetJsonUtils;
+import bean.BeanFlag;
+import bean.ZHFBean;
+import bean.ZQBean;
+import bean.ZQFBean;
+import jiekou.getInterface;
 
 /**
  * Created by 123456 on 2018/2/9.
@@ -22,10 +39,14 @@ public class BitZip {
             image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
             options -= 10;//每次都减少10
         }
-        Log.e("TAG","baos.toByteArray().length=="+baos.toByteArray().length+"");
+        Log.e("TAG","baos.toByteArray().length=="+baos.toByteArray().length/1024+"");
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
         Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+       ///storage/emulated/0/Android/data/com.example.a123456.zhonggu/cache/1520151569494.jpg
         return bitmap;
+    }
+
+    private static void upImg(String s) {
     }
 
 }

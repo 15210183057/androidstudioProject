@@ -132,6 +132,7 @@ public class ShowImageActivity extends Activity {
 					}
 					RequestParams params = new RequestParams(url);
 					params.addBodyParameter("imgdata", new File(thumbPath));
+					Log.e("TAG","new File(thumbPath)=="+new File(thumbPath).length()/1024);
 					params.setConnectTimeout(80000);
 					params.setMaxRetryCount(7);//
 					params.setMultipart(true);

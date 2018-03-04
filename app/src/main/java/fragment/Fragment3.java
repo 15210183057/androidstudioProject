@@ -32,12 +32,14 @@ import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
 
 import adapter.MyLvAdapter;
 import adapter.MyLvAdapter3;
 import bean.BUCartListBeanNUm;
 import bean.BuCartListBean;
 import bean.CarBean;
+import bean.NameAndTel;
 import bean.UserBean;
 import jiekou.getInterface;
 import utils.Mydialog;
@@ -49,7 +51,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
     private View view;
     private ImageView img_topleft;
-
     private TextView tv_topcenter,img_topright;
 
     RefreshLayout refreshLayout;
@@ -216,6 +217,8 @@ Log.e("TAG","list=="+list.get(i).price);
         intent.putExtra("tel",list.get(i).tel);
         intent.putExtra("contact_name",list.get(i).contact_name);
         intent.putExtra("isDaTing",list.get(i).isDaTing);
+        intent.putExtra("NameTelID",list.get(i).NameTelID);
+        intent.putExtra("currentID",i+"");
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,

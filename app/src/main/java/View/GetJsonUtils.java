@@ -24,6 +24,7 @@ import bean.SeriseBean;
 import bean.UserBean;
 import bean.ZQFBean;
 import bean.modelNameBean;
+import bean.NameAndTel;
 import camera.ShowImageActivity;
 
 /**
@@ -353,14 +354,27 @@ public class GetJsonUtils {
                     cartMsgBean.cartmsgname=jsonObject2.getString("name");
                     cartMsgBean.cartMsgId=jsonObject2.getString("id");
                     JSONArray jsonArray1=jsonObject2.getJSONArray("people_info");
-                    Log.e("TAG","jsonarrayUQYU=="+jsonArray1.length());
-                    for(int k=0;k<jsonArray1.length();k++){
-                        JSONObject jsonObject3=jsonArray1.getJSONObject(k);
-                        Log.e("TAG","这里不走="+jsonObject3.toString().contains("name"));
-                            cartMsgBean.merchant_name = jsonObject3.getString("name");
-                            cartMsgBean.tel=jsonObject3.getString("tel");
-                            Log.e("TAG","cartMsgBeanName=="+cartMsgBean.merchant_name+"&"+cartMsgBean.tel);
+                    Log.e("TAG","jsonArray1--"+jsonArray1.length());
+                    if(jsonArray1.length()==0){
+                        NameAndTel nameAndTel=new NameAndTel();
+                        nameAndTel.id="";
+                        nameAndTel.name="";
+                        nameAndTel.tel="";
+                        cartMsgBean.list.add(nameAndTel);
+                    }else{
+                        for(int k=0;k<jsonArray1.length();k++){
+                        JSONObject jsonObject3 = jsonArray1.getJSONObject(k);
+                        cartMsgBean.merchant_name = jsonObject3.getString("name");
+                        cartMsgBean.tel = jsonObject3.getString("tel");
+                        cartMsgBean.ID = jsonObject3.getString("id");
+                        NameAndTel nameAndTel = new NameAndTel();
+                        nameAndTel.id = jsonObject3.getString("id");
+                        nameAndTel.name = jsonObject3.getString("name");
+                        nameAndTel.tel = jsonObject3.getString("tel");
+                        cartMsgBean.list.add(nameAndTel);
+                        }
                     }
+
                     list.add(cartMsgBean);
                 }
             }
@@ -473,6 +487,16 @@ public class GetJsonUtils {
                 buCartListBean.seriseID=jsonObject1.getString("seriesid");
                 buCartListBean.seriseName=jsonObject1.getString("series_name");
                 buCartListBean.isDaTing=jsonObject1.getString("isDaTing");
+                buCartListBean.NameTelID=jsonObject1.getString("selluserid");
+                String str=jsonObject1.getString("sellsinfo");
+                if(!str.equals("null")) {
+                    Log.e("TAG", "str==" + str);
+                    JSONObject jsonObject4 = new JSONObject(str);
+                    if (!buCartListBean.NameTelID.equals("0")) {
+                        buCartListBean.contact_name = jsonObject4.getString("name");
+                        buCartListBean.tel = jsonObject4.getString("tel");
+                    }
+                }
                 Log.e("TAG","mileage==="+buCartListBean.isDaTing);
 
                 String merchant=jsonObject.getString("merchant");
@@ -495,8 +519,13 @@ public class GetJsonUtils {
                 Log.e("TAG","jsonArray1=="+jsonArray1.length());
                 for(int k=0;k<jsonArray1.length();k++){
                     JSONObject jsonObject5=jsonArray1.getJSONObject(k);
-                    buCartListBean.tel=jsonObject5.getString("tel");
-                    buCartListBean.contact_name=jsonObject5.getString("name");//获取姓名
+                    List<NameAndTel>list1=new ArrayList<NameAndTel>();
+                    NameAndTel nameAndTel=new NameAndTel();
+                    nameAndTel.tel=jsonObject5.getString("tel");
+                    nameAndTel.name=jsonObject5.getString("name");//获取姓名
+                    nameAndTel.id=jsonObject5.getString("id");
+                    list1.add(nameAndTel);
+                    NameAndTel.NameAndTellist.add(list1);
                 }
                 list.add(buCartListBean);
             }
