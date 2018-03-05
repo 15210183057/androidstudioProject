@@ -11,14 +11,16 @@
         android:layout_height="50dp"
         android:background="@color/titleBar"
         >
-        <ImageView
+        <TextView
             android:id="@+id/img_left"
-            android:layout_width="25dp"
+            android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/qx"
-            android:visibility="gone"
+            android:text="返回"
+            android:textColor="#fff"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:scaleType="fitXY"/>
         <TextView
             android:id="@+id/tv_center"

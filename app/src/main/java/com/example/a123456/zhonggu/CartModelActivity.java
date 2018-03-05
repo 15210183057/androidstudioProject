@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -52,6 +53,7 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     private MyCartModel3 myCartModel3;
     private String BrandID,SeriseID,ModelID;//需要回传的所有ID
     Mydialog mydialog;
+    private TextView img_left;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,8 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
         lv2=findViewById(R.id.lv2);
         lv3=findViewById(R.id.lv3);
         linear_model=findViewById(R.id.linear_model);
+        img_left=findViewById(R.id.img_left);
+        img_left.setOnClickListener(this);
         relative3_newFragment.setOnClickListener(this);
         relative4_newFragment.setOnClickListener(this);
         relative5_newFragment.setOnClickListener(this);
@@ -86,6 +90,9 @@ public class CartModelActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.img_left:
+                finish();
+                break;
             case R.id.relative3_newFragment:
                 Log.e("TAG","list=="+list.size());
                 btn_ok.setVisibility(View.GONE);

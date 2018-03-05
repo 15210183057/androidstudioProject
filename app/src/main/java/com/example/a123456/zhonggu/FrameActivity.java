@@ -57,7 +57,7 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         initView();
         setOnClick();
         MyRegistReciver();
-//        setPermissions();
+        setPermissions();
     }
 
     @Override
@@ -323,20 +323,20 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
         return super.onKeyDown(keyCode, event);
     }
 
-//    static final String[] PERMISSION = new String[]{
-//            Manifest.permission.READ_CONTACTS,// 写入权限
-//            Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
-//            Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
-//            Manifest.permission.CAMERA
-//    };
-//    /**
-//     * 设置Android6.0的权限申请
-//     */
-//    private void setPermissions() {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-//            //Android 6.0申请权限
-//            ActivityCompat.requestPermissions(this,PERMISSION,1);
-//        }else{
-//        }
-//    }
+    static final String[] PERMISSION = new String[]{
+            Manifest.permission.READ_CONTACTS,// 写入权限
+            Manifest.permission.READ_EXTERNAL_STORAGE,  //读取权限
+            Manifest.permission.WRITE_CALL_LOG,        //读取设备信息
+            Manifest.permission.CAMERA
+    };
+    /**
+     * 设置Android6.0的权限申请
+     */
+    private void setPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            //Android 6.0申请权限
+            ActivityCompat.requestPermissions(this,PERMISSION,1);
+        }else{
+        }
+    }
 }

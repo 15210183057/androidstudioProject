@@ -67,7 +67,7 @@ public class CameraActivity extends Activity implements CameraInterface.CamOpenO
 	 * 设置Android6.0的权限申请
 	 */
 	private void setPermissions() {
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 			//Android 6.0申请权限
 			ActivityCompat.requestPermissions(this,PERMISSION,1);
 		}else{

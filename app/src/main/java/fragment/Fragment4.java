@@ -6,11 +6,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,12 +33,21 @@ import android.widget.Toast;
 import com.example.a123456.zhonggu.R;
 import com.example.a123456.zhonggu.SettingActivity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
 import bean.BUCartListBeanNUm;
+import camera.FileUtil;
 import mycamare.TakePhoteActivity;
 import View.CircleImageView;
+import utils.BitZip;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,7 +113,7 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
                 break;
             case R.id.img_circle:
 //                Toast.makeText(getContext(),"点击头像",Toast.LENGTH_SHORT).show();
-                getPopView(img_circle);
+//                getPopView(img_circle);
                 break;
             case R.id.tv_paizhao:
                 //调取相机功能
@@ -185,6 +198,8 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        FileUtil fileUtil=new FileUtil(getContext());
+
         if (requestCode == PHOTO_REQUEST_GALLERY) {
             if (data != null) {
                 // 得到图片的全路径
@@ -194,14 +209,103 @@ public class Fragment4 extends Fragment implements View.OnClickListener{
                 Bitmap bitmap= null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(resolver,uri);
+                    //获取图片路径
+                    String picPath="";
+                    //获取照片路径
+                    String[] filePathColumn = {MediaStore.Audio.Media.DATA};
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    String photoPath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+                    cursor.close();
+                    Log.i(TAG, "photoPath = "+photoPath+"length=="+new File(photoPath).length()/1024);
+//                    bitmap=BitZip.compressImage(bitmap);
+//                    new FileUtil(getContext()).saveBitmap(BitZip.compressImage(bitmap));
+//                    String filePath = uri.getEncodedPath();
+//                    final String imagePath = Uri.decode(filePath);
+////                    fileUtil.saveBitmap(bitmap);
+//                   String str= saveJPG_After(getContext(),bitmap,"");
+//                    Log.e("TAG","获取本地图库的路径11=="+photoPath);
+                    if(photoPath!=null) {
+//                            photoPath.replace("png","jpg");
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+                        int options = 100;
+                            while (baos.toByteArray().length / 1024 > 100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+                                baos.reset();//重置baos即清空baos
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+                                options -= 10;//每次都减少10
+                                if(options<11){
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
+                                    break;
+                                }
+                            Log.e("TAG", "baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
+
+                        }
+                        Log.e("TAG", "总集baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
+
+                    }
+//                    Log.e("TAG","length=="+new File(str).length()/1024);
+                    selectImag.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                selectImag.setImageBitmap(bitmap);
+//                selectImag.setImageBitmap(bitmap);
             }
         }
     }
+    public static String  saveJPG_After(Context context,Bitmap bitmap, String newImgpath) {
+        //复制Bitmap  因为png可以为透明，jpg不支持透明，把透明底明变成白色
+        //主要是先创建一张白色图片，然后把原来的绘制至上去
+//        String fileName = getFile()+"/"+dataTake+".jpg";
+        newImgpath=context.getExternalCacheDir().getAbsolutePath()+"/"+System.currentTimeMillis()+".jpg";
 
+        Bitmap outB=bitmap.copy(Bitmap.Config.ARGB_8888,true);
+        Canvas canvas=new Canvas(outB);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        File file = new File(newImgpath);
+        if(file.exists()){
+            return newImgpath;
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            ByteArrayOutputStream baos=new ByteArrayOutputStream();
+            int options = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+            Log.e("TAG","长度为：=="+baos.toByteArray().length/1024);
+            while (baos.toByteArray().length/1024>100){
+                baos.reset();
+                Log.e("TAG","options=="+options);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,options,baos);
+                options-=10;
+                Log.e("TAG","循环长的=="+baos.toByteArray().length/1024);
+            }
+//                        int options = 100;
+//                        while ( baos.toByteArray().length / 1024>100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+//                            baos.reset();//重置baos即清空baos
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+//                            options -= 10;//每次都减少10
+//                        }
+            if (outB.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+      return newImgpath;
+    }
+    private Bitmap readBitmap(String newImgpath){
+        if(!Environment.getExternalStorageState().
+                equals(Environment.MEDIA_MOUNTED))
+            return null;
+        Log.e("TAG","读取newImgpath="+newImgpath);
+
+        Bitmap  bitmap1=BitmapFactory.decodeFile(newImgpath);
+        return bitmap1;
+    }
     public class MyReciver extends BroadcastReceiver{
 
         @Override

@@ -461,6 +461,7 @@ public class GetJsonUtils {
      */
     public static List getCartList(Context ctc,String result){
         List<BuCartListBean>list=new ArrayList<BuCartListBean>();
+        NameAndTel.NameAndTellist.clear();
         try {
             JSONArray jsonArray=new JSONArray(result);
 
@@ -526,6 +527,10 @@ public class GetJsonUtils {
                     nameAndTel.id=jsonObject5.getString("id");
                     list1.add(nameAndTel);
                     NameAndTel.NameAndTellist.add(list1);
+                }
+                Log.e("TAG","详情页NameAndTel.NameAndTellist=="+NameAndTel.NameAndTellist.size());
+                for(int t=0;t<NameAndTel.NameAndTellist.size();t++){
+
                 }
                 list.add(buCartListBean);
             }

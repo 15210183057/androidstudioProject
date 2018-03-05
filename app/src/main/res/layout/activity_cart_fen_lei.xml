@@ -11,14 +11,16 @@
         android:layout_height="50dp"
         android:background="@color/titleBar"
         >
-        <ImageView
+        <TextView
             android:id="@+id/img_left"
-            android:layout_width="25dp"
+            android:layout_width="wrap_content"
             android:layout_height="25dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:src="@mipmap/qx"
-            android:visibility="gone"
+            android:text="返回"
+            android:textColor="#fff"
             android:scaleType="fitXY"/>
         <TextView
             android:id="@+id/tv_center"
@@ -60,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text=" 品牌 ："/>
+                android:text=" 分类 ："/>
             <RelativeLayout
                 android:id="@+id/relative3_newFragment"
                 android:layout_width="match_parent"

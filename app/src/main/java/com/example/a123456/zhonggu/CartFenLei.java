@@ -33,9 +33,10 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
     List<CartFenleiBean>list=new ArrayList<CartFenleiBean>();
     CartFenLeiAdapter  adapter;
     RelativeLayout relative3_newFragment;
-    TextView tv3_newFragment;
+    TextView tv3_newFragment,img_left;
     String CartFenleiID;
     Mydialog mydialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,7 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
     }
 
     private void initView() {
+        img_left=findViewById(R.id.img_left);
         lv=findViewById(R.id.lv1);
         btn_okmodel=findViewById(R.id.btn_okmodel);
         relative3_newFragment=findViewById(R.id.relative3_newFragment);
@@ -52,6 +54,7 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
         btn_okmodel.setOnClickListener(this);
         relative3_newFragment.setOnClickListener(this);
         lv.setOnItemClickListener(this);
+        img_left.setOnClickListener(this);
         getData();
     }
     private void getData(){
@@ -93,6 +96,9 @@ public class CartFenLei extends BaseActivity implements View.OnClickListener,Ada
         if(view.getId()==R.id.relative3_newFragment){
             btn_okmodel.setVisibility(View.GONE);
             lv.setVisibility(View.VISIBLE);
+        }
+        if(view.getId()==R.id.img_left){
+            finish();
         }
     }
 

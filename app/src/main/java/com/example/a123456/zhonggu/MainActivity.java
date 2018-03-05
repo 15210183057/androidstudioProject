@@ -118,6 +118,7 @@ public class MainActivity extends BaseActivity {
             }
         }else{
             Log.e("TAG","y用户名=="+UserBean.username);
+//            setPermissions();
             if(!TextUtils.isEmpty(UserBean.username)&&!TextUtils.isEmpty(UserBean.password)){
                 Intent intent=new Intent(MainActivity.this,FrameActivity.class);
                 startActivity(intent);
