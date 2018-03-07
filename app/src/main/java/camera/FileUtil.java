@@ -126,9 +126,8 @@ public class FileUtil {
 
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.JPEG,100, buffer);
-
 		int options = 100;
-		Log.e("TAG","循环长的=options=="+options+"==="+buffer.toByteArray().length/1024);
+		Log.e("TAG","循环长的=options图片大小=="+options+"==="+buffer.toByteArray().length/1024);
 		while ( buffer.toByteArray().length / 1024>100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
 			buffer.reset();//重置baos即清空baos
 			bitmap.compress(Bitmap.CompressFormat.JPEG, options, buffer);//这里压缩options%，把压缩后的数据存放到baos中

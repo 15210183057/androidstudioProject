@@ -4,18 +4,22 @@ package fragment;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -57,6 +61,7 @@ import org.xutils.ex.HttpException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,12 +84,16 @@ import bean.ZQFBean;
 import camera.CameraActivity;
 import camera.FileUtil;
 import jiekou.getInterface;
+import mycamare.TakePhoteActivity;
+import utils.BitZip;
 import utils.MyModelDialog;
 import utils.MySuccess;
 import utils.Mydialog;
 import View.GetJsonUtils;
 import View.CommonPopupWindow;
 import utils.NameAndTelDialog;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -120,6 +129,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
     String quyuTelName;//车商信息对于的用户和电话
     boolean IsClean=false;
     String picID,currentID;//接收销售人员姓名和电话,当前ID
+    private String picName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -425,39 +435,60 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.img_newfragment:
                 img_newfragment.setBackgroundResource(0);
-               if( setPermissions()) {
-                Intent intent3=new Intent(getContext(),CameraActivity.class);
-                intent3.putExtra("name","zuoqian");
-                   int h=getActivity().getWindowManager().getDefaultDisplay().getHeight();
-                   Log.e("TAG","h=="+h);
-                   intent3.putExtra("height", 466+"");
-                startActivity(intent3);
-               }
+                picName="zuoqian";
+                getPicView(img_newfragment);
+//               if( setPermissions()) {
+//                Intent intent3=new Intent(getContext(),CameraActivity.class);
+//                intent3.putExtra("name","zuoqian");
+//                   int h=getActivity().getWindowManager().getDefaultDisplay().getHeight();
+//                   Log.e("TAG","h=="+h);
+//                   intent3.putExtra("height", 466+"");
+//                startActivity(intent3);
+//               }
                 break;
             case R.id.img2_newfragment:
                 img2_newfragment.setBackgroundResource(0);
-                if(setPermissions()){
-                    Intent intent4=new Intent(getContext(),CameraActivity.class);
-                    intent4.putExtra("name","zhengqian");
-                    int h=getActivity().getWindowManager().getDefaultDisplay().getHeight()-200;
-                    Log.e("TAG","h的高低=="+h);
-                    intent4.putExtra("height",""+466);
-                    startActivity(intent4);
-                }
+                getPicView(img2_newfragment);
+                picName="zhengqian";
+//                if(setPermissions()){
+//                    Intent intent4=new Intent(getContext(),CameraActivity.class);
+//                    intent4.putExtra("name","zhengqian");
+//                    int h=getActivity().getWindowManager().getDefaultDisplay().getHeight()-200;
+//                    Log.e("TAG","h的高低=="+h);
+//                    intent4.putExtra("height",""+466);
+//                    startActivity(intent4);
+//                }
 
                 break;
             case R.id.img3_newfragment:
+                getPicView(img3_newfragment);
+                picName="zhenghou";
                 img3_newfragment.setBackgroundResource(0);
-                if(setPermissions()) {
-                    Intent intent5 = new Intent(getContext(), CameraActivity.class);
-                    intent5.putExtra("name", "zhenghou");
-                    intent5.putExtra("height", "466");
-                    startActivity(intent5);
-                }
+
                 break;
             case R.id.tv_cartmodel:
                 Intent intent6=new Intent(getContext(), CartModelActivity.class);
                 startActivity(intent6);
+                break;
+            case R.id.tv_paizhao2:
+                //调取相机功能
+//                startActivity(new Intent(getContext(), TakePhoteActivity.class));
+                if(setPermissions()) {
+                    Intent intent5 = new Intent(getContext(), CameraActivity.class);
+                    intent5.putExtra("name", picName);
+                    intent5.putExtra("height", "466");
+                    startActivity(intent5);
+                }
+                window.dismiss();
+                break;
+            case R.id.tv_xiangce2:
+                takePicture();
+                window.dismiss();
+                break;
+            case R.id.tv_canle2:
+                if(window!=null&&window.isShowing()){
+                    window.dismiss();
+                }
                 break;
         }
     }
@@ -1252,7 +1283,158 @@ public class newFragment extends Fragment implements View.OnClickListener{
         }
         return false;
     }
+    //获取popwindow
+    ImageView selectImag=null;
+    private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
+    private void getPicView(ImageView imageView){
+        selectImag=imageView;
+        popView= View.inflate(getContext(),R.layout.popwiew2,null);
+        LinearLayout pop_linear=popView.findViewById(R.id.pop_linear);
+        tv_paizhao=popView.findViewById(R.id.tv_paizhao2);
+        tv_xiangce=popView.findViewById(R.id.tv_xiangce2);
+        tv_canle=popView.findViewById(R.id.tv_canle2);
+        window=new PopupWindow(getContext());
+        int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        pop_linear.measure(w, h);
+        int pop_height = pop_linear.getMeasuredHeight();
+        int pop_width = pop_linear.getMeasuredWidth();
+        Log.e("TAG","测量h="+pop_height);
+        int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        window.setWidth(width);
+        window.setHeight(pop_height);
+        // 设置PopupWindow的背景
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // 设置PopupWindow是否能响应外部点击事件
+        window.setOutsideTouchable(true);
+        // 设置PopupWindow是否能响应点击事件
+        window.setTouchable(true);
+        // 显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的锚点，第二和第三个参数分别是PopupWindow相对锚点的x、y偏移
+        window.setContentView(popView);
+        window.setAnimationStyle(R.style.animTranslate);
+        window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+                lp.alpha=1.0f;
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp);
+            }
+        });
+        window.showAtLocation(tv_topcenter, Gravity.BOTTOM,0,0);
+        WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+        lp.alpha=0.3f;
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getActivity().getWindow().setAttributes(lp);
+        // 或者也可以调用此方法显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的父View，第二个参数是PopupWindow相对父View的位置，
+        // 第三和第四个参数分别是PopupWindow相对父View的x、y偏移
+        // window.showAtLocation(parent, gravity, x, y);
+        tv_xiangce.setOnClickListener(this);
+        tv_paizhao.setOnClickListener(this);
+        tv_canle.setOnClickListener(this);
+        Log.e("TAG","window=="+window.getWidth()+"height=="+window.getHeight());
+    }
+    //调取本地相机
+    public void takePicture(){
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        Bundle bundle=new Bundle();
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FileUtil fileUtil=new FileUtil(getContext());
 
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            if (data != null) {
+                // 得到图片的全路径
+                Log.e("TAG","这里走了吗");
+                String photoPath="";
+                Uri uri = data.getData();
+                ContentResolver resolver=getActivity().getContentResolver();
+                Bitmap bitmap= null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(resolver,uri);
+//                    selectImag.setImageBitmap(bitmap);
+                    //获取图片路径
+                    String picPath="";
+                    //获取照片路径
+                    String[] filePathColumn = {MediaStore.Audio.Media.DATA};
+                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+               photoPath  = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+                    cursor.close();
+                    Log.i(TAG, "photoPath = "+photoPath+"length=="+new File(photoPath).length()/1024);
+                    if(photoPath!=null) {
+//                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                        Log.e("TAG","开始压缩111=="+new File(photoPath).length()/1024);
+//                        if(new File(photoPath).length()/1024>4000){
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
+//                        }else {
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+//
+//                        }
+//                        int options = 100;
+//                        Log.e("TAG","开始压缩222=="+baos.toByteArray().length/1024);
+//                        while (baos.toByteArray().length / 1024 > 100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+//                            baos.reset();//重置baos即清空baos
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+//                            options -= 10;//每次都减少10
+//                            if(options<11){
+//                                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
+//                                break;
+//                            }
+//                            Log.e("TAG", "baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
+//
+//                        }
+//                        Log.e("TAG", "总集baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
+//                        BitZip.compressImage(bitmap);
+                        // 设置参数
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+                        BitmapFactory.decodeFile(photoPath, options);
+                        int height = options.outHeight;
+                        int width= options.outWidth;
+                        int inSampleSize = 2; // 默认像素压缩比例，压缩为原图的1/2
+                        int minLen = Math.min(height, width); // 原图的最小边长
+                        if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                            float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
+                            inSampleSize = (int)ratio;
+                        }
+                        options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+                        options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+                        Bitmap bm = BitmapFactory.decodeFile(photoPath, options); // 解码文件
+                        Log.w("TAG", "size: " + bm.getByteCount()/1024 + " width: " + bm.getWidth() + " heigth:" + bm.getHeight()); // 输出图像数据
+                        selectImag.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        selectImag.setImageBitmap(bm);
+                        new FileUtil(getContext()).saveBitmap(bm);
+                        photoPath=FileUtil.getJpegName();
+                        selectImag.setImageBitmap(new FileUtil(getContext()).readBitmap(photoPath));
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                selectImag.setImageBitmap(bitmap);
+                if(selectImag==img3_newfragment){
+                    zhfPath=photoPath;
+                    Log.e("TAG","图库里的zhfpath=="+zhfPath);
+                }else if(selectImag==img2_newfragment){
+                    zqPath=photoPath;
+                    Log.e("TAG","图库里的zhpath=="+zqPath);
+                }else if(selectImag==img_newfragment){
+                    zqfPath=photoPath;
+                    Log.e("TAG","图库里的path=="+zqfPath);
+                }
+            }
+        }
+    }
 //    private void setName() {
 //
 //        edt_name.setDropDownVerticalOffset(10);

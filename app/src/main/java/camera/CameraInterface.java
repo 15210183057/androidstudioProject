@@ -148,13 +148,21 @@ public class CameraInterface extends Service{
 			mCamera.takePicture(mShutterCallback, null, mJpegPictureCallback);
 		}
 	}
-	
+//	public boolean Flag=true;
 	public void doTakePicture(int w, int h){
 		if(isPreviewing && (mCamera != null)){
 			Log.i(TAG, "矩形拍照尺寸：width =  " + w + "height =" + h);
 			DST_RECT_WIDTH = w;
 			DST_RECT_HEIGHT = h;
-			mCamera.takePicture(mShutterCallback, null, mRectJpegPictureCallback);
+//			if(Flag) {
+			try {
+				mCamera.takePicture(mShutterCallback, null, mRectJpegPictureCallback);
+
+			}catch (Exception e){
+				Log.e("TAG","e=="+e.getMessage().toString());
+			}
+//				Flag=false;
+//			}
 		}
 	}
 
