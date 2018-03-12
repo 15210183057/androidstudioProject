@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pop_linear2"
+    android:id="@+id/pop_linear"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="#fff"
     >
     <TextView
-        android:id="@+id/tv_paizhao2"
+        android:id="@+id/tv_popguohu"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="相机拍照"
+        android:text="已过户"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_margin="10dp"
@@ -21,10 +21,10 @@
         android:layout_height="1dp"/>
     <TextView
         android:layout_marginTop="2dp"
-        android:id="@+id/tv_xiangce2"
+        android:id="@+id/tv_pop_weiguohu"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="选择图库"
+        android:text="未过户"
         android:textSize="16sp"
         android:gravity="center"
         android:layout_marginLeft="10dp"
@@ -36,7 +36,8 @@
         android:background="#000"
         android:layout_height="1dp"/>
     <TextView
-        android:id="@+id/tv_canle2"
+        android:visibility="gone"
+        android:id="@+id/tv_canle3"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="取消"

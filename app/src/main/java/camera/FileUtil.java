@@ -140,8 +140,11 @@ public class FileUtil {
 			Log.e("TAG","循环长的=options=="+options+"==="+buffer.toByteArray().length/1024+"=="+(buffer.toByteArray().length/1024>100));
 		}
 		Log.e("TAG","fileName=="+fileName);
+		//
+
+		//
 		File file = new File(fileName);
-		Log.e("TAG","保存图片=bitmap="+fileName+"=="+buffer.toByteArray().length/1024);
+		Log.e("TAG","保存图片=bitmap="+fileName+"==宽："+bitmap.getWidth()+"高："+bitmap.getHeight());
 		jpegName = fileName;
 		if(file.exists()){
 			return;
@@ -173,6 +176,15 @@ public class FileUtil {
 		String fileName = name;
 		bitmap = BitmapFactory.decodeFile(fileName);
 		Log.e("TAG","获取图片地址bitmap=="+fileName);
+
+		BitmapFactory.Options options1 = new BitmapFactory.Options();
+		options1.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+		BitmapFactory.decodeFile(fileName, options1);
+		int height = options1.outHeight;
+		int width= options1.outWidth;
+		int inSampleSize = 2; // 默认像素压缩比例，压缩为原图的1/2
+		int minLen = Math.min(height, width); // 原图的最小边长
+		Log.e("TAG","minLen====="+minLen);
 		return bitmap;
 	}
 

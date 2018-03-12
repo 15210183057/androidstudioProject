@@ -219,6 +219,7 @@ Log.e("TAG","list=="+list.get(i).price);
         intent.putExtra("isDaTing",list.get(i).isDaTing);
         intent.putExtra("NameTelID",list.get(i).NameTelID);
         intent.putExtra("currentID",i+"");
+        intent.putExtra("transterstatus",list.get(i).transterstatus);
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,

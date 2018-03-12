@@ -2,9 +2,12 @@ package fragment;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,11 +17,14 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -102,9 +108,11 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private ImageView img_paizhao;
     private EditText edit_num;
     private View view;
-    private PopupWindow window;
-    private View popView,BrandPopView,SerisePopView;
+    private PopupWindow window,window2,window3;
+    private View popView,BrandPopView,SerisePopView,popView2,popView3;
     private TextView tv_paizhao,tv_canle,tv_xiangce;
+    private TextView tv_paizhao2,tv_canle2,tv_xiangce2;
+    private TextView tv_paizhao3,tv_canle3,tv_xiangce3;
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
     private TextView tv_time;//注册日期
@@ -117,7 +125,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private LinearLayout linear_celiang;
     private String serise_id,model_id;
     private TextView tv_quyue,tv_cartFenlei;//tv_cartFenlei 车辆分类
-    CommonPopupWindow window2;
+//    CommonPopupWindow window2;
     private TextView tv_cartmodel;
     List imgListPath=new ArrayList();
     Mydialog mydialog;
@@ -130,6 +138,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
     boolean IsClean=false;
     String picID,currentID;//接收销售人员姓名和电话,当前ID
     private String picName;
+    private TextView Tv_guohu;//过户
+    private String guohuID;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -169,6 +179,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 edt_name.setText("");
                 edt_price.setText("");
                 tv_quyue.setText("请选择车商信息");
+                Tv_guohu.setText("请选择车辆是否过户");
                 tv_time.setText("请选择日期");
                 tv_cartmodel.setText("请选择品牌，车系和车型");
                 tv_cartFenlei.setText("请选取车辆分类信息");
@@ -251,6 +262,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
 
         btn_commit=view.findViewById(R.id.btn_commit);//提交按钮
 
+        Tv_guohu=view.findViewById(R.id.tv_guohu);//是否过户
+
         img_paizhao.setOnClickListener(this);
         tv_time.setOnClickListener(this);
         btn_commit.setOnClickListener(this);
@@ -270,12 +283,16 @@ public class newFragment extends Fragment implements View.OnClickListener{
         edt_name.setOnClickListener(this);
         tv_getmodel=view.findViewById(R.id.tv_getmodel);
         tv_getmodel.setOnClickListener(this);
+        Tv_guohu.setOnClickListener(this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_guohu:
+                getGuohu();
+                break;
             case R.id.edt_name:
                 edt_name.setText("");
 //                if(BeanFlag.Flag){
@@ -374,6 +391,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }else if (TextUtils.isEmpty(tv_cartFenlei.getText().toString())||tv_cartFenlei.getText().toString().trim().equals("请选取车辆分类信息")) {
                     tv_cartFenlei.setBackgroundResource(R.drawable.rednull);
                     Toast.makeText(getContext(),"车辆分类信息不能为空",Toast.LENGTH_LONG).show();
+                }else if (TextUtils.isEmpty(Tv_guohu.getText().toString())||Tv_guohu.getText().toString().trim().equals("请选择车辆是否过户")) {
+                    Tv_guohu.setBackgroundResource(R.drawable.rednull);
+                    Toast.makeText(getContext(),"过户信息不能为空",Toast.LENGTH_LONG).show();
                 }else if(!IsNullEdit(edt_licheng)){
                     Toast.makeText(getContext(),"里程不能为空",Toast.LENGTH_LONG).show();
                 }
@@ -479,16 +499,25 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     intent5.putExtra("height", "466");
                     startActivity(intent5);
                 }
-                window.dismiss();
+                window2.dismiss();
                 break;
             case R.id.tv_xiangce2:
                 takePicture();
-                window.dismiss();
+                window2.dismiss();
                 break;
             case R.id.tv_canle2:
-                if(window!=null&&window.isShowing()){
-                    window.dismiss();
+                if(window2!=null&&window2.isShowing()){
+                    window2.dismiss();
                 }
+            case R.id.tv_popguohu:
+                Tv_guohu.setText(tv_paizhao3.getText().toString());
+                guohuID="0";
+                window3.dismiss();
+                break;
+            case R.id.tv_pop_weiguohu:
+                Tv_guohu.setText(tv_xiangce3.getText().toString());
+                guohuID="1";//未过户
+                window3.dismiss();
                 break;
         }
     }
@@ -624,6 +653,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         public void onReceive(Context context, Intent intent) {
             Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
             if(intent.getAction().equals("update")){
+                Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                 tv_quyue.setBackgroundResource(R.drawable.juxingnull);
                 tv_cartmodel.setBackgroundResource(R.drawable.juxingnull);
                 tv_time.setBackgroundResource(R.drawable.juxingnull);
@@ -634,7 +664,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 MyNewUpdate myNewUpdate=new MyNewUpdate();
 
                //TODO
-
+                guohuID=MyNewUpdate.transterstatus;
+                if(guohuID.equals("0")){
+                    //已过户
+                    Tv_guohu.setText("已过户");
+                }else{
+                    Tv_guohu.setText("未过户");
+                }
                 fenleiID=MyNewUpdate.isDaTing;
 //                1=大厅车辆 ，2=市场车辆，3=商户自用车，4=新车登记商户卡车辆，5=职工车辆
                 if(fenleiID.equals("1")){
@@ -1030,6 +1066,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
         requestParams.addBodyParameter("isDaTing",fenleiID);
+        requestParams.addBodyParameter("transterstatus",guohuID);//是否过户
         requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());
@@ -1133,6 +1170,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         requestParams.addBodyParameter("name",edt_name.getText().toString());
         //车辆分类
         requestParams.addBodyParameter("isDaTing",fenleiID);
+        requestParams.addBodyParameter("transterstatus",guohuID);//是否过户
         requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
         Log.e("TAG","修改地址=="+requestParams);
@@ -1288,12 +1326,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private void getPicView(ImageView imageView){
         selectImag=imageView;
-        popView= View.inflate(getContext(),R.layout.popwiew2,null);
-        LinearLayout pop_linear=popView.findViewById(R.id.pop_linear);
-        tv_paizhao=popView.findViewById(R.id.tv_paizhao2);
-        tv_xiangce=popView.findViewById(R.id.tv_xiangce2);
-        tv_canle=popView.findViewById(R.id.tv_canle2);
-        window=new PopupWindow(getContext());
+        popView2= View.inflate(getContext(),R.layout.popwiew2,null);
+        LinearLayout pop_linear=popView2.findViewById(R.id.pop_linear2);
+        tv_paizhao2=popView2.findViewById(R.id.tv_paizhao2);
+        tv_xiangce2=popView2.findViewById(R.id.tv_xiangce2);
+        tv_canle2=popView2.findViewById(R.id.tv_canle2);
+        window2=new PopupWindow(getContext());
         int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
         int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
         pop_linear.measure(w, h);
@@ -1302,19 +1340,19 @@ public class newFragment extends Fragment implements View.OnClickListener{
         Log.e("TAG","测量h="+pop_height);
         int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
-        window.setWidth(width);
-        window.setHeight(pop_height);
+        window2.setWidth(width);
+        window2.setHeight(pop_height);
         // 设置PopupWindow的背景
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        window2.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         // 设置PopupWindow是否能响应外部点击事件
-        window.setOutsideTouchable(true);
+        window2.setOutsideTouchable(true);
         // 设置PopupWindow是否能响应点击事件
-        window.setTouchable(true);
+        window2.setTouchable(true);
         // 显示PopupWindow，其中：
         // 第一个参数是PopupWindow的锚点，第二和第三个参数分别是PopupWindow相对锚点的x、y偏移
-        window.setContentView(popView);
-        window.setAnimationStyle(R.style.animTranslate);
-        window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        window2.setContentView(popView2);
+        window2.setAnimationStyle(R.style.animTranslate);
+        window2.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
@@ -1323,7 +1361,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 getActivity().getWindow().setAttributes(lp);
             }
         });
-        window.showAtLocation(tv_topcenter, Gravity.BOTTOM,0,0);
+        window2.showAtLocation(tv_topcenter, Gravity.BOTTOM,0,0);
         WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
         lp.alpha=0.3f;
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -1332,10 +1370,10 @@ public class newFragment extends Fragment implements View.OnClickListener{
         // 第一个参数是PopupWindow的父View，第二个参数是PopupWindow相对父View的位置，
         // 第三和第四个参数分别是PopupWindow相对父View的x、y偏移
         // window.showAtLocation(parent, gravity, x, y);
-        tv_xiangce.setOnClickListener(this);
-        tv_paizhao.setOnClickListener(this);
-        tv_canle.setOnClickListener(this);
-        Log.e("TAG","window=="+window.getWidth()+"height=="+window.getHeight());
+        tv_xiangce2.setOnClickListener(this);
+        tv_paizhao2.setOnClickListener(this);
+        tv_canle2.setOnClickListener(this);
+        Log.e("TAG","window=="+window2.getWidth()+"height=="+window2.getHeight());
     }
     //调取本地相机
     public void takePicture(){
@@ -1359,69 +1397,61 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 Uri uri = data.getData();
                 ContentResolver resolver=getActivity().getContentResolver();
                 Bitmap bitmap= null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(resolver,uri);
-//                    selectImag.setImageBitmap(bitmap);
-                    //获取图片路径
-                    String picPath="";
-                    //获取照片路径
-                    String[] filePathColumn = {MediaStore.Audio.Media.DATA};
-                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-               photoPath  = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
-                    cursor.close();
-                    Log.i(TAG, "photoPath = "+photoPath+"length=="+new File(photoPath).length()/1024);
-                    if(photoPath!=null) {
-//                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                        Log.e("TAG","开始压缩111=="+new File(photoPath).length()/1024);
-//                        if(new File(photoPath).length()/1024>4000){
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG,80,baos);
-//                        }else {
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
-//
-//                        }
-//                        int options = 100;
-//                        Log.e("TAG","开始压缩222=="+baos.toByteArray().length/1024);
-//                        while (baos.toByteArray().length / 1024 > 100) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩
-//                            baos.reset();//重置baos即清空baos
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
-//                            options -= 10;//每次都减少10
-//                            if(options<11){
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
-//                                break;
-//                            }
-//                            Log.e("TAG", "baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
-//
-//                        }
-//                        Log.e("TAG", "总集baos.toByteArray().length==" + baos.toByteArray().length / 1024 + "");
-//                        BitZip.compressImage(bitmap);
-                        // 设置参数
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
-                        BitmapFactory.decodeFile(photoPath, options);
-                        int height = options.outHeight;
-                        int width= options.outWidth;
-                        int inSampleSize = 2; // 默认像素压缩比例，压缩为原图的1/2
-                        int minLen = Math.min(height, width); // 原图的最小边长
-                        if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
-                            float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
-                            inSampleSize = (int)ratio;
-                        }
-                        options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
-                        options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
-                        Bitmap bm = BitmapFactory.decodeFile(photoPath, options); // 解码文件
-                        Log.w("TAG", "size: " + bm.getByteCount()/1024 + " width: " + bm.getWidth() + " heigth:" + bm.getHeight()); // 输出图像数据
-                        selectImag.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                        selectImag.setImageBitmap(bm);
-                        new FileUtil(getContext()).saveBitmap(bm);
-                        photoPath=FileUtil.getJpegName();
-                        selectImag.setImageBitmap(new FileUtil(getContext()).readBitmap(photoPath));
-                    }
+                //                    bitmap = MediaStore.Images.Media.getBitmap(resolver,uri);
+////                    selectImag.setImageBitmap(bitmap);
+//                    //获取图片路径
+//                    String picPath="";
+//                    //获取照片路径
+//                    String[] filePathColumn = {MediaStore.Audio.Media.DATA};
+//                    Cursor cursor = getActivity().getContentResolver().query(data.getData(), filePathColumn, null, null, null);
+//                    cursor.moveToFirst();
+//               photoPath  = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+//                    cursor.close();
+                Log.i(TAG, "photoPath = "+photoPath+"length=="+new File(photoPath).length()/1024);
+                photoPath=getImageAbsolutePath(getActivity(),uri);
+                if(photoPath!=null) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+                    BitmapFactory.decodeFile(photoPath, options);
+                    int height = options.outHeight;
+                    int width= options.outWidth;
+                    Log.e("TAG","height=="+height+"==width=="+width);
+//                    宽：1050高：1398
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2，默认1不压缩
+//                    int minLen = Math.min(height, width); // 原图的最小边长
+//                    Log.e("TAG","minLen+=="+minLen);
+//                    if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+//                        float ratio = (float)minLen / 100f; // 计算像素压缩比例
+//                        inSampleSize = (int)ratio;
+//                    }
+                    if(width>1050||height>1398){
+                        if (width > height) {
+                            inSampleSize = Math.round((float) height / (float) 1398);
+                            Log.e("TAG","压缩比例为-----"+inSampleSize);
+                        } else {
+                            inSampleSize = Math.round((float) width / (float) 1050);
+                            Log.e("TAG","压缩比例为2222222-----"+inSampleSize);
+                        }
+                    }
+                    Log.e("TAG","压缩比例为-----"+inSampleSize);
+                    options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+                    options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+                    Bitmap bm = BitmapFactory.decodeFile(photoPath, options); // 解码文件
+                    Log.e("TAG", "size: " + bm.getByteCount()/1024 + " width: " + bm.getWidth() + " heigth:" + bm.getHeight()); // 输出图像数据
+                    selectImag.setScaleType(ImageView.ScaleType.FIT_XY);
+//                    selectImag.setImageBitmap(bm);
+//                    Bitmap bm=BitmapFactory.decodeFile(photoPath);
+
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate((float)90f);
+                    Bitmap rotaBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
+                    new FileUtil(getContext()).saveBitmap(rotaBitmap);
+                    photoPath=FileUtil.getJpegName();
+                        selectImag.setImageBitmap(rotaBitmap);
                 }
-//                selectImag.setImageBitmap(bitmap);
+
+                //                selectImag.setImageBitmap(bitmap);
                 if(selectImag==img3_newfragment){
                     zhfPath=photoPath;
                     Log.e("TAG","图库里的zhfpath=="+zhfPath);
@@ -1458,4 +1488,149 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //            edt_name.setAdapter(arrayAdapter);
 //        }
 //    }
+
+    private void getGuohu(){
+        popView3= View.inflate(getContext(),R.layout.myguohu_popview,null);
+        LinearLayout pop_linear=popView3.findViewById(R.id.pop_linear);
+        tv_paizhao3=popView3.findViewById(R.id.tv_popguohu);
+        tv_xiangce3=popView3.findViewById(R.id.tv_pop_weiguohu);
+        tv_canle3=popView3.findViewById(R.id.tv_canle3);
+        window3=new PopupWindow(getContext());
+        int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        pop_linear.measure(w, h);
+        int pop_height = pop_linear.getMeasuredHeight();
+        int pop_width = pop_linear.getMeasuredWidth();
+        Log.e("TAG","测量h="+pop_height);
+        int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        window3.setWidth(width);
+        window3.setHeight(pop_height);
+        // 设置PopupWindow的背景
+        window3.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // 设置PopupWindow是否能响应外部点击事件
+        window3.setOutsideTouchable(true);
+        // 设置PopupWindow是否能响应点击事件
+        window3.setTouchable(true);
+        // 显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的锚点，第二和第三个参数分别是PopupWindow相对锚点的x、y偏移
+        window3.setContentView(popView3);
+        window3.setAnimationStyle(R.style.animTranslate);
+        window3.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+                lp.alpha=1.0f;
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp);
+            }
+        });
+        window3.showAtLocation(Tv_guohu, Gravity.BOTTOM,0,0);
+        WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+        lp.alpha=0.3f;
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getActivity().getWindow().setAttributes(lp);
+        // 或者也可以调用此方法显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的父View，第二个参数是PopupWindow相对父View的位置，
+        // 第三和第四个参数分别是PopupWindow相对父View的x、y偏移
+        // window.showAtLocation(parent, gravity, x, y);
+        tv_xiangce3.setOnClickListener(this);
+        tv_paizhao3.setOnClickListener(this);
+        tv_canle3.setOnClickListener(this);
+        Log.e("TAG","window=="+window3.getWidth()+"height=="+window3.getHeight());
+    }
+    @TargetApi(19)
+    public static String getImageAbsolutePath(Activity context, Uri imageUri) {
+        if (context == null || imageUri == null)
+            return null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, imageUri)) {
+            if (isExternalStorageDocument(imageUri)) {
+                String docId = DocumentsContract.getDocumentId(imageUri);
+                String[] split = docId.split(":");
+                String type = split[0];
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+            } else if (isDownloadsDocument(imageUri)) {
+                String id = DocumentsContract.getDocumentId(imageUri);
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                return getDataColumn(context, contentUri, null, null);
+            } else if (isMediaDocument(imageUri)) {
+                String docId = DocumentsContract.getDocumentId(imageUri);
+                String[] split = docId.split(":");
+                String type = split[0];
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                String selection = MediaStore.Images.Media._ID + "=?";
+                String[] selectionArgs = new String[]{split[1]};
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        } // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(imageUri.getScheme())) {
+            // Return the remote address
+            if (isGooglePhotosUri(imageUri))
+                return imageUri.getLastPathSegment();
+            return getDataColumn(context, imageUri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(imageUri.getScheme())) {
+            return imageUri.getPath();
+        }
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        Cursor cursor = null;
+        String column = MediaStore.Images.Media.DATA;
+        String[] projection = {column};
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is Google Photos.
+     */
+    public static boolean isGooglePhotosUri(Uri uri) {
+        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
 }

@@ -488,6 +488,7 @@ public class GetJsonUtils {
                 buCartListBean.seriseID=jsonObject1.getString("seriesid");
                 buCartListBean.seriseName=jsonObject1.getString("series_name");
                 buCartListBean.isDaTing=jsonObject1.getString("isDaTing");
+                buCartListBean.transterstatus=jsonObject1.getString("transterstatus");
                 buCartListBean.NameTelID=jsonObject1.getString("selluserid");
                 String str=jsonObject1.getString("sellsinfo");
                 if(!str.equals("null")) {
