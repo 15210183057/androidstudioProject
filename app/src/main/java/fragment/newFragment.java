@@ -1443,12 +1443,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                    selectImag.setImageBitmap(bm);
 //                    Bitmap bm=BitmapFactory.decodeFile(photoPath);
 
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate((float)90f);
-                    Bitmap rotaBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
-                    new FileUtil(getContext()).saveBitmap(rotaBitmap);
+//                    Matrix matrix = new Matrix();
+//                    matrix.postRotate((float)90f);
+//                    Bitmap rotaBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
+                    new FileUtil(getContext()).saveBitmap(bm);
                     photoPath=FileUtil.getJpegName();
-                        selectImag.setImageBitmap(rotaBitmap);
+                        selectImag.setImageBitmap(bm);
                 }
 
                 //                selectImag.setImageBitmap(bitmap);
