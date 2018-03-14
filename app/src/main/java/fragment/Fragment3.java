@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -62,8 +63,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
     Mydialog mydialog;
     TextView tv_quyu;
     String quyu_ID;
-    Button btn_serach;
+    Button btn_serach,btn_clean;
     boolean canlel=false;
+    private EditText edt_vin_search;
+    List<List<NameAndTel>> NameAndTellist1=new ArrayList<List<NameAndTel>>();
     public Fragment3() {
         // Required empty public constructor
     }
@@ -84,22 +87,26 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         getActivity().registerReceiver(my,intentFilter);
         list=new ArrayList<BuCartListBean>();
 
-        getBuCartList(i);
         view=inflater.inflate(R.layout.fragment_fragment3, container, false);
         img_topleft=view.findViewById(R.id.img_left);
         img_topright=view.findViewById(R.id.img_right);
         tv_topcenter=view.findViewById(R.id.tv_center);
 
+        edt_vin_search=view.findViewById(R.id.edt_vin_search);
         tv_quyu=view.findViewById(R.id.tv_quyue);
         btn_serach=view.findViewById(R.id.btn_serach);
+        btn_clean=view.findViewById(R.id.btn_clean);
         img_topleft.setVisibility(View.GONE);
         tv_topcenter.setText("已上传车源");
 //        img_topright.setVisibility(View.GONE);
+        getBuCartList(i);
+
         initView();
 
         Log.e("TAG","标题；"+tv_topcenter.getText().toString());
         tv_quyu.setOnClickListener(this);
         btn_serach.setOnClickListener(this);
+        btn_clean.setOnClickListener(this);
         img_topright.setOnClickListener(this);
         return view;
 
@@ -136,6 +143,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 //                        if(i>1){
 //                            i--;
                         list.clear();
+                        NameAndTellist1.clear();
                             getBuCartList(1);
 //                        }
                     }
@@ -191,6 +199,15 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int h2=NameAndTellist1.size();
+        Log.e("TAG","=h2="+h2+"i=="+i);
+        int h=NameAndTellist1.get(i).size();
+        Log.e("TAG","h=="+h+"=h2="+h2);
+//
+//        for(int r=0;r<h;r++){
+//            Log.e("TAG","id=="+NameAndTel.NameAndTellist.get(i).get(r).id+":"+NameAndTel.NameAndTellist.get(i).get(r).name);
+//        }
+
         Intent intent=new Intent();
         intent.setAction("new");
         intent.putExtra("Flag","true");
@@ -201,6 +218,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("licheng",list.get(i).mileage);
         intent.putExtra("price",list.get(i).price);
 Log.e("TAG","list=="+list.get(i).price);
+        Log.e("TAG","第几条=="+i);
+        Log.e("TAG","quyuID=="+list.get(i).quyuID+"=="+"i");
         intent.putExtra("quyuID",list.get(i).quyuID);
         intent.putExtra("brandID",list.get(i).brandid);
         intent.putExtra("seriseID",list.get(i).seriseID);
@@ -232,6 +251,9 @@ Log.e("TAG","list=="+list.get(i).price);
         if(!TextUtils.isEmpty(quyu_ID)) {
             requestParams.addBodyParameter("merchantid", quyu_ID);
         }
+        if(!TextUtils.isEmpty(edt_vin_search.getText())){
+            requestParams.addBodyParameter("vin",edt_vin_search.getText().toString());
+        }
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
@@ -249,6 +271,7 @@ Log.e("TAG","list=="+list.get(i).price);
                 }else{
 
                 }
+                NameAndTellist1.addAll(NameAndTel.NameAndTellist);
             }
 
             @Override
@@ -316,7 +339,7 @@ Log.e("TAG","list=="+list.get(i).price);
                 }
                 Log.e("TAG","开始搜索="+quyu_ID);
                 list.clear();
-
+                NameAndTellist1.clear();
                 getBuCartList(1);
                  i=1;
                 break;
@@ -328,6 +351,18 @@ Log.e("TAG","list=="+list.get(i).price);
                 tv_quyu.setText("按车商信息搜索");
                 i=1;
                 list.clear();
+                NameAndTellist1.clear();
+                getBuCartList(1);
+                break;
+            case R.id.btn_clean:
+                if(!mydialog.isShowing()){
+                    mydialog.show();
+                }
+                quyu_ID="";
+                tv_quyu.setText("按车商信息搜索");
+                i=1;
+                list.clear();
+                NameAndTellist1.clear();
                 getBuCartList(1);
                 break;
         }

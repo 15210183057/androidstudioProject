@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,6 +93,7 @@ import camera.FileUtil;
 import jiekou.getInterface;
 import mycamare.TakePhoteActivity;
 import utils.BitZip;
+import utils.MyBitmap;
 import utils.MyModelDialog;
 import utils.MySuccess;
 import utils.Mydialog;
@@ -846,6 +848,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 linear3_newfragment.setVisibility(View.VISIBLE);
                 tv_cartmodel.setText(cartName);
                 modelid=intent.getStringExtra("modelID");
+                Log.e("TAG","modelID=="+modelid+"=cartname=="+cartName);
             }else if(intent.getAction().equals("updataCart")){
                 quyuID=intent.getStringExtra("quyuID");
                 tv_quyue.setText(intent.getStringExtra("quyuName"));
@@ -1248,7 +1251,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                    tv_time.setText(list.get(0).data.toString());
                     seriesid=list.get(0).series_id;
                     brandid=list.get(0).brand_id;
-                    Log.e("TAG","seriesid=="+seriesid+"=="+list.get(0).series_id);
+                    Log.e("TAG","seriesid=="+seriesid+"=="+list.get(0).series_id+"==brandid="+brandid);
                     MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
                     myModelDialog.show();
                 }
@@ -1427,10 +1430,10 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                    }
                     if(width>1050||height>1398){
                         if (width > height) {
-                            inSampleSize = Math.round((float) height / (float) 1398);
+                            inSampleSize = Math.round((float) height / (float) 1398)+2;
                             Log.e("TAG","压缩比例为-----"+inSampleSize);
                         } else {
-                            inSampleSize = Math.round((float) width / (float) 1050);
+                            inSampleSize = Math.round((float) width / (float) 1050)+2;
                             Log.e("TAG","压缩比例为2222222-----"+inSampleSize);
                         }
                     }
@@ -1440,6 +1443,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     Bitmap bm = BitmapFactory.decodeFile(photoPath, options); // 解码文件
                     Log.e("TAG", "size: " + bm.getByteCount()/1024 + " width: " + bm.getWidth() + " heigth:" + bm.getHeight()); // 输出图像数据
                     selectImag.setScaleType(ImageView.ScaleType.FIT_XY);
+                    if(MyBitmap.readPictureDegree(photoPath)>0){
+                        bm=MyBitmap.amendRotatePhoto(photoPath,bm);
+                    }
 //                    selectImag.setImageBitmap(bm);
 //                    Bitmap bm=BitmapFactory.decodeFile(photoPath);
 
@@ -1448,7 +1454,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                    Bitmap rotaBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, false);
                     new FileUtil(getContext()).saveBitmap(bm);
                     photoPath=FileUtil.getJpegName();
-                        selectImag.setImageBitmap(bm);
+                        selectImag.setImageBitmap(new FileUtil(getContext()).readBitmap(photoPath));
                 }
 
                 //                selectImag.setImageBitmap(bitmap);
@@ -1526,6 +1532,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
             }
         });
         window3.showAtLocation(Tv_guohu, Gravity.BOTTOM,0,0);
+//        window3.showAsDropDown(Tv_guohu);
+//        window3.showAsDropDown(Tv_guohu,0,0,Gravity.NO_GRAVITY);
         WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
         lp.alpha=0.3f;
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -1633,4 +1641,5 @@ public class newFragment extends Fragment implements View.OnClickListener{
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
 }

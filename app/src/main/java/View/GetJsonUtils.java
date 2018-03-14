@@ -465,7 +465,7 @@ public class GetJsonUtils {
         try {
             JSONArray jsonArray=new JSONArray(result);
 
-            Log.e("TAG","jay==="+jsonArray.length());
+//            Log.e("TAG","jay==="+jsonArray.length());
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject=jsonArray.getJSONObject(i);
                 String carinfo=jsonObject.getString("carinfo");
@@ -499,7 +499,7 @@ public class GetJsonUtils {
                         buCartListBean.tel = jsonObject4.getString("tel");
                     }
                 }
-                Log.e("TAG","mileage==="+buCartListBean.isDaTing);
+//                Log.e("TAG","mileage==="+buCartListBean.isDaTing);
 
                 String merchant=jsonObject.getString("merchant");
                 JSONObject jsonObject2=new JSONObject(merchant);
@@ -509,35 +509,39 @@ public class GetJsonUtils {
                 String pic=jsonObject.getString("pic");
                 JSONObject jsonObject3=new JSONObject(pic);
                 buCartListBean.img1=jsonObject3.getString("zhengqian45");
-                Log.e("TAG","buCartListBean.img1=="+buCartListBean.img1);
+//                Log.e("TAG","buCartListBean.img1=="+buCartListBean.img1);
                 buCartListBean.img2=jsonObject3.getString("zhengqian");
-                Log.e("TAG","buCartListBean.img2=="+buCartListBean.img2);
+//                Log.e("TAG","buCartListBean.img2=="+buCartListBean.img2);
                 buCartListBean.img3=jsonObject3.getString("zhenghou");
-                Log.e("TAG","buCartListBean.img3=="+buCartListBean.img3);
+//                Log.e("TAG","buCartListBean.img3=="+buCartListBean.img3);
 
 //                String merchant_contacter=jsonObject.getString("merchant_contacter");
 //                JSONObject jsonObject4=new JSONObject(merchant_contacter);
                 JSONArray jsonArray1=jsonObject.getJSONArray("people_info");
                 Log.e("TAG","jsonArray1=="+jsonArray1.length());
+                List<NameAndTel>list1=new ArrayList<NameAndTel>();
                 for(int k=0;k<jsonArray1.length();k++){
                     JSONObject jsonObject5=jsonArray1.getJSONObject(k);
-                    List<NameAndTel>list1=new ArrayList<NameAndTel>();
                     NameAndTel nameAndTel=new NameAndTel();
                     nameAndTel.tel=jsonObject5.getString("tel");
                     nameAndTel.name=jsonObject5.getString("name");//获取姓名
                     nameAndTel.id=jsonObject5.getString("id");
                     list1.add(nameAndTel);
-                    NameAndTel.NameAndTellist.add(list1);
                 }
-                Log.e("TAG","详情页NameAndTel.NameAndTellist=="+NameAndTel.NameAndTellist.size());
-                for(int t=0;t<NameAndTel.NameAndTellist.size();t++){
+                NameAndTel.NameAndTellist.add(list1);
+                Log.e("TAG","list1==NameAndTel.NameAndTellist.size()="+list1.size()+"==="+NameAndTel.NameAndTellist.size());
 
-                }
                 list.add(buCartListBean);
+
+                for(int t=0;t<NameAndTel.NameAndTellist.get(i).size();t++){
+                    Log.e("TAG","t=i="+t+"=="+i);
+                    Log.e("TAG","详情页NameAndTel.NameAndTellist=t="+t+"==="+NameAndTel.NameAndTellist.get(i).get(t).id);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         return list;
     }
     //通过vin码获取车型，车系，车牌，价格，里程
