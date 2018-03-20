@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pop_linear"
+    android:id="@+id/pop_linear3"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="#fff"
     >
     <TextView
-        android:id="@+id/tv_popguohu"
+        android:id="@+id/tv_pop_guohu"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="已过户"

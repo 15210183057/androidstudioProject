@@ -511,10 +511,16 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 if(window2!=null&&window2.isShowing()){
                     window2.dismiss();
                 }
-            case R.id.tv_popguohu:
-                Tv_guohu.setText(tv_paizhao3.getText().toString());
-                guohuID="0";
-                window3.dismiss();
+            case R.id.tv_pop_guohu:
+                if(window3!=null&&window3.isShowing()) {
+                    if (tv_paizhao3 != null) {
+                        Tv_guohu.setText(tv_paizhao3.getText().toString());
+                        guohuID = "0";
+                        Log.e("TAG", "为什走这里么？");
+                        window3.dismiss();
+                    }
+                }
+
                 break;
             case R.id.tv_pop_weiguohu:
                 Tv_guohu.setText(tv_xiangce3.getText().toString());
@@ -621,6 +627,10 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         Tv.setBackgroundResource(R.drawable.juxingnull);
                     }
                 }, year, month, day);
+        //设置起始日期和结束日期
+        DatePicker datePicker = dialog3.getDatePicker();
+        //datePicker.setMinDate();
+        datePicker.setMaxDate(System.currentTimeMillis());
         dialog3.show();
     }
     //判断小数点后面是否都为"0",截取字符串
@@ -913,7 +923,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         public void afterTextChanged(Editable editable) {
         }
     }
-    //上传三张大图
+    //上传三 张大图
     String  str="";
     private void updateImag(final String path){
             final RequestParams params=new RequestParams(getInterface.UpdateImag);
@@ -1340,7 +1350,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         pop_linear.measure(w, h);
         int pop_height = pop_linear.getMeasuredHeight();
         int pop_width = pop_linear.getMeasuredWidth();
-        Log.e("TAG","测量h="+pop_height);
+        Log.e("TAG","测量22222h="+pop_height);
         int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
         window2.setWidth(width);
@@ -1376,7 +1386,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         tv_xiangce2.setOnClickListener(this);
         tv_paizhao2.setOnClickListener(this);
         tv_canle2.setOnClickListener(this);
-        Log.e("TAG","window=="+window2.getWidth()+"height=="+window2.getHeight());
+        Log.e("TAG","window222222=="+window2.getWidth()+"height=="+window2.getHeight());
     }
     //调取本地相机
     public void takePicture(){
@@ -1496,9 +1506,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //    }
 
     private void getGuohu(){
-        popView3= View.inflate(getContext(),R.layout.myguohu_popview,null);
-        LinearLayout pop_linear=popView3.findViewById(R.id.pop_linear);
-        tv_paizhao3=popView3.findViewById(R.id.tv_popguohu);
+       popView3= View.inflate(getContext(),R.layout.myguohu_popview,null);
+        LinearLayout pop_linear=popView3.findViewById(R.id.pop_linear3);
+        tv_paizhao3=popView3.findViewById(R.id.tv_pop_guohu);
         tv_xiangce3=popView3.findViewById(R.id.tv_pop_weiguohu);
         tv_canle3=popView3.findViewById(R.id.tv_canle3);
         window3=new PopupWindow(getContext());
@@ -1507,9 +1517,10 @@ public class newFragment extends Fragment implements View.OnClickListener{
         pop_linear.measure(w, h);
         int pop_height = pop_linear.getMeasuredHeight();
         int pop_width = pop_linear.getMeasuredWidth();
-        Log.e("TAG","测量h="+pop_height);
         int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
         int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        Log.e("TAG","测量333333333h="+pop_height+"=="+width+"=="+(window3==null));
+
         window3.setWidth(width);
         window3.setHeight(pop_height);
         // 设置PopupWindow的背景
@@ -1544,8 +1555,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
         // window.showAtLocation(parent, gravity, x, y);
         tv_xiangce3.setOnClickListener(this);
         tv_paizhao3.setOnClickListener(this);
-        tv_canle3.setOnClickListener(this);
-        Log.e("TAG","window=="+window3.getWidth()+"height=="+window3.getHeight());
+//        tv_canle3.setOnClickListener(this);
+        Log.e("TAG","window33333333=="+window3.getWidth()+"height=="+window3.getHeight());
     }
     @TargetApi(19)
     public static String getImageAbsolutePath(Activity context, Uri imageUri) {
