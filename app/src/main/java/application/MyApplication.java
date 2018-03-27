@@ -1,6 +1,7 @@
 package application;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,6 +32,7 @@ public class MyApplication extends Application {
         userBean.groupids=sharedUtils.readXML(usermsg,"groupids",this);
         userBean.id=sharedUtils.readXML(usermsg,"userid",this);
     }
+
     public static MyApplication getInstance(){
         myApplication=new MyApplication();
         return myApplication;

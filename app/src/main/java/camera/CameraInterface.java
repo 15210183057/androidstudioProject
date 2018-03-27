@@ -17,7 +17,11 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
+import android.view.WindowManager;
+
+import com.example.a123456.zhonggu.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -175,15 +179,28 @@ public class CameraInterface extends Service{
 		if(mCamera != null){
 			mParams = mCamera.getParameters();
 			mParams.setPictureFormat(PixelFormat.JPEG);//设置拍照后的存储的图片格式
-			
+			//			设置PreviewSize 和 PictureSize
+			List<Size> sizes = mParams.getSupportedPreviewSizes();
+			Display display = MainActivity.activity.getWindowManager().getDefaultDisplay();
+			Point p = new Point();
+			display.getSize(p);
+			Size optimalSize = getOptimalPreviewSize(sizes,p.x, p.y);
+			mParams.setPreviewSize(optimalSize.width, optimalSize.height);
+
+			WindowManager windowManager = MainActivity.activity.getWindowManager();
+			Display display2 = windowManager.getDefaultDisplay();
+			int screenWidth = screenWidth = display2.getWidth();
+			int screenHeight = screenHeight = display2.getHeight();
+//			Camera.Parameters mParameters = mCamera.getParameters();
+			mParams.setPictureSize(optimalSize.width,  optimalSize.height);
 			//设置PreviewSize 和 PictureSize
-			Size pictureSize = CamParaUtil.getInstance().getPropPictureSize(
-					mParams.getSupportedPictureSizes(), previewRate, 800);
-			mParams.setPictureSize(pictureSize.width, pictureSize.height);
-			
-			Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
-					mParams.getSupportedPreviewSizes(), previewRate, 800);
-			mParams.setPreviewSize(previewSize.width, previewSize.height);
+//			Size pictureSize = CamParaUtil.getInstance().getPropPictureSize(
+//					mParams.getSupportedPictureSizes(), previewRate, 800);
+//			mParams.setPictureSize(pictureSize.width, pictureSize.height);
+//
+//			Size previewSize = CamParaUtil.getInstance().getPropPreviewSize(
+//					mParams.getSupportedPreviewSizes(), previewRate, 800);
+//			mParams.setPreviewSize(previewSize.width, previewSize.height);
 			
 			mCamera.setDisplayOrientation(90);
 			
@@ -204,7 +221,36 @@ public class CameraInterface extends Service{
 					+ "Height = " + mParams.getPictureSize().height);
 		}
 	}
-	
+	private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
+		final double ASPECT_TOLERANCE = 0.05;
+		double targetRatio = (double) w / h;
+		if (sizes == null)
+			return null;
+		Size optimalSize = null;
+		double minDiff = Double.MAX_VALUE;
+		int targetHeight = h;
+		// Try to find an size match aspect ratio and size
+		for (Size size : sizes) {
+			double ratio = (double) size.width / size.height;
+			if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+				continue;
+			if (Math.abs(size.height - targetHeight) < minDiff) {
+				optimalSize = size;
+				minDiff = Math.abs(size.height - targetHeight);
+			}
+		}
+		// Cannot find the one match the aspect ratio, ignore the requirement
+		if (optimalSize == null) {
+			minDiff = Double.MAX_VALUE;
+			for (Size size : sizes) {
+				if (Math.abs(size.height - targetHeight) < minDiff) {
+					optimalSize = size;
+					minDiff = Math.abs(size.height - targetHeight);
+				}
+			}
+		}
+		return optimalSize;
+	}
 	//为了实现拍照的快门声音及拍照保存照片需要下面三个回调变量
 	ShutterCallback mShutterCallback = new ShutterCallback() {
 		//快门按下的回调，在这里我们可以设置类似播放咔嚓之类的操作，默认的就是咔嚓

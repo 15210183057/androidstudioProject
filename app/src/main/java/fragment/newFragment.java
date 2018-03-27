@@ -287,7 +287,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
         tv_getmodel.setOnClickListener(this);
         Tv_guohu.setOnClickListener(this);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View view) {
@@ -1270,9 +1269,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Log.e("TAG","getPrice=="+ex.getMessage().toString());
-                if(mydialog.isShowing()){
+                if(mydialog1.isShowing()){
                     if(!TextUtils.isEmpty(ex.getMessage().toString())){
-                        mydialog.dismiss();
+                        mydialog1.dismiss();
                         Toast.makeText(getContext(),"获取失败",Toast.LENGTH_LONG).show();
                     }
                 }
@@ -1304,6 +1303,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         edt_price.setText("");
         edt_licheng.setText("");
         tv_time.setText("");
+        Tv_guohu.setText("");
         tv_cartmodel.setText("");
         tv_cartFenlei.setText("");
         ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";

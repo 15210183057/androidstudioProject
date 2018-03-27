@@ -1,6 +1,7 @@
 package com.example.a123456.zhonggu;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -49,11 +50,13 @@ public class MainActivity extends BaseActivity {
     boolean mShowRequestPermission = true;//用户是否禁止权限
     String newVersion,url,content;//服务器获取的app版本，更新地址url,更新内容；
     int versionCode;//获取当前app版本
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        activity=this;
 //        getBan();
 //        findViewById(R.id.HelloTV).setOnClickListener(new View.OnClickListener() {
 //            @Override
