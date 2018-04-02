@@ -154,20 +154,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
         mydialog=new Mydialog(getContext(),"正在上传.....");
         return view;
     }
-//    LJDHAA123B0027880
-//
-//            LVSFCAAE16F067586
-//
-//    LVVDB11BXDD167021
-//            LSGPC54U99F082714
-//    LJU8824S4CS021900
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if(mySuccess.isShowing()){
-//
-//        }
-//    }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -197,6 +183,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 ZHFBean.zhfpath = "";
                 str = "";
                 tv_cartFenlei.setBackgroundResource(R.drawable.juxingnull);
+                Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                 img_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zq45d));
                 img2_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zqf));
                 img3_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zhf));
@@ -366,7 +353,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //                updateImag(zqfPath);
 //                updateImag(zqPath);
 //                updateImag(zhfPath);
-                Log.e("TAG","点击提交");
+                Log.e("TAG","点击提交--里程为=="+(!IsNullEdit(edt_licheng)||edt_licheng.getText().toString().equals("0"))+"="+edt_licheng.getText().toString());
 //                getSubStr(edt_price);
 //                getSubStr(edt_licheng);
                 if (TextUtils.isEmpty(tv_quyue.getText().toString())||tv_quyue.getText().toString().trim().equals("请选择车商信息")){
@@ -395,8 +382,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }else if (TextUtils.isEmpty(Tv_guohu.getText().toString())||Tv_guohu.getText().toString().trim().equals("请选择车辆是否过户")) {
                     Tv_guohu.setBackgroundResource(R.drawable.rednull);
                     Toast.makeText(getContext(),"过户信息不能为空",Toast.LENGTH_LONG).show();
-                }else if(!IsNullEdit(edt_licheng)){
-                    Toast.makeText(getContext(),"里程不能为空",Toast.LENGTH_LONG).show();
+                }else if(!IsNullEdit(edt_licheng)||edt_licheng.getText().toString().equals("0")){
+                    Toast.makeText(getContext(),"里程不能为空且不能位0",Toast.LENGTH_LONG).show();
+                    edt_licheng.setBackgroundResource(R.drawable.rednull);
                 }
                 else if(!IsNullEdit(edt_price)){
                     Toast.makeText(getContext(),"价格不能为空",Toast.LENGTH_LONG).show();
@@ -515,6 +503,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     if (tv_paizhao3 != null) {
                         Tv_guohu.setText(tv_paizhao3.getText().toString());
                         guohuID = "0";
+                        Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                         Log.e("TAG", "为什走这里么？");
                         window3.dismiss();
                     }
@@ -524,6 +513,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             case R.id.tv_pop_weiguohu:
                 Tv_guohu.setText(tv_xiangce3.getText().toString());
                 guohuID="1";//未过户
+                Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                 window3.dismiss();
                 break;
         }
@@ -669,6 +659,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 tv_cartmodel.setBackgroundResource(R.drawable.juxingnull);
                 tv_time.setBackgroundResource(R.drawable.juxingnull);
                 tv_cartFenlei.setBackgroundResource(R.drawable.juxingnull);
+                Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                 img_newfragment.setBackgroundResource(R.drawable.zq45d);
                 img2_newfragment.setBackgroundResource(R.drawable.zqf);
                 img3_newfragment.setBackgroundResource(R.drawable.zhf);
@@ -984,18 +975,18 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     else {
                         Log.e("TAG","修改BeanFlag.Flag=="+BeanFlag.Flag);
                         if (BeanFlag.Flag) {
-                            if (!TextUtils.isEmpty(zqfPath) && TextUtils.isEmpty(ZQFBean.zqpath)) {
-                            Log.e("TAG","左前方45°角图片修改失败=="+ZQFBean.zqpath);
-                                Toast.makeText(getContext(),"左前方45°角图片修改失败",Toast.LENGTH_SHORT).show();
-                            } if (!TextUtils.isEmpty(zqPath) && TextUtils.isEmpty(ZQBean.zqpath)) {
-                                //正前方图pain
-                                Log.e("TAG","正前方图片修改失败=="+ZQBean.zqpath);
-                                Toast.makeText(getContext(),"正前方图片修改失败",Toast.LENGTH_SHORT).show();
-                            } if (!TextUtils.isEmpty(zhfPath) && TextUtils.isEmpty(ZHFBean.zhfpath)) {
-                                //正后方图pain
-                                Log.e("TAG","正后方图片修改失败=="+ZHFBean.zhfpath);
-                                Toast.makeText(getContext(),"正后方图片修改失败",Toast.LENGTH_SHORT).show();
-                            }
+//                            if (!TextUtils.isEmpty(zqfPath) && TextUtils.isEmpty(ZQFBean.zqpath)) {
+//                            Log.e("TAG","左前方45°角图片修改失败=="+ZQFBean.zqpath);
+//                                Toast.makeText(getContext(),"左前方45°角图片修改失败",Toast.LENGTH_SHORT).show();
+//                            } if (!TextUtils.isEmpty(zqPath) && TextUtils.isEmpty(ZQBean.zqpath)) {
+//                                //正前方图pain
+//                                Log.e("TAG","正前方图片修改失败=="+ZQBean.zqpath);
+//                                Toast.makeText(getContext(),"正前方图片修改失败",Toast.LENGTH_SHORT).show();
+//                            } if (!TextUtils.isEmpty(zhfPath) && TextUtils.isEmpty(ZHFBean.zhfpath)) {
+//                                //正后方图pain
+//                                Log.e("TAG","正后方图片修改失败=="+ZHFBean.zhfpath);
+//                                Toast.makeText(getContext(),"正后方图片修改失败",Toast.LENGTH_SHORT).show();
+//                            }
                         }
                     }
                 }
@@ -1006,9 +997,20 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     if(mydialog.isShowing()){
                         mydialog.dismiss();
                     }
-                    if(!TextUtils.isEmpty(ZHFBean.zhfpath)&&!TextUtils.isEmpty(ZQBean.zqpath)&&!TextUtils.isEmpty(ZQFBean.zqpath)){
-                        ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
-                    }else{
+                    if(!TextUtils.isEmpty(zqfPath)){
+                        ZQFBean.zqpath="";
+                        str="";
+                    }
+                    if(!TextUtils.isEmpty(zqPath)){
+                        ZQBean.zqpath="";
+                    }
+                    if(!TextUtils.isEmpty(zhfPath)){
+                        ZHFBean.zhfpath="";
+                    }
+//                    if(!TextUtils.isEmpty(ZHFBean.zhfpath)&&!TextUtils.isEmpty(ZQBean.zqpath)&&!TextUtils.isEmpty(ZQFBean.zqpath)){
+//                        ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
+//                    }
+//                    else{
                         if(!TextUtils.isEmpty(ex.getMessage().toString())){
                             if (ex instanceof HttpException) { // 网络错误
                                 HttpException httpEx = (HttpException) ex;
@@ -1024,7 +1026,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
                             Toast.makeText(getContext(),"图片上传失败",Toast.LENGTH_LONG).show();
                         }
-                    }
+//                    }
                 }
 
                 @Override
@@ -1079,6 +1081,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         //车辆分类
         requestParams.addBodyParameter("isDaTing",fenleiID);
         requestParams.addBodyParameter("transterstatus",guohuID);//是否过户
+//        requestParams.addBodyParameter("carStyleld",modelid);
         requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
         Log.e("TAG","上传参数=="+requestParams.getBodyParams());

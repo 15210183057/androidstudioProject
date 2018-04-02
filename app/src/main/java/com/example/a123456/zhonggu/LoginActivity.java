@@ -37,7 +37,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_mylogin);
         initView();
     }
 
@@ -67,12 +67,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     StringBuilder stringBuilder;
     private void getLogin(){
         mydialog=new Mydialog(LoginActivity.this,"正在登陆，请稍后...");
-        mydialog.show();
         //登陆
         final String username=edt_username.getText().toString();
         final String password=edt_password.getText().toString();
         //判断用户名和密码是否为空
         if(!TextUtils.isEmpty(username)&&!TextUtils.isEmpty(password)){
+            mydialog.show();
             //登陆，发送请求
             final RequestParams params=new RequestParams(getInterface.loginUser);
             params.addBodyParameter("username",username);

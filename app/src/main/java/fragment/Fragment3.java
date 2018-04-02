@@ -349,6 +349,9 @@ Log.e("TAG","list=="+list.get(i).price);
                 }
                 quyu_ID="";
                 tv_quyu.setText("按车商信息搜索");
+                edt_vin_search.setText("");
+                edt_vin_search.setHint("输入VIN查询");
+//                edt_vin_search.setText("输入VIN查询");
                 i=1;
                 list.clear();
                 NameAndTellist1.clear();
