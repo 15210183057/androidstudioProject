@@ -248,6 +248,7 @@ Log.e("TAG","list=="+list.get(i).price);
         RequestParams requestParams=new RequestParams(getInterface.getList);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
+        requestParams.addBodyParameter("groupid",UserBean.groupids);
         if(!TextUtils.isEmpty(quyu_ID)) {
             requestParams.addBodyParameter("merchantid", quyu_ID);
         }

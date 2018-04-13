@@ -507,12 +507,17 @@ public class GetJsonUtils {
                 buCartListBean.name=jsonObject2.getString("name");//获取用户名
 //                buCartListBean.contact_name=jsonObject2.getString("contact_name");
                 String pic=jsonObject.getString("pic");
-                JSONObject jsonObject3=new JSONObject(pic);
-                buCartListBean.img1=jsonObject3.getString("zhengqian45");
+                if(!TextUtils.isEmpty(pic)){
+                    Log.e("TAG","pic=="+pic);
+                    JSONObject jsonObject3=new JSONObject(pic);
+                    buCartListBean.img1=jsonObject3.getString("zhengqian45");
 //                Log.e("TAG","buCartListBean.img1=="+buCartListBean.img1);
-                buCartListBean.img2=jsonObject3.getString("zhengqian");
+                    buCartListBean.img2=jsonObject3.getString("zhengqian");
 //                Log.e("TAG","buCartListBean.img2=="+buCartListBean.img2);
-                buCartListBean.img3=jsonObject3.getString("zhenghou");
+                    buCartListBean.img3=jsonObject3.getString("zhenghou");
+                }
+
+
 //                Log.e("TAG","buCartListBean.img3=="+buCartListBean.img3);
 
 //                String merchant_contacter=jsonObject.getString("merchant_contacter");

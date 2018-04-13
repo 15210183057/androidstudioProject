@@ -2,6 +2,7 @@ package com.example.a123456.zhonggu;
 import base.BaseActivity;
 import bean.CartMsgBean;
 import bean.NameAndTel;
+import bean.UserBean;
 import jiekou.getInterface;
 
 import android.content.BroadcastReceiver;
@@ -207,7 +208,7 @@ private String getIntentStr;
         params.setConnectTimeout(10000);
         params.addBodyParameter("json","1");
         params.addBodyParameter("pagesize","100");
-        params.addBodyParameter("where","groupid in(2) and status=1");
+        params.addBodyParameter("where","groupid in("+ UserBean.groupids+") and status=1");
         Log.e("TAG","params=="+params);
         Log.e("TAG","车商-=="+params.getParams("where"));
         x.http().post(params, new Callback.CommonCallback<String>() {
