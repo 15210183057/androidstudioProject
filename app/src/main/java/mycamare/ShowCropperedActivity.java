@@ -31,7 +31,7 @@ public class ShowCropperedActivity extends Activity {
     ImageView imageView;
     int beginHeight, endHeight, beginWidht, endWidth;
     CropperImage cropperImage;
-
+//    https://m.kudu8.net/6/6250/4058358.html
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

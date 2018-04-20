@@ -1048,7 +1048,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         // mileage,target_price,userid,brandid,seriesid,zhengqian45,zhengqian,zhenghou
         requestParams.addBodyParameter("vin",edit_num.getText().toString().trim());
         requestParams.addBodyParameter("merchant_code",quyuID);
-        requestParams.addBodyParameter("groupid",UserBean.groupids);
+        requestParams.addBodyParameter("groupid",UserBean.groupid);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("brandid",brandid);
         requestParams.addBodyParameter("seriesid",seriesid);
@@ -1150,7 +1150,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //        requestParams.addBodyParameter("vin",edit_num.getText().toString().trim());//vin码不可修改
         Log.e("TAG","quyuID=="+quyuID);
         requestParams.addBodyParameter("merchant_code",quyuID);
-        requestParams.addBodyParameter("groupid",UserBean.groupids);
+        requestParams.addBodyParameter("groupid",UserBean.groupid);
 //        requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("vendorId",brandid);
         requestParams.addBodyParameter("brandId",seriesid);

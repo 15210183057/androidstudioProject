@@ -73,16 +73,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         //判断用户名和密码是否为空
         if(!TextUtils.isEmpty(username)&&!TextUtils.isEmpty(password)){
             mydialog.show();
-            //登陆，发送请求
+            //登陆，
             final RequestParams params=new RequestParams(getInterface.loginUser);
             params.addBodyParameter("username",username);
             params.addBodyParameter("pass",password);
             params.addBodyParameter("json","1");
-
+            Log.e("TAG","登陆接口URL="+params);
             x.http().post(params, new Callback.CommonCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.e("TAG","result=="+result);
+                    Log.e("TAG","登陆接口返回result=="+result);
                     mydialog.dismiss();
                    List<UserBean> list= GetJsonUtils.getLogin(LoginActivity.this,result);
                    //打印groups
@@ -109,6 +109,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                         utils.saveXML(MyApplication.usermsg,"password", password, LoginActivity.this);
                         utils.saveXML(MyApplication.usermsg,"groupids", UserBean.groupids, LoginActivity.this);
                         utils.saveXML(MyApplication.usermsg,"userid",UserBean.id,LoginActivity.this);
+                        utils.saveXML(MyApplication.usermsg,"groupid",UserBean.groupid,LoginActivity.this);
                         Intent intent = new Intent(LoginActivity.this, FrameActivity.class);
                         startActivity(intent);
                         finish();
