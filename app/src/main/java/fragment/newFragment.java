@@ -4,6 +4,7 @@ package fragment;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -107,14 +108,18 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class newFragment extends Fragment implements View.OnClickListener{
+
+    private Button readdalert_btn1,readdalert_btn2;//重复操作vin提示，取消，确认
+
     private ImageView img_paizhao;
     private EditText edit_num;
     private View view;
-    private PopupWindow window,window2,window3;
-    private View popView,BrandPopView,SerisePopView,popView2,popView3;
+    private PopupWindow window,window2,window3,window4;
+    private View popView,BrandPopView,SerisePopView,popView2,popView3,popView4;
     private TextView tv_paizhao,tv_canle,tv_xiangce;
     private TextView tv_paizhao2,tv_canle2,tv_xiangce2;
     private TextView tv_paizhao3,tv_canle3,tv_xiangce3;
+    private TextView tv_paizhao4,tv_canle4,tv_xiangce4;
     private ImageView img_topleft,img_topright;
     private TextView tv_topcenter;
     private TextView tv_time;//注册日期
@@ -142,6 +147,8 @@ public class newFragment extends Fragment implements View.OnClickListener{
     private String picName;
     private TextView Tv_guohu;//过户
     private String guohuID;
+    private TextView tv_status;
+    private String status;//1 正常；0下架
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -168,6 +175,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 edt_price.setText("");
                 tv_quyue.setText("请选择车商信息");
                 Tv_guohu.setText("请选择车辆是否过户");
+                tv_status.setText("请选择车辆状态");
                 tv_time.setText("请选择日期");
                 tv_cartmodel.setText("请选择品牌，车系和车型");
                 tv_cartFenlei.setText("请选取车辆分类信息");
@@ -184,6 +192,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 str = "";
                 tv_cartFenlei.setBackgroundResource(R.drawable.juxingnull);
                 Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
+                tv_status.setBackgroundResource(R.drawable.juxingnull);
                 img_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zq45d));
                 img2_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zqf));
                 img3_newfragment.setImageBitmap(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.zhf));
@@ -252,7 +261,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
         btn_commit=view.findViewById(R.id.btn_commit);//提交按钮
 
         Tv_guohu=view.findViewById(R.id.tv_guohu);//是否过户
+        tv_status=view.findViewById(R.id.tv_status);
 
+        tv_status.setOnClickListener(this);
         img_paizhao.setOnClickListener(this);
         tv_time.setOnClickListener(this);
         btn_commit.setOnClickListener(this);
@@ -278,6 +289,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_status:
+                getStatus();
+                break;
             case R.id.tv_guohu:
                 getGuohu();
                 break;
@@ -295,7 +309,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 //获取车型车系车牌
                 if (!TextUtils.isEmpty(edit_num.getText().toString())
                         && !TextUtils.isEmpty(tv_time.getText().toString())
-                        && !tv_time.getText().toString().equals("请选择日期")) {
+                        && !tv_time.getText().toString().trim().equals("请选择日期")) {
                     getPrice("model");
                 } else {
                     Toast.makeText(getContext(), "vin码或注册日期不能为空", Toast.LENGTH_LONG).show();
@@ -303,9 +317,13 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.tv_getprice:
                 //获取价格
+                Log.e("TAG","动态获取=="+(!TextUtils.isEmpty(edit_num.getText().toString())
+                        && !TextUtils.isEmpty(tv_time.getText().toString())
+                        && !tv_time.getText().toString().trim().equals("请选择日期")));
+                Log.e("TAG","动态获取=="+(!tv_time.getText().toString().trim().equals("请选择日期")));
                 if (!TextUtils.isEmpty(edit_num.getText().toString())
                         && !TextUtils.isEmpty(tv_time.getText().toString())
-                        && !tv_time.getText().toString().equals("请选择日期")) {
+                        && !tv_time.getText().toString().trim().equals("请选择日期")) {
                     getPrice("price");
                 } else {
                     Toast.makeText(getContext(), "vin或者注册时间不能为空", Toast.LENGTH_LONG).show();
@@ -350,6 +368,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.btn_commit:
+
 //                updateImag(zqfPath);
 //                updateImag(zqPath);
 //                updateImag(zhfPath);
@@ -388,6 +407,9 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }
                 else if(!IsNullEdit(edt_price)){
                     Toast.makeText(getContext(),"价格不能为空",Toast.LENGTH_LONG).show();
+                }else if (TextUtils.isEmpty(tv_status.getText().toString())||tv_status.getText().toString().trim().equals("请选择车辆状态")) {
+                    tv_status.setBackgroundResource(R.drawable.rednull);
+                    Toast.makeText(getContext(),"车辆状态不能为空",Toast.LENGTH_LONG).show();
                 }
 
                 else{
@@ -515,6 +537,22 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 guohuID="1";//未过户
                 Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
                 window3.dismiss();
+                break;
+            case R.id.tv_pop_xiajia:
+                if(window4.isShowing()){
+                    window4.dismiss();
+                }
+                tv_status.setText("下架");
+                tv_status.setBackgroundResource(R.drawable.juxingnull);
+                status="0";
+                break;
+            case R.id.tv_pop_zhengchang:
+                if (window4.isShowing()){
+                    window4.dismiss();
+                }
+                tv_status.setText("正常");
+                tv_status.setBackgroundResource(R.drawable.juxingnull);
+                status="1";
                 break;
         }
     }
@@ -655,6 +693,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
             Log.e("TAG","接收广播newFragment===="+intent.getStringExtra("path"));
             if(intent.getAction().equals("update")){
                 Tv_guohu.setBackgroundResource(R.drawable.juxingnull);
+                tv_status.setBackgroundResource(R.drawable.juxingnull);
                 tv_quyue.setBackgroundResource(R.drawable.juxingnull);
                 tv_cartmodel.setBackgroundResource(R.drawable.juxingnull);
                 tv_time.setBackgroundResource(R.drawable.juxingnull);
@@ -667,6 +706,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
 
                //TODO
                 guohuID=MyNewUpdate.transterstatus;
+
                 if(guohuID.equals("0")){
                     //已过户
                     Tv_guohu.setText("已过户");
@@ -694,6 +734,12 @@ public class newFragment extends Fragment implements View.OnClickListener{
                 }
                 if(!TextUtils.isEmpty(MyNewUpdate.contact_name)) {
                     edt_name.setText(MyNewUpdate.contact_name.trim());
+                }
+                status=MyNewUpdate.status;//车辆状态
+                if(status.equals("0")){
+                    tv_status.setText("下架");
+                }else{
+                    tv_status.setText("正常");
                 }
 
                 edit_num.setText(MyNewUpdate.vinnum);
@@ -1081,6 +1127,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         //车辆分类
         requestParams.addBodyParameter("isDaTing",fenleiID);
         requestParams.addBodyParameter("transterstatus",guohuID);//是否过户
+        requestParams.addBodyParameter("status",status);//车辆状态，下架/正常
 //        requestParams.addBodyParameter("carStyleld",modelid);
         requestParams.setMaxRetryCount(2);
         Log.e("TAG","上传地址=="+requestParams.getUri());
@@ -1186,6 +1233,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         //车辆分类
         requestParams.addBodyParameter("isDaTing",fenleiID);
         requestParams.addBodyParameter("transterstatus",guohuID);//是否过户
+        requestParams.addBodyParameter("status",status);//车辆状态
         requestParams.setMaxRetryCount(2);
 //        requestParams.addBodyParameter("status","0");
         Log.e("TAG","修改地址=="+requestParams);
@@ -1264,8 +1312,18 @@ public class newFragment extends Fragment implements View.OnClickListener{
                     seriesid=list.get(0).series_id;
                     brandid=list.get(0).brand_id;
                     Log.e("TAG","seriesid=="+seriesid+"=="+list.get(0).series_id+"==brandid="+brandid);
-                    MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
-                    myModelDialog.show();
+
+                    // 如果等id则是更新以前的数据,等于0则是新增
+                    if(!list.get(0).ispu.equals("0")){
+                        if(!BeanFlag.Flag) {
+                            ReAddAlert reAddAlert = new ReAddAlert(getActivity());
+                            reAddAlert.show();
+                        }else{
+                            MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
+                            myModelDialog.show();
+                        }
+                    }
+
                 }
             }
 
@@ -1307,6 +1365,7 @@ public class newFragment extends Fragment implements View.OnClickListener{
         edt_licheng.setText("");
         tv_time.setText("");
         Tv_guohu.setText("");
+        tv_status.setText("");
         tv_cartmodel.setText("");
         tv_cartFenlei.setText("");
         ZQFBean.zqpath="";ZQBean.zqpath="";ZHFBean.zhfpath="";str="";
@@ -1561,6 +1620,60 @@ public class newFragment extends Fragment implements View.OnClickListener{
 //        tv_canle3.setOnClickListener(this);
         Log.e("TAG","window33333333=="+window3.getWidth()+"height=="+window3.getHeight());
     }
+    //车辆状态
+    private void getStatus(){
+        popView4= View.inflate(getContext(),R.layout.mystatus_popview,null);
+        LinearLayout pop_linear=popView4.findViewById(R.id.pop_linear4);
+        tv_paizhao4=popView4.findViewById(R.id.tv_pop_zhengchang);
+        tv_xiangce4=popView4.findViewById(R.id.tv_pop_xiajia);
+        tv_canle4=popView4.findViewById(R.id.tv_canle3);
+        window4=new PopupWindow(getContext());
+        int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        pop_linear.measure(w, h);
+        int pop_height = pop_linear.getMeasuredHeight();
+        int pop_width = pop_linear.getMeasuredWidth();
+        int width=getActivity().getWindowManager().getDefaultDisplay().getWidth();
+        int height=getActivity().getWindowManager().getDefaultDisplay().getHeight();
+        Log.e("TAG","测量333333333h="+pop_height+"=="+width+"=="+(window3==null));
+
+        window4.setWidth(width);
+        window4.setHeight(pop_height);
+        // 设置PopupWindow的背景
+        window4.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // 设置PopupWindow是否能响应外部点击事件
+        window4.setOutsideTouchable(true);
+        // 设置PopupWindow是否能响应点击事件
+        window4.setTouchable(true);
+        // 显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的锚点，第二和第三个参数分别是PopupWindow相对锚点的x、y偏移
+        window4.setContentView(popView4);
+        window4.setAnimationStyle(R.style.animTranslate);
+        window4.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+                lp.alpha=1.0f;
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                getActivity().getWindow().setAttributes(lp);
+            }
+        });
+        window4.showAtLocation(tv_status, Gravity.BOTTOM,0,0);
+//        window3.showAsDropDown(Tv_guohu);
+//        window3.showAsDropDown(Tv_guohu,0,0,Gravity.NO_GRAVITY);
+        WindowManager.LayoutParams lp=getActivity().getWindow().getAttributes();
+        lp.alpha=0.3f;
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getActivity().getWindow().setAttributes(lp);
+        // 或者也可以调用此方法显示PopupWindow，其中：
+        // 第一个参数是PopupWindow的父View，第二个参数是PopupWindow相对父View的位置，
+        // 第三和第四个参数分别是PopupWindow相对父View的x、y偏移
+        // window.showAtLocation(parent, gravity, x, y);
+        tv_xiangce4.setOnClickListener(this);
+        tv_paizhao4.setOnClickListener(this);
+//        tv_canle3.setOnClickListener(this);
+        Log.e("TAG","window33333333=="+window4.getWidth()+"height=="+window4.getHeight());
+    }
     @TargetApi(19)
     public static String getImageAbsolutePath(Activity context, Uri imageUri) {
         if (context == null || imageUri == null)
@@ -1654,6 +1767,40 @@ public class newFragment extends Fragment implements View.OnClickListener{
      */
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
+
+    //重复操作VIN提示
+    class ReAddAlert extends AlertDialog{
+
+        protected ReAddAlert(Context context) {
+            super(context);
+            setCanceledOnTouchOutside(false);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.readdalert);
+            readdalert_btn1=findViewById(R.id.btn_ok);
+            readdalert_btn2=findViewById(R.id.btn_canle);
+            readdalert_btn1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    cleanDate();
+                    dismiss();
+                }
+            });
+            readdalert_btn2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    //继续操作
+                    dismiss();
+                    MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
+                    myModelDialog.show();
+                }
+            });
+        }
     }
 
 }

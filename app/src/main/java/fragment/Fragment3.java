@@ -217,7 +217,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         intent.putExtra("cartmodel",list.get(i).brandName+list.get(i).seriseName+list.get(i).modelName);
         intent.putExtra("licheng",list.get(i).mileage);
         intent.putExtra("price",list.get(i).price);
-Log.e("TAG","list=="+list.get(i).price);
+        Log.e("TAG","list=="+list.get(i).price);
         Log.e("TAG","第几条=="+i);
         Log.e("TAG","quyuID=="+list.get(i).quyuID+"=="+"i");
         intent.putExtra("quyuID",list.get(i).quyuID);
@@ -239,6 +239,7 @@ Log.e("TAG","list=="+list.get(i).price);
         intent.putExtra("NameTelID",list.get(i).NameTelID);
         intent.putExtra("currentID",i+"");
         intent.putExtra("transterstatus",list.get(i).transterstatus);
+        intent.putExtra("status",list.get(i).status);//车辆状态。下架/正常
         getActivity().sendBroadcast(intent);
     }
     //网络请求，获取数据源,
@@ -249,6 +250,7 @@ Log.e("TAG","list=="+list.get(i).price);
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
         requestParams.addBodyParameter("groupid",UserBean.groupids);
+        requestParams.addBodyParameter("status","3");
         if(!TextUtils.isEmpty(quyu_ID)) {
             requestParams.addBodyParameter("merchantid", quyu_ID);
         }
@@ -266,6 +268,7 @@ Log.e("TAG","list=="+list.get(i).price);
                 listBeans.clear();
                 listBeans= GetJsonUtils.getCartList(getActivity(),result);
 //                listBeans= GetJsonUtils.getBuCartList(getActivity(),result);
+                Log.e("TAG","list.size=="+list.size());
                 list.addAll(listBeans);
                 if (list.size()==0){
                     Toast.makeText(getContext(),"没有符合该车商的车辆信息",Toast.LENGTH_SHORT).show();
@@ -378,7 +381,12 @@ Log.e("TAG","list=="+list.get(i).price);
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals("delete")) {
+                if(list.size()!=0){
+                list.clear();
+                NameAndTellist1.clear();
+                Log.e("TAG","list.size()=="+list.size());
                 getBuCartList(1);
+              }
             }
             if(intent.getAction().equals("f3")){
                 String name=intent.getStringExtra("name");

@@ -6,7 +6,7 @@ package bean;
  */
 
 public class BuCartListBean {
-    public String isDaTing,vin,licensePlate,cardType,name,id,tel,contact_name,imgUrl,userName,time,price,carName,mileage,regTime;
+    public String status,isDaTing,vin,licensePlate,cardType,name,id,tel,contact_name,imgUrl,userName,time,price,carName,mileage,regTime;
     public String quyuID,quyuName,modelID,seriseID,brandid,modelName,seriseName,brandName;
     public boolean Flag;
     public String img1,img2,img3;

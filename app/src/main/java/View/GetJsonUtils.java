@@ -488,6 +488,7 @@ public class GetJsonUtils {
                 buCartListBean.seriseID=jsonObject1.getString("seriesid");
                 buCartListBean.seriseName=jsonObject1.getString("series_name");
                 buCartListBean.isDaTing=jsonObject1.getString("isDaTing");
+                buCartListBean.status=jsonObject1.getString("status");
                 buCartListBean.transterstatus=jsonObject1.getString("transterstatus");
                 buCartListBean.NameTelID=jsonObject1.getString("selluserid");
                 String str=jsonObject1.getString("sellsinfo");
@@ -594,6 +595,11 @@ public class GetJsonUtils {
                 cartMsgBean.licheng=jsonObject.getString("mileage");
                 cartMsgBean.price=jsonObject.getString("price");
                 cartMsgBean.data=jsonObject.getString("regdate");
+//                如果等id则是更新以前的数据
+//                :
+//                等于0则是新增
+                cartMsgBean.ispu=jsonObject.getString("ispu");
+//
                 JSONArray jsonArray=jsonObject.getJSONArray("model");
                 for(int i=0;i<jsonArray.length();i++){
                     JSONObject jsonObject1=jsonArray.getJSONObject(i);

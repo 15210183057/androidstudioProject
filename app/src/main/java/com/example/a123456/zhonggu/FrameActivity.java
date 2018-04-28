@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import application.MyApplication;
 import bean.BeanFlag;
 import bean.MyNewUpdate;
 import fragment.Fragment1;
@@ -237,6 +238,8 @@ public class FrameActivity extends BaseActivity implements View.OnClickListener{
                 MyNewUpdate.NameTelID=intent.getStringExtra("NameTelID");
                 MyNewUpdate.currentID=intent.getStringExtra("currentID");
                 MyNewUpdate.transterstatus=intent.getStringExtra("transterstatus");
+
+                MyNewUpdate.status=intent.getStringExtra("status");
                 //通知Fragment vin不可编辑
                 Intent intent1=new Intent();
                 intent1.setAction("update");
