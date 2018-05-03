@@ -1318,10 +1318,11 @@ public class newFragment extends Fragment implements View.OnClickListener{
                         if(!BeanFlag.Flag) {
                             ReAddAlert reAddAlert = new ReAddAlert(getActivity());
                             reAddAlert.show();
-                        }else{
-                            MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
-                            myModelDialog.show();
                         }
+                    }else{
+                        Log.e("TAG","size---"+ModelNameandID.list);
+                        MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
+                        myModelDialog.show();
                     }
 
                 }
