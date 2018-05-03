@@ -250,12 +250,12 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemClickListen
         requestParams.addBodyParameter("userid",UserBean.id);
         requestParams.addBodyParameter("page",current_page+"");
         requestParams.addBodyParameter("groupid",UserBean.groupids);
-        requestParams.addBodyParameter("status","3");
         if(!TextUtils.isEmpty(quyu_ID)) {
             requestParams.addBodyParameter("merchantid", quyu_ID);
         }
         if(!TextUtils.isEmpty(edt_vin_search.getText())){
             requestParams.addBodyParameter("vin",edt_vin_search.getText().toString());
+            requestParams.addBodyParameter("status","3");
         }
         Log.e("TAG","requestParams接口拼接地址为=="+requestParams+"");
         x.http().post(requestParams, new Callback.CommonCallback<String>() {

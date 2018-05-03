@@ -1320,7 +1320,6 @@ public class newFragment extends Fragment implements View.OnClickListener{
                             reAddAlert.show();
                         }
                     }else{
-                        Log.e("TAG","size---"+ModelNameandID.list);
                         MyModelDialog myModelDialog=new MyModelDialog(getContext(),ModelNameandID.list);
                         myModelDialog.show();
                     }
